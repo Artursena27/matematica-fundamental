@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matemática Fundamental II · Teoria e Exercícios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap">
+<style>
+:root{--navy:#0E1B3D;--navy2:#1A2C5C;--line:#DDE3F0;--bg:#F5F7FC;--card:#FFFFFF;--ink:#14213D;--muted:#55627F;--accent:#FFC93C;--accent2:#FFE7A3;--ok:#128C4A;--okbg:#E6F5EC}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Archivo',system-ui,sans-serif;font-size:17px;line-height:1.55}
+button{font:inherit;cursor:pointer}
+a{color:inherit}
+header{background:var(--navy);color:#fff;padding:22px 20px 26px;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:36px 36px}
+.wrap{max-width:980px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.logo{width:42px;height:42px;border-radius:12px;background:var(--accent);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
+.brand b{font-size:20px;font-weight:900;letter-spacing:-.01em;display:block;line-height:1.1}
+.brand small{color:#C9D3EC;font-size:13px;font-weight:600}
+.search{margin-top:20px;position:relative}
+.search input{width:100%;padding:16px 18px 16px 52px;border-radius:16px;border:2px solid transparent;font:inherit;font-size:18px;background:#fff;color:var(--ink);outline:none}
+.search input:focus{border-color:var(--accent)}
+.search svg{position:absolute;left:18px;top:50%;transform:translateY(-50%)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.chip{padding:7px 14px;border-radius:999px;border:2px solid rgba(255,255,255,.25);background:transparent;color:#fff;font-size:14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--navy)}
+main{padding:24px 20px 60px}
+.area{margin-top:26px}
+.area h2{font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;font-weight:800}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.tcard{display:flex;flex-direction:column;gap:6px;padding:16px 18px;background:var(--card);border:2px solid var(--line);border-radius:18px;text-decoration:none;min-height:88px;transition:border-color .15s,transform .15s}
+.tcard:hover,.tcard:focus-visible{border-color:var(--navy);transform:translateY(-2px);outline:none}
+.tcard b{font-size:17px;line-height:1.25}
+.badge{display:inline-block;font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--accent2);color:var(--navy);align-self:flex-start}
+.empty{padding:40px 0;text-align:center;color:var(--muted)}
+/* tema */
+.back{display:inline-flex;align-items:center;gap:6px;font-weight:700;text-decoration:none;color:var(--muted);margin-bottom:10px}
+.back:hover{color:var(--ink)}
+.thead h1{font-size:clamp(26px,5vw,38px);line-height:1.1;margin:6px 0 10px;letter-spacing:-.02em;font-weight:900}
+.tabs{display:flex;gap:8px;margin:18px 0 0;border-bottom:2px solid var(--line)}
+.tab{padding:12px 18px;border:none;background:none;font-weight:800;color:var(--muted);border-bottom:4px solid transparent;margin-bottom:-2px;font-size:17px}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:24px;margin-top:18px}
+.teoria p,.teoria li{font-size:18px}
+.teoria ul,.teoria ol{padding-left:22px}
+.teoria li{margin:6px 0}
+.ex{background:#F0F4FF;border-left:0;border-radius:14px;padding:14px 16px;margin:14px 0}
+.tip{background:#FFF6DA;border-radius:14px;padding:12px 16px}
+.big{font-size:22px;text-align:center}
+table.t{border-collapse:collapse;margin:12px 0;width:100%;max-width:640px;font-size:16px}
+table.t td,table.t th{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+table.t th{background:#F0F4FF}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px;line-height:1.15}
+.fr>span:first-child{border-bottom:2px solid currentColor;padding:0 3px}
+.fr>span:last-child{padding:0 3px}
+.ov{border-top:2px solid currentColor;padding:0 2px}
+.hl{background:var(--accent);padding:0 3px;border-radius:4px}
+sup{font-size:.7em}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:18px}
+.seg{display:inline-flex;background:#E8ECF6;border-radius:14px;padding:4px}
+.seg button{border:none;background:none;padding:10px 16px;border-radius:10px;font-weight:800;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.btn{border:2px solid var(--navy);background:#fff;color:var(--navy);padding:10px 16px;border-radius:12px;font-weight:800}
+.btn.primary{background:var(--navy);color:#fff}
+.btn.gold{background:var(--accent);border-color:var(--accent);color:var(--navy)}
+.btn:disabled{opacity:.4;cursor:default}
+.listinfo{font-size:14px;color:var(--muted);font-weight:700}
+.quiz{text-align:left}
+.qnum{font-weight:900;color:var(--muted);font-size:15px;letter-spacing:.08em}
+.progress{height:8px;background:#E8ECF6;border-radius:4px;margin:10px 0 18px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.qtext{font-size:22px;font-weight:700;line-height:1.5}
+.answer{margin-top:20px;border-radius:16px;background:var(--okbg);padding:18px}
+.answer .ans{font-size:22px;font-weight:900;color:var(--ok)}
+.steps{margin:12px 0 0;padding-left:22px}
+.steps li{margin:6px 0;font-size:17px}
+.qnav{display:flex;gap:10px;justify-content:space-between;margin-top:22px;flex-wrap:wrap}
+.qlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.qitem{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px 20px}
+.qitem .qtext{font-size:19px}
+.qitem .answer{padding:14px 16px;margin-top:12px}
+.qitem .answer .ans{font-size:19px}
+.dots{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.dots button{width:34px;height:34px;border-radius:10px;border:2px solid var(--line);background:#fff;font-weight:800;font-size:14px;color:var(--muted)}
+.dots button.cur{border-color:var(--navy);color:var(--navy)}
+.dots button.seen{background:var(--accent2)}
+.hint{font-size:13px;color:var(--muted);margin-top:10px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:20px}
+@media (max-width:600px){.panel{padding:18px}.qtext{font-size:19px}main{padding:18px 14px 50px}}
+@media print{header,.tabs,.toolbar,.back,footer,.noprint{display:none!important}body{background:#fff}.panel,.qitem{border:1px solid #ccc;break-inside:avoid}.answer{background:#fff;border:1px solid #9c9}}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap">
+<a class="brand" href="#"><span class="logo">∑</span><span><b>Matemática · Fundamental II</b><small>Teoria e exercícios resolvidos · 6º ao 9º ano</small></span></a>
+<div class="search" id="searchBox">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#55627F" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input id="q" type="search" placeholder="Pesquise um assunto: frações, MMC, Pitágoras…" aria-label="Pesquisar assunto" autocomplete="off">
+</div>
+<div class="chips" id="chips" role="group" aria-label="Filtrar por ano"></div>
+</div>
+</header>
+<main><div class="wrap" id="view"></div></main>
+<footer>Questões geradas com o gabarito calculado automaticamente. Use “Nova lista” para outras questões do mesmo assunto.</footer>
+
+<script>
+/* ===== núcleo: aleatório com semente, formatação e frações ===== */
+var TOPICS = [];
+var MINUS = '−';
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hashStr(s){var h=2166136261;for(var k=0;k<s.length;k++){h^=s.charCodeAt(k);h=Math.imul(h,16777619);}return h>>>0;}
+function R(seed){
+  var f=mulberry32(seed);
+  var o={f:f};
+  o.i=function(a,b){return a+Math.floor(f()*(b-a+1));};
+  o.p=function(arr){return arr[Math.floor(f()*arr.length)];};
+  o.nz=function(a,b){var x;do{x=o.i(a,b);}while(x===0);return x;};
+  o.sh=function(arr){var c=arr.slice();for(var k=c.length-1;k>0;k--){var j=Math.floor(f()*(k+1));var t=c[k];c[k]=c[j];c[j]=t;}return c;};
+  o.s=function(){return f()<0.5?-1:1;};
+  return o;
+}
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=b;b=a%b;a=t;}return a;}
+function lcm(a,b){return Math.abs(a*b)/gcd(a,b);}
+function rnd(x,dp){var m=Math.pow(10,dp===undefined?6:dp);return Math.round(x*m)/m;}
+/* número no formato brasileiro (vírgula decimal) */
+function n(x,dp){
+  if(dp===undefined) dp=4;
+  x=rnd(x,dp); if(Object.is(x,-0)) x=0;
+  var a=Math.abs(x), parts=String(a).split('.');
+  var ip=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  if(parts[0].length<=4) ip=parts[0];
+  var s=ip+(parts[1]?','+parts[1]:'');
+  return (x<0?MINUS:'')+s;
+}
+function p(x){return x<0?'('+n(x)+')':n(x);}
+function money(x){var s=rnd(x,2).toFixed(2).split('.');var ip=s[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.');return 'R$ '+ip+','+s[1];}
+/* frações */
+function Q(a,b){if(b===undefined)b=1;if(b<0){a=-a;b=-b;}var g=gcd(a,b)||1;return {n:a/g,d:b/g};}
+function qa(x,y){return Q(x.n*y.d+y.n*x.d,x.d*y.d);}
+function qs(x,y){return Q(x.n*y.d-y.n*x.d,x.d*y.d);}
+function qm(x,y){return Q(x.n*y.n,x.d*y.d);}
+function qd(x,y){return Q(x.n*y.d,x.d*y.n);}
+function F(a,b){if(typeof a!=='number'||typeof b!=='number')return '<span class="fr"><span>'+a+'</span><span>'+b+'</span></span>';var neg=(a<0)!==(b<0);a=Math.abs(a);b=Math.abs(b);return (neg&&a!==0?MINUS:'')+'<span class="fr"><span>'+a+'</span><span>'+b+'</span></span>';}
+function FQ(q){return q.d===1?n(q.n):F(q.n,q.d);}
+function pFQ(q){return q.n<0?'('+FQ(q)+')':FQ(q);}
+/* polinômio: [[coef,'x²'],[coef,'x'],[coef,'']] */
+function poly(terms){
+  var s='';
+  terms.forEach(function(t){
+    var c=t[0],v=t[1];if(c===0)return;
+    var a=Math.abs(c);var cs=(a===1&&v)?'':n(a);
+    if(s===''){s=(c<0?MINUS:'')+cs+v;}else{s+=(c<0?' − ':' + ')+cs+v;}
+  });
+  return s||'0';
+}
+function sup(e){return '<sup>'+e+'</sup>';}
+function raiz(x){return '√<span class="ov">'+x+'</span>';}
+function mix(i,fns){return fns[i%fns.length]();}
+function topic(t){TOPICS.push(t);}
+function lista(t,seed){
+  var r=R(hashStr(t.id)+(seed||0)*7919);var out=[],seen={},tries=0;
+  while(out.length<20&&tries<600){tries++;var g=t.gen(r,tries-1);if(seen[g.q])continue;seen[g.q]=1;out.push(g);}
+  return out;
+}
+
+/* ===== NÚMEROS ===== */
+function fact(x){var f=[],d=2;while(x>1){var e=0;while(x%d===0){x/=d;e++;}if(e)f.push([d,e]);d++;}return f;}
+function factStr(x){return fact(x).map(function(t){return t[0]+(t[1]>1?sup(t[1]):'');}).join(' × ');}
+function divisores(x){var d=[];for(var k=1;k<=x;k++)if(x%k===0)d.push(k);return d;}
+function isPrime(x){if(x<2)return false;for(var k=2;k*k<=x;k++)if(x%k===0)return false;return true;}
+function moneyS(x){return (x<0?MINUS:'')+money(Math.abs(x));}
+function ps(x){return x>0?'(+'+x+')':'('+n(x)+')';}
+var ORDENS=['unidades','dezenas','centenas','unidades de milhar','dezenas de milhar','centenas de milhar','unidades de milhão'];
+
+topic({id:'sistema-numeracao',nome:'Sistema de numeração decimal',ano:'6º ano',area:'Números',
+tags:'valor posicional ordem classe decomposição arredondamento algarismo',
+teoria:'<p>Usamos 10 algarismos (0 a 9). O <b>valor de um algarismo depende da posição</b> que ele ocupa: cada posição vale 10 vezes a posição à sua direita.</p><table class="t"><tr><th>Classe dos milhões</th><th colspan="3">Classe dos milhares</th><th colspan="3">Classe das unidades simples</th></tr><tr><td>U. milhão</td><td>C. milhar</td><td>D. milhar</td><td>U. milhar</td><td>Centena</td><td>Dezena</td><td>Unidade</td></tr></table><ul><li><b>Valor absoluto</b>: o próprio algarismo. <b>Valor posicional (relativo)</b>: algarismo × valor da posição.</li><li><b>Decompor</b> é escrever o número como soma dos valores posicionais: 4.705 = 4 × 1000 + 7 × 100 + 5.</li><li><b>Arredondar</b>: olhe o algarismo logo à direita da ordem pedida. Se for 5 ou mais, aumenta 1; se for menor que 5, mantém. O resto vira zero.</li></ul><div class="ex"><b>Exemplo:</b> em 36.482, o 6 está nas unidades de milhar e vale 6.000. Arredondando para a centena: 36.500 (porque o 8 ≥ 5).</div>',
+gen:function(r,i){return mix(i,[
+function(){var len=r.i(5,7),N=r.i(Math.pow(10,len-1),Math.pow(10,len)-1);var s=String(N);var pos;do{pos=r.i(0,len-1);}while(s[len-1-pos]==='0');var d=+s[len-1-pos];
+ var shown=n(N);var cnt=-1,html='';for(var k=shown.length-1;k>=0;k--){var ch=shown[k];if(ch!=='.')cnt++;html=((ch!=='.'&&cnt===pos)?'<b class="hl">'+ch+'</b>':ch)+html;}
+ return {q:'No número '+html+', qual é o valor posicional do algarismo destacado?',a:n(d*Math.pow(10,pos)),s:'O '+d+' está na ordem das '+ORDENS[pos]+', então vale '+d+' × '+n(Math.pow(10,pos))+' = '+n(d*Math.pow(10,pos))+'.'};},
+function(){var parts=[],N=0;var ex=r.sh([0,1,2,3,4,5]).slice(0,r.i(3,4)).sort(function(a,b){return b-a;});ex.forEach(function(e){var d=r.i(1,9);N+=d*Math.pow(10,e);parts.push(d+' × '+n(Math.pow(10,e)));});
+ return {q:'Qual número é representado por '+parts.join(' + ')+'?',a:n(N),s:'Somando os valores posicionais: '+ex.map(function(e,k){return n(+parts[k].split(' × ')[0]*Math.pow(10,e));}).join(' + ')+' = '+n(N)+'.'};},
+function(){var N=r.i(1000,99999);var ord=r.p([[10,'dezena'],[100,'centena'],[1000,'unidade de milhar']]);var R_=Math.round(N/ord[0])*ord[0];var dig=Math.floor(N/(ord[0]/10))%10;
+ return {q:'Arredonde '+n(N)+' para a '+ord[1]+' mais próxima.',a:n(R_),s:'O algarismo à direita da '+ord[1]+' é '+dig+(dig>=5?' (≥ 5), então aumentamos 1':' (< 5), então mantemos')+'. Resultado: '+n(R_)+'.'};},
+function(){var N=r.i(1001,99999);var s=String(N),parts=[];for(var k=0;k<s.length;k++){var d=+s[k],e=s.length-1-k;if(d)parts.push(e===0?String(d):d+' × '+n(Math.pow(10,e)));}
+ return {q:'Decomponha o número '+n(N)+' usando potências de 10 (ex.: 3 × 100).',a:parts.join(' + '),s:'Cada algarismo diferente de zero vezes o valor da sua posição.'};}
+]);}});
+
+topic({id:'expressoes-numericas',nome:'Expressões numéricas',ano:'6º ano',area:'Números',
+tags:'ordem das operações parênteses colchetes chaves prioridade',
+teoria:'<p>Para resolver uma expressão numérica siga sempre esta ordem:</p><ol><li>Resolva o que está dentro de <b>( )</b>, depois <b>[ ]</b>, depois <b>{ }</b>.</li><li>Dentro de cada um: primeiro <b>potências e raízes</b>;</li><li>depois <b>multiplicações e divisões</b>, na ordem em que aparecem (da esquerda para a direita);</li><li>por último <b>adições e subtrações</b>, também da esquerda para a direita.</li></ol><div class="ex"><b>Exemplo:</b> 20 − 3 × 4 + 8 ÷ 2 = 20 − 12 + 4 = 12.<br>[10 + (6 − 2) × 3] ÷ 2 = [10 + 4 × 3] ÷ 2 = [10 + 12] ÷ 2 = 22 ÷ 2 = 11.</div><p class="tip">Erro comum: fazer 20 − 3 = 17 antes da multiplicação. Multiplicação vem antes!</p>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(2,30),b=r.i(2,12),c=r.i(2,12);return {q:'Calcule: '+a+' + '+b+' × '+c,a:n(a+b*c),s:'Primeiro a multiplicação: '+b+' × '+c+' = '+(b*c)+'. Depois: '+a+' + '+(b*c)+' = '+(a+b*c)+'.'};},
+function(){var a=r.i(3,12),b=r.i(3,12),d=r.i(2,9),q=r.i(2,10),c=d*q;var v=a*b-q;return {q:'Calcule: '+a+' × '+b+' − '+c+' ÷ '+d,a:n(v),s:a+' × '+b+' = '+(a*b)+' e '+c+' ÷ '+d+' = '+q+'. Então '+(a*b)+' − '+q+' = '+n(v)+'.'};},
+function(){var a=r.i(2,15),b=r.i(2,15),c=r.i(2,9),d=r.i(1,(a+b)*c-1);var v=(a+b)*c-d;return {q:'Calcule: ('+a+' + '+b+') × '+c+' − '+d,a:n(v),s:'Parênteses: '+a+' + '+b+' = '+(a+b)+'. Depois '+(a+b)+' × '+c+' = '+((a+b)*c)+'. Por fim '+((a+b)*c)+' − '+d+' = '+v+'.'};},
+function(){var e=r.i(2,6),q=r.i(3,12),inner=e*q,d=r.i(2,5),kmax=Math.min(6,Math.floor((inner-1)/d));if(kmax<1){kmax=1;inner=d+e*Math.ceil((d+1)/e);q=inner/e;}var k=r.i(1,kmax),a=inner-k*d;if(a<1){a=1;inner=a+k*d;}
+ var c=r.i(1,9),b=c+k;if(inner%e!==0){e=1;q=inner;}
+ return {q:'Calcule: ['+a+' + ('+b+' − '+c+') × '+d+'] ÷ '+e,a:n(inner/e),s:'('+b+' − '+c+') = '+k+'; '+k+' × '+d+' = '+(k*d)+'; ['+a+' + '+(k*d)+'] = '+inner+'; '+inner+' ÷ '+e+' = '+n(inner/e)+'.'};},
+function(){var a=r.i(2,5),b=r.i(2,3),c=r.i(2,9),d=r.i(1,20);var v=Math.pow(a,b)+c*d;return {q:'Calcule: '+a+sup(b)+' + '+c+' × '+d,a:n(v),s:'Potência primeiro: '+a+sup(b)+' = '+Math.pow(a,b)+'. Multiplicação: '+c+' × '+d+' = '+(c*d)+'. Soma: '+v+'.'};}
+]);}});
+
+topic({id:'potenciacao',nome:'Potenciação',ano:'6º ano',area:'Números',
+tags:'potência expoente base quadrado cubo potências de 10',
+teoria:'<p>Potência é uma multiplicação de fatores iguais: <b>a<sup>n</sup> = a × a × … × a</b> (n vezes). <i>a</i> é a <b>base</b> e <i>n</i> o <b>expoente</b>.</p><ul><li>a<sup>1</sup> = a &nbsp;&nbsp; a<sup>0</sup> = 1 (a ≠ 0)</li><li>Quadrado: a<sup>2</sup>; cubo: a<sup>3</sup>.</li><li>10<sup>n</sup> = 1 seguido de n zeros.</li></ul><p><b>Propriedades</b> (mesma base):</p><ul><li>a<sup>m</sup> × a<sup>n</sup> = a<sup>m+n</sup> (conserva a base, soma expoentes)</li><li>a<sup>m</sup> ÷ a<sup>n</sup> = a<sup>m−n</sup> (subtrai expoentes)</li><li>(a<sup>m</sup>)<sup>n</sup> = a<sup>m×n</sup></li></ul><div class="ex"><b>Exemplo:</b> 2<sup>5</sup> = 2×2×2×2×2 = 32. &nbsp; 3<sup>4</sup> × 3<sup>2</sup> = 3<sup>6</sup>.</div><p class="tip">Cuidado: 2<sup>3</sup> não é 2 × 3! É 2 × 2 × 2 = 8.</p>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(2,9),e=r.i(2,4);if(a>5)e=r.i(2,3);var v=Math.pow(a,e);return {q:'Calcule '+a+sup(e)+'.',a:n(v),s:Array(e).fill(a).join(' × ')+' = '+n(v)+'.'};},
+function(){var a=r.i(11,20);return {q:'Calcule '+a+sup(2)+'.',a:n(a*a),s:a+' × '+a+' = '+(a*a)+'.'};},
+function(){var a=r.i(2,50),e=r.p([0,1]);return {q:'Quanto vale '+a+sup(e)+'?',a:n(e?a:1),s:e?'Todo número elevado a 1 é ele mesmo.':'Todo número diferente de zero elevado a 0 é igual a 1.'};},
+function(){var a=r.i(2,9),m=r.i(2,8),k=r.i(2,8),t=r.i(0,2);var q,ans,s;
+ if(t===0){q=a+sup(m)+' × '+a+sup(k);ans=a+sup(m+k);s='Mesma base na multiplicação: soma os expoentes ('+m+' + '+k+' = '+(m+k)+').';}
+ else if(t===1){var M=Math.max(m,k)+1,K=Math.min(m,k);q=a+sup(M)+' ÷ '+a+sup(K);ans=a+sup(M-K);s='Mesma base na divisão: subtrai os expoentes ('+M+' − '+K+' = '+(M-K)+').';}
+ else{q='('+a+sup(m)+')'+sup(k);ans=a+sup(m*k);s='Potência de potência: multiplica os expoentes ('+m+' × '+k+' = '+(m*k)+').';}
+ return {q:'Escreva como uma única potência: '+q,a:ans,s:s};},
+function(){var e=r.i(2,9),d=r.i(1,9);return {q:'Calcule '+d+' × 10'+sup(e)+'.',a:n(d*Math.pow(10,e)),s:'10'+sup(e)+' é 1 seguido de '+e+' zeros; vezes '+d+' dá '+n(d*Math.pow(10,e))+'.'};}
+]);}});
+
+topic({id:'radiciacao',nome:'Radiciação (raiz quadrada e cúbica)',ano:'6º ano',area:'Números',
+tags:'raiz quadrada raiz cúbica quadrado perfeito radical',
+teoria:'<p>A radiciação é a operação <b>inversa da potenciação</b>.</p><ul><li><b>Raiz quadrada</b>: √a = b porque b<sup>2</sup> = a. Ex.: √49 = 7, pois 7<sup>2</sup> = 49.</li><li><b>Raiz cúbica</b>: ∛a = b porque b<sup>3</sup> = a. Ex.: ∛64 = 4.</li><li><b>Quadrados perfeitos</b>: 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225…</li><li>Se o número não é quadrado perfeito, a raiz fica entre dois inteiros: √30 está entre 5 e 6 (25 &lt; 30 &lt; 36).</li><li>Raiz de fração: √(a/b) = √a / √b.</li></ul><div class="ex"><b>Exemplo:</b> √144 + ∛27 = 12 + 3 = 15.</div>',
+gen:function(r,i){return mix(i,[
+function(){var k=r.i(2,20);return {q:'Calcule '+raiz(k*k)+'.',a:n(k),s:k+sup(2)+' = '+(k*k)+', então '+raiz(k*k)+' = '+k+'.'};},
+function(){var k=r.i(2,6);return {q:'Calcule ∛'+(k*k*k)+'.',a:n(k),s:k+sup(3)+' = '+(k*k*k)+', então a raiz cúbica é '+k+'.'};},
+function(){var x;do{x=r.i(2,200);}while(Math.sqrt(x)%1===0);var f=Math.floor(Math.sqrt(x));return {q:raiz(x)+' está entre quais números inteiros consecutivos?',a:f+' e '+(f+1),s:f+sup(2)+' = '+(f*f)+' e '+(f+1)+sup(2)+' = '+((f+1)*(f+1))+'. Como '+(f*f)+' &lt; '+x+' &lt; '+((f+1)*(f+1))+', a raiz está entre '+f+' e '+(f+1)+'.'};},
+function(){var a=r.i(1,12),b;do{b=r.i(2,12);}while(gcd(a,b)!==1);return {q:'Calcule '+raiz(F(a*a,b*b))+'.',a:F(a,b),s:raiz(a*a)+' = '+a+' e '+raiz(b*b)+' = '+b+'.'};},
+function(){var a=r.i(2,15),b=r.i(2,15);return {q:'Calcule '+raiz(a*a)+' + '+raiz(b*b)+'.',a:n(a+b),s:a+' + '+b+' = '+(a+b)+'.'};}
+]);}});
+
+topic({id:'multiplos-divisores',nome:'Múltiplos, divisores e critérios de divisibilidade',ano:'6º ano',area:'Números',
+tags:'múltiplo divisor divisibilidade critério divisível',
+teoria:'<ul><li><b>Múltiplos</b> de um número: resultados de multiplicá-lo por 0, 1, 2, 3… M(4) = {0, 4, 8, 12, …} (infinitos).</li><li><b>Divisores</b>: números que dividem exatamente (resto zero). D(12) = {1, 2, 3, 4, 6, 12} (finitos).</li></ul><p><b>Critérios de divisibilidade</b></p><table class="t"><tr><td><b>2</b></td><td>termina em 0, 2, 4, 6 ou 8 (é par)</td></tr><tr><td><b>3</b></td><td>soma dos algarismos é divisível por 3</td></tr><tr><td><b>4</b></td><td>os dois últimos algarismos formam número divisível por 4 (ou terminam em 00)</td></tr><tr><td><b>5</b></td><td>termina em 0 ou 5</td></tr><tr><td><b>6</b></td><td>divisível por 2 e por 3</td></tr><tr><td><b>9</b></td><td>soma dos algarismos é divisível por 9</td></tr><tr><td><b>10</b></td><td>termina em 0</td></tr></table><div class="ex"><b>Exemplo:</b> 2.358 é divisível por 3? 2+3+5+8 = 18, que é divisível por 3 → sim (e também por 9).</div>',
+gen:function(r,i){return mix(i,[
+function(){var x=r.p([12,18,20,24,28,30,32,36,40,42,45,48,50,54,56,60,63,64,72,80,84,90,96,100]);return {q:'Quais são os divisores de '+x+'?',a:'D('+x+') = {'+divisores(x).join(', ')+'}',s:'Teste as divisões exatas em pares: '+divisores(x).filter(function(d){return d*d<=x;}).map(function(d){return d+' × '+(x/d);}).join(', ')+'.'};},
+function(){var k=r.i(3,15);var m=[0,1,2,3,4,5].map(function(t){return t*k;});return {q:'Escreva os seis primeiros múltiplos naturais de '+k+'.',a:m.join(', '),s:'Multiplique '+k+' por 0, 1, 2, 3, 4 e 5.'};},
+function(){var d=r.p([2,3,4,5,6,9,10]),N=r.i(100,9999);if(r.f()<0.5)N=N-N%d;var sd=String(N).split('').reduce(function(s,c){return s+ +c;},0);var ok=N%d===0;var why;
+ if(d===2)why='termina em '+(N%10)+(N%2===0?' (par)':' (ímpar)');else if(d===3||d===9)why='a soma dos algarismos é '+sd+(sd%d===0?', que é':', que não é')+' divisível por '+d;else if(d===4)why='os dois últimos algarismos formam '+(N%100)+(N%100%4===0?', divisível':', não divisível')+' por 4';else if(d===5)why='termina em '+(N%10);else if(d===10)why='termina em '+(N%10);else why=(N%2===0?'é par':'não é par')+' e a soma dos algarismos é '+sd+(sd%3===0?' (divisível por 3)':' (não divisível por 3)');
+ return {q:'O número '+n(N)+' é divisível por '+d+'?',a:ok?'Sim':'Não',s:'Porque '+why+'.'};},
+function(){var b=r.i(3,15),a=r.f()<0.5?b*r.i(2,15):r.i(20,200);var ok=a%b===0;return {q:a+' é múltiplo de '+b+'?',a:ok?'Sim':'Não',s:ok?a+' = '+b+' × '+(a/b)+'.':a+' ÷ '+b+' deixa resto '+(a%b)+'.'};}
+]);}});
+
+topic({id:'primos-fatoracao',nome:'Números primos e fatoração',ano:'6º ano',area:'Números',
+tags:'primo composto decomposição fatores primos fatoração',
+teoria:'<ul><li><b>Número primo</b>: tem exatamente dois divisores, 1 e ele mesmo. Primos até 50: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47.</li><li><b>Composto</b>: tem mais de dois divisores. O 1 não é primo nem composto. O 2 é o único primo par.</li><li><b>Fatoração</b>: escrever o número como produto de primos. Divida sucessivamente pelo menor primo possível.</li></ul><div class="ex"><b>Exemplo:</b><br>60 | 2<br>30 | 2<br>15 | 3<br>&nbsp;5 | 5<br>&nbsp;1 &nbsp;→ 60 = 2<sup>2</sup> × 3 × 5</div><p class="tip">Para saber se n é primo, teste a divisão pelos primos até √n.</p>',
+gen:function(r,i){return mix(i,[
+function(){var x;do{x=1;var c=r.i(2,4);for(var k=0;k<c;k++)x*=r.p([2,2,2,3,3,5,7,11,13]);}while(x>1000||x<12);return {q:'Fatore '+n(x)+' em fatores primos.',a:factStr(x),s:'Divisões sucessivas: '+fact(x).map(function(t){return Array(t[1]).fill(t[0]).join(', ');}).join(', ')+'.'};},
+function(){var x=r.i(2,120);var ok=isPrime(x);var dv=ok?0:divisores(x)[1];return {q:'O número '+x+' é primo?',a:ok?'Sim':'Não',s:ok?'Seus únicos divisores são 1 e '+x+'.':x+' é divisível por '+dv+' ('+x+' = '+dv+' × '+(x/dv)+').'};},
+function(){var a=r.i(1,80),b=a+r.i(10,20);var L=[];for(var k=a;k<=b;k++)if(isPrime(k))L.push(k);return {q:'Liste os números primos entre '+a+' e '+b+' (incluindo esses, se forem primos).',a:L.length?L.join(', '):'Nenhum',s:'Teste cada número dividindo pelos primos 2, 3, 5, 7.'};}
+]);}});
+
+topic({id:'mmc',nome:'MMC — mínimo múltiplo comum',ano:'6º ano',area:'Números',
+tags:'mínimo múltiplo comum mmc problemas encontro',
+teoria:'<p>O <b>MMC</b> de dois ou mais números é o menor múltiplo (diferente de zero) comum a todos.</p><p><b>Método da fatoração simultânea:</b> divida todos os números ao mesmo tempo pelos primos até que todos virem 1; o MMC é o produto dos primos usados.</p><div class="ex"><b>Exemplo:</b> MMC(12, 18)<br>12, 18 | 2<br>&nbsp;6, &nbsp;9 | 2<br>&nbsp;3, &nbsp;9 | 3<br>&nbsp;1, &nbsp;3 | 3<br>&nbsp;1, &nbsp;1 → 2 × 2 × 3 × 3 = 36</div><p><b>Quando usar:</b> problemas de “acontecer junto de novo” (ônibus, alarmes, luzes que piscam) e para somar frações.</p>',
+gen:function(r,i){function L(arr){return arr.reduce(lcm);}return mix(i,[
+function(){var a=r.i(2,30),b;do{b=r.i(2,30);}while(b===a);var m=L([a,b]);return {q:'Calcule o MMC('+a+', '+b+').',a:n(m),s:a+' = '+factStr(a)+'; '+b+' = '+factStr(b)+'. Pegue cada primo com o maior expoente: '+factStr(m)+' = '+m+'.'};},
+function(){var a=r.i(2,12),b=r.i(2,12),c=r.i(2,12);if(a===b||b===c||a===c)c=a+b;var m=L([a,b,c]);return {q:'Calcule o MMC('+a+', '+b+', '+c+').',a:n(m),s:'Fatorando: '+[a,b,c].map(function(x){return x+' = '+factStr(x);}).join('; ')+'. MMC = '+factStr(m)+' = '+m+'.'};},
+function(){var a=r.p([10,12,15,18,20,25,30,40]),b;do{b=r.p([8,12,15,20,24,30,36,45]);}while(b===a);var m=L([a,b]);var h=8+Math.floor(m/60),mi=m%60;return {q:'Dois ônibus saem juntos do terminal às 8h. Um sai a cada '+a+' minutos e o outro a cada '+b+' minutos. Depois de quantos minutos eles sairão juntos novamente? A que horas?',a:m+' minutos, às '+h+'h'+(mi<10?'0':'')+mi,s:'MMC('+a+', '+b+') = '+m+' minutos depois das 8h.'};},
+function(){var a=r.p([2,3,4,5,6,8]),b;do{b=r.p([3,4,5,6,9,10,12]);}while(b===a);var m=L([a,b]);return {q:'Uma luz pisca a cada '+a+' segundos e outra a cada '+b+' segundos. Se piscaram juntas agora, daqui a quantos segundos piscarão juntas de novo?',a:m+' segundos',s:'MMC('+a+', '+b+') = '+m+'.'};}
+]);}});
+
+topic({id:'mdc',nome:'MDC — máximo divisor comum',ano:'6º ano',area:'Números',
+tags:'máximo divisor comum mdc problemas dividir em partes iguais',
+teoria:'<p>O <b>MDC</b> de dois ou mais números é o maior número que divide todos eles exatamente.</p><ul><li><b>Pela fatoração:</b> multiplique só os primos <b>comuns</b>, com o <b>menor</b> expoente.</li><li><b>Divisões sucessivas (Euclides):</b> divida o maior pelo menor; depois o divisor pelo resto, até o resto ser 0. O último divisor é o MDC.</li></ul><div class="ex"><b>Exemplo:</b> MDC(24, 36): 24 = 2<sup>3</sup> × 3; 36 = 2<sup>2</sup> × 3<sup>2</sup> → 2<sup>2</sup> × 3 = 12.</div><p><b>Quando usar:</b> dividir coisas em partes iguais do <b>maior tamanho possível</b>, montar o maior número de kits iguais.</p><p class="tip">Se MDC = 1, os números são primos entre si.</p>',
+gen:function(r,i){return mix(i,[
+function(){var g=r.i(2,15),x=r.i(2,9),y;do{y=r.i(2,9);}while(y===x||gcd(x,y)!==1);var a=g*x,b=g*y;return {q:'Calcule o MDC('+a+', '+b+').',a:n(g),s:a+' = '+factStr(a)+'; '+b+' = '+factStr(b)+'. Fatores comuns com menor expoente: '+(g>1?factStr(g):'1')+' = '+g+'.'};},
+function(){var g=r.i(2,8),xs=r.sh([2,3,5,7]).slice(0,3);var arr=xs.map(function(x){return x*g;});return {q:'Calcule o MDC('+arr.join(', ')+').',a:n(g),s:'Todos são múltiplos de '+g+' e, divididos por ele, dão '+xs.join(', ')+', que não têm divisor comum além de 1.'};},
+function(){var g=r.p([5,6,8,10,12,15,20,25]),x=r.i(2,7),y;do{y=r.i(2,7);}while(gcd(x,y)!==1||y===x);var a=g*x,b=g*y;return {q:'Duas fitas medem '+a+' cm e '+b+' cm. Quero cortá-las em pedaços do mesmo tamanho, o maior possível, sem sobrar nada. Qual o tamanho de cada pedaço e quantos pedaços terei?',a:g+' cm cada; '+(x+y)+' pedaços',s:'MDC('+a+', '+b+') = '+g+'. Pedaços: '+a+' ÷ '+g+' + '+b+' ÷ '+g+' = '+x+' + '+y+' = '+(x+y)+'.'};},
+function(){var g=r.i(3,12),x=r.i(2,6),y;do{y=r.i(2,6);}while(gcd(x,y)!==1||y===x);var a=g*x,b=g*y;return {q:'Tenho '+a+' lápis e '+b+' borrachas e quero montar o maior número possível de kits iguais, sem sobrar nada. Quantos kits e o que vai em cada um?',a:g+' kits, cada um com '+x+' lápis e '+y+' borrachas',s:'MDC('+a+', '+b+') = '+g+'. '+a+' ÷ '+g+' = '+x+' e '+b+' ÷ '+g+' = '+y+'.'};}
+]);}});
+
+topic({id:'fracoes',nome:'Frações: conceito, equivalência e simplificação',ano:'6º ano',area:'Números',
+tags:'fração numerador denominador equivalente simplificar irredutível fração de quantidade número misto',
+teoria:'<p>Uma fração <span class="fr"><span>a</span><span>b</span></span> representa <b>a partes</b> de um inteiro dividido em <b>b partes iguais</b>. a é o <b>numerador</b>, b é o <b>denominador</b>.</p><ul><li><b>Frações equivalentes</b>: multiplicando ou dividindo numerador e denominador pelo mesmo número, a fração não muda: '+'<span class="fr"><span>1</span><span>2</span></span> = <span class="fr"><span>2</span><span>4</span></span> = <span class="fr"><span>3</span><span>6</span></span>.</li><li><b>Simplificar</b>: dividir os dois termos pelo MDC até ficar <b>irredutível</b>.</li><li><b>Fração de quantidade</b>: divida pelo denominador e multiplique pelo numerador. <span class="fr"><span>3</span><span>4</span></span> de 80 = 80 ÷ 4 × 3 = 60.</li><li><b>Número misto</b>: 2 <span class="fr"><span>1</span><span>3</span></span> = <span class="fr"><span>2×3+1</span><span>3</span></span> = <span class="fr"><span>7</span><span>3</span></span>.</li></ul>',
+gen:function(r,i){return mix(i,[
+function(){var x,y;do{x=r.i(1,9);y=r.i(2,12);}while(gcd(x,y)!==1||x>=y);var k=r.i(2,9);return {q:'Simplifique '+F(x*k,y*k)+' até a forma irredutível.',a:F(x,y),s:'MDC('+(x*k)+', '+(y*k)+') = '+k+'. Dividindo os dois termos por '+k+': '+F(x,y)+'.'};},
+function(){var x,y;do{x=r.i(1,9);y=r.i(2,10);}while(gcd(x,y)!==1);var k=r.i(2,8);return {q:'Complete para que as frações sejam equivalentes: '+F(x,y)+' = <span class="fr"><span>?</span><span>'+(y*k)+'</span></span>',a:n(x*k),s:'O denominador foi multiplicado por '+k+' ('+y+' × '+k+' = '+(y*k)+'), então o numerador também: '+x+' × '+k+' = '+(x*k)+'.'};},
+function(){var b=r.p([2,3,4,5,6,8,10]),a=r.i(1,b-1),N=b*r.i(3,30);return {q:'Quanto é '+F(a,b)+' de '+N+'?',a:n(N/b*a),s:N+' ÷ '+b+' = '+(N/b)+'; '+(N/b)+' × '+a+' = '+(N/b*a)+'.'};},
+function(){var b=r.i(2,9),w=r.i(1,5),a=r.i(1,b-1);if(r.f()<0.5)return {q:'Transforme o número misto '+w+' '+F(a,b)+' em fração imprópria.',a:F(w*b+a,b),s:w+' × '+b+' + '+a+' = '+(w*b+a)+'; mantém o denominador '+b+'.'};
+ return {q:'Transforme '+F(w*b+a,b)+' em número misto.',a:w+' '+F(a,b),s:(w*b+a)+' ÷ '+b+' = '+w+' e resto '+a+'.'};}
+]);}});
+
+topic({id:'comparacao-fracoes',nome:'Comparação e ordenação de frações',ano:'6º ano',area:'Números',
+tags:'comparar frações maior menor ordem crescente decrescente',
+teoria:'<ul><li><b>Mesmo denominador</b>: maior numerador → maior fração. <span class="fr"><span>5</span><span>7</span></span> &gt; <span class="fr"><span>3</span><span>7</span></span>.</li><li><b>Mesmo numerador</b>: maior denominador → menor fração (pedaços menores). <span class="fr"><span>1</span><span>3</span></span> &gt; <span class="fr"><span>1</span><span>5</span></span>.</li><li><b>Denominadores diferentes</b>: reduza ao mesmo denominador (MMC) ou use a <b>multiplicação cruzada</b>: compare a×d com c×b.</li></ul><div class="ex"><b>Exemplo:</b> <span class="fr"><span>2</span><span>3</span></span> ou <span class="fr"><span>3</span><span>5</span></span>? 2×5 = 10 e 3×3 = 9. Como 10 &gt; 9, <span class="fr"><span>2</span><span>3</span></span> &gt; <span class="fr"><span>3</span><span>5</span></span>.</div>',
+gen:function(r,i){function rf(){var b=r.i(2,12),a=r.i(1,b+3);return Q(a,b);}return mix(i,[
+function(){var x=rf(),y;do{y=rf();}while(y.n*x.d===x.n*y.d);var L=x.n*y.d,Rr=y.n*x.d;var sym=L>Rr?'&gt;':'&lt;';return {q:'Compare usando &gt;, &lt; ou =: '+FQ(x)+' ___ '+FQ(y),a:FQ(x)+' '+sym+' '+FQ(y),s:'Multiplicação cruzada: '+x.n+' × '+y.d+' = '+L+' e '+y.n+' × '+x.d+' = '+Rr+'.'};},
+function(){var b=r.i(5,15),a=r.i(1,b-1),c;do{c=r.i(1,b-1);}while(c===a);return {q:'Qual é maior: '+F(a,b)+' ou '+F(c,b)+'?',a:F(Math.max(a,c),b),s:'Mesmo denominador: vence o maior numerador.'};},
+function(){var a=r.i(1,5),b=r.i(a+1,12),c;do{c=r.i(a+1,12);}while(c===b);return {q:'Qual é maior: '+F(a,b)+' ou '+F(a,c)+'?',a:F(a,Math.min(b,c)),s:'Mesmo numerador: a de menor denominador é maior (pedaços maiores).'};},
+function(){var fs=[],vals={};while(fs.length<3){var f=rf();var v=f.n/f.d;if(vals[v])continue;vals[v]=1;fs.push(f);}var o=fs.slice().sort(function(a,b){return a.n/a.d-b.n/b.d;});var m=fs.map(function(f){return f.d;}).reduce(lcm);
+ return {q:'Coloque em ordem crescente: '+fs.map(FQ).join(', '),a:o.map(FQ).join(' &lt; '),s:'Com denominador comum '+m+': '+fs.map(function(f){return F(f.n*m/f.d,m);}).join(', ')+'.'};}
+]);}});
+
+topic({id:'soma-subtracao-fracoes',nome:'Adição e subtração de frações',ano:'6º ano',area:'Números',
+tags:'somar frações subtrair frações mmc denominadores diferentes',
+teoria:'<ul><li><b>Mesmo denominador</b>: soma (ou subtrai) os numeradores e conserva o denominador. <span class="fr"><span>2</span><span>7</span></span> + <span class="fr"><span>3</span><span>7</span></span> = <span class="fr"><span>5</span><span>7</span></span>.</li><li><b>Denominadores diferentes</b>: tire o MMC dos denominadores, transforme cada fração em equivalente com esse denominador e depois some.</li><li>No fim, <b>simplifique</b> o resultado.</li></ul><div class="ex"><b>Exemplo:</b> <span class="fr"><span>1</span><span>4</span></span> + <span class="fr"><span>5</span><span>6</span></span>: MMC(4, 6) = 12 → <span class="fr"><span>3</span><span>12</span></span> + <span class="fr"><span>10</span><span>12</span></span> = <span class="fr"><span>13</span><span>12</span></span>.</div><p class="tip">Erro comum: somar os denominadores (1/2 + 1/3 ≠ 2/5).</p>',
+gen:function(r,i){function rf(){var b=r.i(2,10),a=r.i(1,b+2);return {n:a,d:b};}
+function solve(x,y,op){var m=lcm(x.d,y.d);var a=x.n*m/x.d,b=y.n*m/y.d;var res=op>0?Q(a+b,m):Q(a-b,m);return {res:res,s:'MMC('+x.d+', '+y.d+') = '+m+'. '+F(x.n,x.d)+' = '+F(a,m)+' e '+F(y.n,y.d)+' = '+F(b,m)+'. '+F(a,m)+(op>0?' + ':' − ')+F(b,m)+' = '+F(op>0?a+b:a-b,m)+(Q(op>0?a+b:a-b,m).d!==m?' = '+FQ(res):'')+'.'};}
+return mix(i,[
+function(){var b=r.i(3,15),a=r.i(1,b),c=r.i(1,b);var res=Q(a+c,b);return {q:'Calcule: '+F(a,b)+' + '+F(c,b),a:FQ(res),s:'Mesmo denominador: '+a+' + '+c+' = '+(a+c)+' → '+F(a+c,b)+(res.d!==b?' = '+FQ(res):'')+'.'};},
+function(){var x=rf(),y;do{y=rf();}while(y.d===x.d);var o=solve(x,y,1);return {q:'Calcule: '+F(x.n,x.d)+' + '+F(y.n,y.d),a:FQ(o.res),s:o.s};},
+function(){var x=rf(),y;do{y=rf();}while(y.d===x.d||y.n/y.d>=x.n/x.d);var o=solve(x,y,-1);return {q:'Calcule: '+F(x.n,x.d)+' − '+F(y.n,y.d),a:FQ(o.res),s:o.s};},
+function(){var w=r.i(1,5),y=rf();while(y.n>=y.d){y=rf();}var res=Q(w*y.d-y.n,y.d);return {q:'Calcule: '+w+' − '+F(y.n,y.d),a:FQ(res),s:w+' = '+F(w*y.d,y.d)+'; '+F(w*y.d,y.d)+' − '+F(y.n,y.d)+' = '+F(w*y.d-y.n,y.d)+'.'};},
+function(){var b=r.p([3,4,5,6,8]),a=r.i(1,b-1),c=r.p([2,3,4,5,6]),dd=r.i(1,c-1);if(c===b)c=b*2;var res=Q(a*c+dd*b,b*c);var left=qs(Q(1),res);if(left.n<=0)return {q:'Calcule: '+F(a,b)+' + '+F(dd,c),a:FQ(res),s:'Denominador comum '+lcm(b,c)+'.'};
+ return {q:'Ana comeu '+F(a,b)+' de uma pizza e Bia comeu '+F(dd,c)+'. Que fração da pizza sobrou?',a:FQ(left),s:'Comeram '+F(a,b)+' + '+F(dd,c)+' = '+FQ(res)+'. Sobrou 1 − '+FQ(res)+' = '+FQ(left)+'.'};}
+]);}});
+
+topic({id:'multiplicacao-divisao-fracoes',nome:'Multiplicação e divisão de frações',ano:'6º ano',area:'Números',
+tags:'multiplicar frações dividir frações inverso',
+teoria:'<ul><li><b>Multiplicação</b>: numerador × numerador e denominador × denominador. <span class="fr"><span>2</span><span>3</span></span> × <span class="fr"><span>4</span><span>5</span></span> = <span class="fr"><span>8</span><span>15</span></span>.</li><li>Dá para <b>simplificar antes</b> (cruzado), o que deixa as contas menores.</li><li><b>Divisão</b>: conserva a primeira e multiplica pelo <b>inverso</b> da segunda. <span class="fr"><span>3</span><span>4</span></span> ÷ <span class="fr"><span>2</span><span>5</span></span> = <span class="fr"><span>3</span><span>4</span></span> × <span class="fr"><span>5</span><span>2</span></span> = <span class="fr"><span>15</span><span>8</span></span>.</li><li>Número inteiro: escreva com denominador 1 (5 = <span class="fr"><span>5</span><span>1</span></span>).</li></ul>',
+gen:function(r,i){function rf(){var b=r.i(2,9),a=r.i(1,9);return {n:a,d:b};}return mix(i,[
+function(){var x=rf(),y=rf();var res=Q(x.n*y.n,x.d*y.d);return {q:'Calcule: '+F(x.n,x.d)+' × '+F(y.n,y.d),a:FQ(res),s:F(x.n+' × '+y.n,x.d+' × '+y.d)+' = '+F(x.n*y.n,x.d*y.d)+(res.d!==x.d*y.d?' = '+FQ(res):'')+'.'};},
+function(){var x=rf(),y=rf();var res=Q(x.n*y.d,x.d*y.n);return {q:'Calcule: '+F(x.n,x.d)+' ÷ '+F(y.n,y.d),a:FQ(res),s:'Inverte a segunda: '+F(x.n,x.d)+' × '+F(y.d,y.n)+' = '+F(x.n*y.d,x.d*y.n)+(res.d!==x.d*y.n||res.n!==x.n*y.d?' = '+FQ(res):'')+'.'};},
+function(){var w=r.i(2,12),x=rf();var res=Q(w*x.n,x.d);return {q:'Calcule: '+w+' × '+F(x.n,x.d),a:FQ(res),s:F(w+' × '+x.n,x.d)+' = '+F(w*x.n,x.d)+(res.d!==x.d?' = '+FQ(res):'')+'.'};},
+function(){var x=rf(),w=r.i(2,9);var res=Q(x.n,x.d*w);return {q:'Calcule: '+F(x.n,x.d)+' ÷ '+w,a:FQ(res),s:F(x.n,x.d)+' × '+F(1,w)+' = '+F(x.n,x.d*w)+(res.d!==x.d*w?' = '+FQ(res):'')+'.'};},
+function(){var a=r.p([2,3,4,5]),b=r.p([1,2,3]);var L=a*r.i(2,6);var part=Q(b,a);if(b>=a)b=1;return {q:'Uma garrafa tem '+L+' litros. Quantos copos de '+F(b,a)+' de litro dá para encher?',a:FQ(qd(Q(L),Q(b,a)))+' copos',s:L+' ÷ '+F(b,a)+' = '+L+' × '+F(a,b)+' = '+FQ(qd(Q(L),Q(b,a)))+'.'};}
+]);}});
+
+topic({id:'decimais',nome:'Números decimais: operações',ano:'6º ano',area:'Números',
+tags:'decimal vírgula somar subtrair multiplicar dividir casas decimais',
+teoria:'<ul><li><b>Adição e subtração</b>: coloque <b>vírgula embaixo de vírgula</b> (complete com zeros) e opere normalmente.</li><li><b>Multiplicação</b>: multiplique como se não houvesse vírgula; o resultado terá tantas casas decimais quanto a <b>soma das casas</b> dos fatores. 1,2 × 0,3 = 0,36.</li><li><b>Por 10, 100, 1000</b>: a vírgula anda 1, 2 ou 3 casas para a direita (para a esquerda na divisão).</li><li><b>Divisão</b>: iguale as casas decimais do dividendo e do divisor (multiplicando os dois por 10, 100…) e divida normalmente.</li></ul><div class="ex"><b>Exemplo:</b> 7,5 ÷ 0,25 = 750 ÷ 25 = 30.</div>',
+gen:function(r,i){function d2(lo,hi,dp){return r.i(lo,hi)/Math.pow(10,dp);}return mix(i,[
+function(){var a=r.i(100,9999),b=r.i(10,999);return {q:'Calcule: '+n(a/100)+' + '+n(b/10),a:n((a+b*10)/100),s:'Vírgula embaixo de vírgula: '+n(a/100)+' + '+(b/10).toFixed(2).replace('.',',')+' = '+n((a+b*10)/100)+'.'};},
+function(){var a=r.i(500,9999),b=r.i(10,a-1);return {q:'Calcule: '+n(a/100)+' − '+n(b/100),a:n((a-b)/100),s:'Alinhe as vírgulas e subtraia: '+n((a-b)/100)+'.'};},
+function(){var a=r.i(11,99),b=r.i(2,99);return {q:'Calcule: '+n(a/10)+' × '+n(b/10),a:n(a*b/100),s:a+' × '+b+' = '+(a*b)+'; 1 + 1 = 2 casas decimais → '+n(a*b/100)+'.'};},
+function(){var d=r.i(2,9),qq=r.i(11,999)/100;var D=rnd(qq*d,2);return {q:'Calcule: '+n(D)+' ÷ '+d,a:n(qq),s:'Divida normalmente, mantendo a vírgula no quociente: '+n(qq)+'. Confira: '+n(qq)+' × '+d+' = '+n(D)+'.'};},
+function(){var x=r.i(1,9999)/1000,k=r.p([10,100,1000]),op=r.f()<0.5;return {q:'Calcule: '+n(x)+(op?' × ':' ÷ ')+n(k),a:n(op?x*k:x/k,6),s:'A vírgula anda '+(String(k).length-1)+' casa(s) para a '+(op?'direita':'esquerda')+'.'};},
+function(){var b=r.p([5,25,2,4,5]),a=r.i(1,40)*b;var A=a/10,B=b/(b===2||b===4?10:100);var res=rnd(A/B,4);return {q:'Calcule: '+n(A)+' ÷ '+n(B),a:n(res),s:'Multiplique os dois por '+(B<0.1?'100':'10')+' para tirar a vírgula do divisor e divida: '+n(res)+'.'};}
+]);}});
+
+topic({id:'fracao-decimal',nome:'Conversão entre fração e decimal',ano:'6º ano',area:'Números',
+tags:'fração decimal converter transformar fração decimal',
+teoria:'<ul><li><b>Fração → decimal</b>: divida o numerador pelo denominador. <span class="fr"><span>3</span><span>4</span></span> = 3 ÷ 4 = 0,75.</li><li>Dica: se der, transforme o denominador em 10, 100 ou 1000: <span class="fr"><span>3</span><span>4</span></span> = <span class="fr"><span>75</span><span>100</span></span> = 0,75.</li><li><b>Decimal → fração</b>: escreva o número sem vírgula no numerador e, no denominador, 1 seguido de tantos zeros quantas forem as casas decimais. Depois simplifique. 0,35 = <span class="fr"><span>35</span><span>100</span></span> = <span class="fr"><span>7</span><span>20</span></span>.</li></ul>',
+gen:function(r,i){return mix(i,[
+function(){var d=r.p([2,4,5,8,10,20,25,50]),a;do{a=r.i(1,2*d);}while(a%d===0);return {q:'Escreva '+F(a,d)+' na forma decimal.',a:n(a/d),s:a+' ÷ '+d+' = '+n(a/d)+'.'};},
+function(){var dp=r.i(1,3),x;do{x=r.i(1,Math.pow(10,dp)*3);}while(x%10===0);var den=Math.pow(10,dp);var res=Q(x,den);return {q:'Escreva '+n(x/den)+' como fração irredutível.',a:FQ(res),s:n(x/den)+' = '+F(x,den)+(res.d!==den?' = '+FQ(res):'')+'.'};}
+]);}});
+
+topic({id:'porcentagem',nome:'Porcentagem',ano:'7º ano',area:'Números',
+tags:'porcentagem por cento desconto aumento percentual',
+teoria:'<p><b>p%</b> significa <span class="fr"><span>p</span><span>100</span></span>. 25% = <span class="fr"><span>25</span><span>100</span></span> = 0,25.</p><ul><li><b>p% de N</b> = <span class="fr"><span>p</span><span>100</span></span> × N. Ex.: 30% de 200 = 0,30 × 200 = 60.</li><li>Atalhos: 10% = divide por 10; 50% = metade; 25% = divide por 4; 1% = divide por 100.</li><li><b>Desconto de p%</b>: paga (100 − p)% do preço. <b>Aumento de p%</b>: paga (100 + p)%.</li><li><b>Quantos por cento a é de b</b>: <span class="fr"><span>a</span><span>b</span></span> × 100.</li></ul><div class="ex"><b>Exemplo:</b> camisa de R$ 80 com 15% de desconto → 0,85 × 80 = R$ 68.</div>',
+gen:function(r,i){return mix(i,[
+function(){var pp=r.p([5,10,12,15,20,25,30,40,45,50,60,75,80]),N=r.i(2,40)*20;return {q:'Quanto é '+pp+'% de '+N+'?',a:n(pp*N/100),s:F(pp,100)+' × '+N+' = '+n(pp*N/100)+'.'};},
+function(){var pp=r.p([10,15,20,25,30,40]),P=r.i(4,60)*10;var f=P*(100-pp)/100;return {q:'Um produto custa '+money(P)+' e está com '+pp+'% de desconto. Qual o preço final?',a:money(f),s:'Desconto: '+pp+'% de '+P+' = '+money(P*pp/100)+'. Preço final: '+money(P)+' − '+money(P*pp/100)+' = '+money(f)+'.'};},
+function(){var pp=r.p([5,10,20,25,50]),P=r.i(2,50)*20;var f=P*(100+pp)/100;return {q:'Um salário de '+money(P)+' teve aumento de '+pp+'%. Qual o novo valor?',a:money(f),s:'Aumento: '+money(P*pp/100)+'. Novo valor: '+money(f)+' (ou '+n(1+pp/100)+' × '+P+').'};},
+function(){var pp=r.p([10,20,25,40,50,60,75,80,5,15]),b=r.i(1,20)*20;var a=b*pp/100;return {q:'Numa turma de '+b+' alunos, '+a+' foram aprovados direto. Que porcentagem isso representa?',a:pp+'%',s:F(a,b)+' × 100 = '+pp+'%.'};},
+function(){var pp=r.p([10,20,25,30,40,50]),x=r.i(2,30)*10;var a=x*pp/100;return {q:pp+'% de um número é '+n(a)+'. Qual é esse número?',a:n(x),s:'Se '+pp+'% vale '+n(a)+', então 1% vale '+n(a/pp)+' e 100% vale '+n(x)+'.'};}
+]);}});
+
+topic({id:'inteiros-reta-modulo',nome:'Números inteiros: reta numérica, módulo e comparação',ano:'7º ano',area:'Números',
+tags:'inteiros negativos positivos reta numérica módulo oposto simétrico comparar',
+teoria:'<p>Os <b>números inteiros</b> (ℤ) são …, −3, −2, −1, 0, 1, 2, 3, … Na reta, os negativos ficam à esquerda do zero.</p><ul><li><b>Módulo</b> (valor absoluto) é a distância até o zero: |−7| = 7, |5| = 5.</li><li><b>Oposto (simétrico)</b>: mesmo módulo e sinal contrário. O oposto de −4 é 4.</li><li><b>Comparação</b>: na reta, quem está mais à direita é maior. Todo positivo &gt; 0 &gt; todo negativo.</li><li>Entre dois negativos, o maior é o de <b>menor módulo</b>: −2 &gt; −9.</li><li>Distância entre a e b na reta: |a − b|.</li></ul>',
+gen:function(r,i){return mix(i,[
+function(){var x=r.nz(-50,50);return {q:'Qual é o módulo de '+n(x)+'?',a:n(Math.abs(x)),s:'Distância de '+n(x)+' até o zero.'};},
+function(){var x=r.nz(-60,60);return {q:'Qual é o oposto (simétrico) de '+n(x)+'?',a:n(-x),s:'Mesmo módulo, sinal trocado.'};},
+function(){var a=r.i(-20,20),b;do{b=r.i(-20,20);}while(b===a);return {q:'Compare usando &gt; ou &lt;: '+n(a)+' ___ '+n(b),a:n(a)+(a>b?' &gt; ':' &lt; ')+n(b),s:(a>b?n(a):n(b))+' está mais à direita na reta.'};},
+function(){var s=[],seen={};while(s.length<4){var x=r.i(-15,15);if(seen[x])continue;seen[x]=1;s.push(x);}var o=s.slice().sort(function(a,b){return a-b;});return {q:'Coloque em ordem crescente: '+s.map(n).join(', '),a:o.map(n).join(' &lt; '),s:'Da esquerda para a direita na reta numérica.'};},
+function(){var a=r.i(-15,-1),b=r.i(1,15);return {q:'Qual a distância, na reta numérica, entre '+n(a)+' e '+n(b)+'?',a:n(b-a),s:'|'+n(b)+' − ('+n(a)+')| = '+n(b-a)+'.'};}
+]);}});
+
+topic({id:'inteiros-soma-subtracao',nome:'Números inteiros: adição e subtração',ano:'7º ano',area:'Números',
+tags:'inteiros somar subtrair sinais negativos jogo de sinais temperatura saldo',
+teoria:'<ul><li><b>Sinais iguais</b>: soma os módulos e conserva o sinal. (−3) + (−5) = −8.</li><li><b>Sinais diferentes</b>: subtrai os módulos e fica o sinal do de <b>maior módulo</b>. (−9) + (+4) = −5.</li><li><b>Subtração</b>: somar o oposto. a − b = a + (−b). (+3) − (−7) = 3 + 7 = 10.</li><li>Eliminando parênteses: +(+) = +, +(−) = −, −(+) = −, −(−) = +.</li></ul><div class="ex"><b>Exemplo:</b> −4 − (−10) + (−3) = −4 + 10 − 3 = 3.</div><p class="tip">Pense em dinheiro: negativo é dívida, positivo é ter.</p>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.nz(-20,20),b=r.nz(-20,20);return {q:'Calcule: '+ps(a)+' + '+ps(b),a:n(a+b),s:(a>0)===(b>0)?'Sinais iguais: soma e conserva o sinal.':'Sinais diferentes: '+Math.max(Math.abs(a),Math.abs(b))+' − '+Math.min(Math.abs(a),Math.abs(b))+' = '+Math.abs(a+b)+', sinal do maior módulo.'};},
+function(){var a=r.nz(-20,20),b=r.nz(-20,20);return {q:'Calcule: '+ps(a)+' − '+ps(b),a:n(a-b),s:'Troca a subtração pela soma do oposto: '+ps(a)+' + '+ps(-b)+' = '+n(a-b)+'.'};},
+function(){var a=r.nz(-15,15),b=r.nz(-15,15),c=r.nz(-15,15);return {q:'Calcule: '+n(a)+' '+(b<0?'− '+(-b):'+ '+b)+' − ('+n(c)+')',a:n(a+b-c),s:'Elimine os parênteses: −('+n(c)+') = '+(c<0?'+'+(-c):'−'+c)+'. Resultado: '+n(a+b-c)+'.'};},
+function(){var t=r.i(-10,-1),s=r.i(3,18);return {q:'De madrugada a temperatura era '+n(t)+' °C. Ao meio-dia tinha subido '+s+' °C. Qual a temperatura ao meio-dia?',a:n(t+s)+' °C',s:n(t)+' + '+s+' = '+n(t+s)+'.'};},
+function(){var sal=r.i(-200,300),g=r.i(50,500);return {q:'Meu saldo bancário era de '+moneyS(sal)+' e fiz uma compra de '+money(g)+' no débito. Qual o novo saldo?',a:moneyS(sal-g),s:['Compra no débito = tirar dinheiro = subtrair.',n(sal)+' − '+g+' = '+n(sal-g)+'.',(sal-g<0?'Ficou negativo: a conta está devendo '+money(g-sal)+'.':'Ainda sobra dinheiro na conta.')]};}
+]);}});
+
+topic({id:'inteiros-multiplicacao-divisao',nome:'Números inteiros: multiplicação, divisão e potência',ano:'7º ano',area:'Números',
+tags:'inteiros multiplicar dividir regra de sinais potência de negativo',
+teoria:'<p><b>Regra de sinais</b> (multiplicação e divisão):</p><table class="t"><tr><td>(+) · (+) = +</td><td>(−) · (−) = +</td></tr><tr><td>(+) · (−) = −</td><td>(−) · (+) = −</td></tr></table><p>Sinais <b>iguais</b> → positivo; sinais <b>diferentes</b> → negativo.</p><ul><li>Vários fatores: conte os negativos. Quantidade <b>par</b> → positivo; <b>ímpar</b> → negativo.</li><li><b>Potência de base negativa</b>: expoente par → positivo; ímpar → negativo. (−2)<sup>4</sup> = 16; (−2)<sup>3</sup> = −8.</li><li>Atenção: −2<sup>2</sup> = −4 (só o 2 está elevado), mas (−2)<sup>2</sup> = 4.</li></ul>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.nz(-12,12),b=r.nz(-12,12);return {q:'Calcule: '+ps(a)+' × '+ps(b),a:n(a*b),s:'Sinais '+((a>0)===(b>0)?'iguais → positivo':'diferentes → negativo')+'; '+Math.abs(a)+' × '+Math.abs(b)+' = '+Math.abs(a*b)+'.'};},
+function(){var b=r.nz(-12,12),q=r.nz(-12,12),a=b*q;return {q:'Calcule: '+ps(a)+' ÷ '+ps(b),a:n(q),s:'Sinais '+((a>0)===(b>0)?'iguais → positivo':'diferentes → negativo')+'; '+Math.abs(a)+' ÷ '+Math.abs(b)+' = '+Math.abs(q)+'.'};},
+function(){var a=r.nz(-6,6),b=r.nz(-6,6),c=r.nz(-6,6);var neg=[a,b,c].filter(function(x){return x<0;}).length;return {q:'Calcule: '+ps(a)+' × '+ps(b)+' × '+ps(c),a:n(a*b*c),s:neg+' fator(es) negativo(s) → '+(neg%2?'negativo':'positivo')+'; módulo '+Math.abs(a*b*c)+'.'};},
+function(){var b=r.i(2,5),e=r.i(2,5);if(b>3)e=r.i(2,3);var v=Math.pow(-b,e);return {q:'Calcule: ('+MINUS+b+')'+sup(e),a:n(v),s:'Expoente '+(e%2?'ímpar → negativo':'par → positivo')+'; '+b+sup(e)+' = '+Math.pow(b,e)+'.'};},
+function(){var b=r.i(2,9);return {q:'Calcule: '+MINUS+b+sup(2)+' e ('+MINUS+b+')'+sup(2)+'.',a:n(-b*b)+' e '+n(b*b),s:'Em '+MINUS+b+sup(2)+' só o '+b+' é elevado; em ('+MINUS+b+')'+sup(2)+' o '+MINUS+b+' inteiro é elevado.'};},
+function(){var a=r.nz(-9,9),b=r.nz(-9,9),d=r.nz(-6,6),q=r.nz(-8,8),c=d*q;return {q:'Calcule: '+ps(a)+' × '+ps(b)+' + '+ps(c)+' ÷ '+ps(d),a:n(a*b+q),s:ps(a)+' × '+ps(b)+' = '+n(a*b)+'; '+ps(c)+' ÷ '+ps(d)+' = '+n(q)+'; '+n(a*b)+' + '+p(q)+' = '+n(a*b+q)+'.'};}
+]);}});
+
+topic({id:'racionais',nome:'Números racionais: operações com sinais',ano:'7º ano',area:'Números',
+tags:'racionais frações negativas decimais negativos operações',
+teoria:'<p><b>Número racional</b> (ℚ) é todo número que pode ser escrito como fração <span class="fr"><span>a</span><span>b</span></span> com a e b inteiros e b ≠ 0: inteiros, frações, decimais exatos e dízimas periódicas.</p><ul><li>As regras de frações (MMC, multiplicar em linha, inverter na divisão) valem junto com a <b>regra de sinais</b> dos inteiros.</li><li><span class="fr"><span>−a</span><span>b</span></span> = <span class="fr"><span>a</span><span>−b</span></span> = −<span class="fr"><span>a</span><span>b</span></span>.</li></ul><div class="ex"><b>Exemplo:</b> −<span class="fr"><span>2</span><span>3</span></span> + <span class="fr"><span>1</span><span>4</span></span> = −<span class="fr"><span>8</span><span>12</span></span> + <span class="fr"><span>3</span><span>12</span></span> = −<span class="fr"><span>5</span><span>12</span></span>.</div>',
+gen:function(r,i){function rf(){var b=r.i(2,9),a=r.nz(-9,9);return Q(a,b);}return mix(i,[
+function(){var x=rf(),y=rf();var m=lcm(x.d,y.d),A=x.n*m/x.d,B=y.n*m/y.d;return {q:'Calcule: '+FQ(x)+' + '+pFQ(y),a:FQ(qa(x,y)),s:['Ache o denominador comum (MMC de '+x.d+' e '+y.d+'): '+m+'.','Reescreva as frações com denominador '+m+': '+F(A,m)+' e '+F(B,m)+'.','Some os numeradores com a regra de sinais: '+n(A)+' + '+p(B)+' = '+n(A+B)+' → '+F(A+B,m)+'.'].concat(qa(x,y).d!==m?['Simplifique: '+FQ(qa(x,y))+'.']:[])};},
+function(){var x=rf(),y=rf();return {q:'Calcule: '+pFQ(x)+' × '+pFQ(y),a:FQ(qm(x,y)),s:'Multiplica em linha e aplica a regra de sinais: '+FQ(qm(x,y))+'.'};},
+function(){var x=rf(),y=rf();return {q:'Calcule: '+pFQ(x)+' ÷ '+pFQ(y),a:FQ(qd(x,y)),s:'Inverte a segunda: '+pFQ(x)+' × '+pFQ(Q(y.d,y.n))+' = '+FQ(qd(x,y))+'.'};},
+function(){var a=r.nz(-99,99)/10,b=r.nz(-999,999)/100;return {q:'Calcule: '+n(a)+' + '+p(b),a:n(rnd(a+b,2)),s:'Regra de sinais da adição com vírgula alinhada: '+n(rnd(a+b,2))+'.'};},
+function(){var x=Q(-r.i(1,8),r.i(2,9)),y;do{y=Q(-r.i(1,8),r.i(2,9));}while(y.n*x.d===x.n*y.d);var big=(x.n/x.d>y.n/y.d)?x:y;return {q:'Qual é maior: '+FQ(x)+' ou '+FQ(y)+'?',a:FQ(big),s:'Entre negativos, é maior o de menor módulo: '+n(Math.abs(x.n/x.d),3)+' e '+n(Math.abs(y.n/y.d),3)+'.'};}
+]);}});
+
+/* ===== NÚMEROS (8º e 9º) + PROPORCIONALIDADE ===== */
+function simpRad(x){var k=1,b=x;for(var d=2;d*d<=b;d++){while(b%(d*d)===0){b/=d*d;k*=d;}}return [k,b];}
+function rad(k,b){if(b===1)return n(k);return (k===1?'':(k===-1?MINUS:n(k)))+'√'+b;}
+
+topic({id:'potencias-propriedades',nome:'Potências: expoente negativo e propriedades',ano:'8º ano',area:'Números',
+tags:'potência expoente negativo expoente zero propriedades base fracionária',
+teoria:'<ul><li><b>Expoente negativo</b>: inverte a base e troca o sinal do expoente. a<sup>−n</sup> = <span class="fr"><span>1</span><span>a<sup>n</sup></span></span>. Ex.: 2<sup>−3</sup> = <span class="fr"><span>1</span><span>8</span></span>.</li><li><b>Fração com expoente negativo</b>: (<span class="fr"><span>a</span><span>b</span></span>)<sup>−n</sup> = (<span class="fr"><span>b</span><span>a</span></span>)<sup>n</sup>.</li><li><b>Fração elevada</b>: eleva numerador e denominador. (<span class="fr"><span>2</span><span>3</span></span>)<sup>2</sup> = <span class="fr"><span>4</span><span>9</span></span>.</li><li>Propriedades (mesma base): a<sup>m</sup>·a<sup>n</sup> = a<sup>m+n</sup>; a<sup>m</sup> ÷ a<sup>n</sup> = a<sup>m−n</sup>; (a<sup>m</sup>)<sup>n</sup> = a<sup>m·n</sup>. Valem também com expoentes negativos.</li><li>Produto com mesmo expoente: a<sup>n</sup>·b<sup>n</sup> = (a·b)<sup>n</sup>.</li></ul>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(2,10),e=r.i(1,3);if(a>5)e=r.i(1,2);var v=Math.pow(a,e);return {q:'Calcule '+a+sup(MINUS+e)+'.',a:F(1,v),s:['Expoente negativo: viramos a base de cabeça para baixo e o expoente fica positivo.',a+sup(MINUS+e)+' = '+F(1,a+sup(e)),a+sup(e)+' = '+v+', então a resposta é '+F(1,v)+'.']};},
+function(){var a=r.i(1,5),b;do{b=r.i(2,6);}while(gcd(a,b)!==1||a===b);var e=r.i(1,3);var res=Q(Math.pow(b,e),Math.pow(a,e));return {q:'Calcule ('+F(a,b)+')'+sup(MINUS+e)+'.',a:FQ(res),s:['Inverte a fração e o expoente fica positivo: ('+F(b,a)+')'+sup(e)+'.','Eleva em cima e embaixo: '+F(b+sup(e),a+sup(e))+' = '+FQ(res)+'.']};},
+function(){var a=r.i(1,5),b;do{b=r.i(2,7);}while(gcd(a,b)!==1);var e=r.i(2,3);return {q:'Calcule ('+F(a,b)+')'+sup(e)+'.',a:F(Math.pow(a,e),Math.pow(b,e)),s:['Eleva o numerador: '+a+sup(e)+' = '+Math.pow(a,e)+'.','Eleva o denominador: '+b+sup(e)+' = '+Math.pow(b,e)+'.','Resultado: '+F(Math.pow(a,e),Math.pow(b,e))+'.']};},
+function(){var a=r.i(2,9),m=r.nz(-6,6),k=r.nz(-6,6);return {q:'Escreva como uma única potência: '+a+sup(m<0?MINUS+(-m):m)+' × '+a+sup(k<0?MINUS+(-k):k),a:a+sup((m+k)<0?MINUS+(-(m+k)):(m+k)),s:['Mesma base multiplicando: conserva a base e <b>soma</b> os expoentes.',n(m)+' + '+p(k)+' = '+n(m+k)+'.']};},
+function(){var a=r.i(2,9),m=r.nz(-5,8),k=r.nz(-5,8);return {q:'Escreva como uma única potência: '+a+sup(n(m))+' ÷ '+a+sup(n(k)),a:a+sup(n(m-k)),s:['Mesma base dividindo: conserva a base e <b>subtrai</b> os expoentes.',n(m)+' − '+p(k)+' = '+n(m-k)+'.']};},
+function(){var a=r.i(2,7),m=r.nz(-4,5),k=r.nz(-3,4);return {q:'Escreva como uma única potência: ('+a+sup(n(m))+')'+sup(n(k)),a:a+sup(n(m*k)),s:['Potência de potência: <b>multiplica</b> os expoentes.',n(m)+' × '+p(k)+' = '+n(m*k)+'.']};}
+]);}});
+
+topic({id:'notacao-cientifica',nome:'Notação científica',ano:'8º ano',area:'Números',
+tags:'notação científica potência de 10 números muito grandes muito pequenos',
+teoria:'<p>Um número está em <b>notação científica</b> quando escrito como <b>a × 10<sup>n</sup></b>, com <b>1 ≤ a &lt; 10</b> (um único algarismo diferente de zero antes da vírgula) e n inteiro.</p><ul><li><b>Número grande</b>: a vírgula anda para a esquerda → expoente positivo. 45.000.000 = 4,5 × 10<sup>7</sup>.</li><li><b>Número pequeno</b>: a vírgula anda para a direita → expoente negativo. 0,00032 = 3,2 × 10<sup>−4</sup>.</li><li>O expoente é <b>quantas casas a vírgula andou</b>.</li><li><b>Multiplicar</b>: multiplica os números e soma os expoentes; se passar de 10, ajusta.</li></ul><div class="ex"><b>Exemplo:</b> (3 × 10<sup>4</sup>) × (5 × 10<sup>2</sup>) = 15 × 10<sup>6</sup> = 1,5 × 10<sup>7</sup>.</div>',
+gen:function(r,i){function mant(){var M=r.f()<0.4?r.i(1,9):r.i(11,99);if(M%10===0)M+=1;return M;}function ms(M){return M<10?String(M):String(M)[0]+','+String(M)[1];}
+return mix(i,[
+function(){var M=mant(),k=r.i(3,9);var N=M<10?M*Math.pow(10,k):M*Math.pow(10,k-1);return {q:'Escreva '+n(N,0)+' em notação científica.',a:ms(M)+' × 10'+sup(k),s:['Coloque a vírgula logo depois do primeiro algarismo: '+ms(M)+'.','Conte quantas casas a vírgula andou para a esquerda: '+k+'.','Número grande → expoente positivo: '+ms(M)+' × 10'+sup(k)+'.']};},
+function(){var M=mant(),k=r.i(2,7);var str='0,'+Array(k).join('0')+String(M);return {q:'Escreva '+str+' em notação científica.',a:ms(M)+' × 10'+sup(MINUS+k),s:['Ande com a vírgula para a direita até ficar um algarismo (diferente de zero) antes dela: '+ms(M)+'.','Ela andou '+k+' casas.','Número pequeno → expoente negativo: '+ms(M)+' × 10'+sup(MINUS+k)+'.']};},
+function(){var M=mant(),k=r.i(2,6),neg=r.f()<0.5;var str=neg?'0,'+Array(k).join('0')+String(M):n(M<10?M*Math.pow(10,k):M*Math.pow(10,k-1),0);return {q:'Escreva na forma decimal: '+ms(M)+' × 10'+sup(neg?MINUS+k:k),a:str,s:['Expoente '+(neg?'negativo → a vírgula anda '+k+' casas para a esquerda.':'positivo → a vírgula anda '+k+' casas para a direita.'),'Complete com zeros: '+str+'.']};},
+function(){var a=r.i(2,9),b=r.i(2,9),m=r.i(2,8),k=r.i(2,8);var pr=a*b,e=m+k;var ans=pr>=10?ms(pr)+' × 10'+sup(e+1):pr+' × 10'+sup(e);return {q:'Calcule em notação científica: ('+a+' × 10'+sup(m)+') × ('+b+' × 10'+sup(k)+')',a:ans,s:['Multiplique os números: '+a+' × '+b+' = '+pr+'.','Some os expoentes: '+m+' + '+k+' = '+e+' → '+pr+' × 10'+sup(e)+'.'].concat(pr>=10?['Como '+pr+' ≥ 10, ajuste: '+pr+' = '+ms(pr)+' × 10, então fica '+ms(pr)+' × 10'+sup(e+1)+'.']:[])};}
+]);}});
+
+topic({id:'dizimas',nome:'Dízimas periódicas e fração geratriz',ano:'8º ano',area:'Números',
+tags:'dízima periódica fração geratriz período 0,333 decimal infinito',
+teoria:'<p><b>Dízima periódica</b> é um decimal infinito em que um grupo de algarismos (o <b>período</b>) se repete. Ex.: 0,333…; 0,1515…; 2,777…</p><p><b>Fração geratriz</b> (a fração que gera a dízima):</p><ul><li><b>Simples</b> (o período começa logo após a vírgula): período sobre tantos <b>9</b> quantos algarismos tiver o período. 0,777… = <span class="fr"><span>7</span><span>9</span></span>; 0,2323… = <span class="fr"><span>23</span><span>99</span></span>.</li><li><b>Composta</b> (tem um pedaço que não repete, o anteperíodo): (anteperíodo e período juntos − anteperíodo) sobre (um 9 por algarismo do período e um 0 por algarismo do anteperíodo). 0,1666… = <span class="fr"><span>16 − 1</span><span>90</span></span> = <span class="fr"><span>15</span><span>90</span></span> = <span class="fr"><span>1</span><span>6</span></span>.</li><li>Com parte inteira: some a parte inteira à fração. 2,333… = 2 + <span class="fr"><span>3</span><span>9</span></span> = <span class="fr"><span>7</span><span>3</span></span>.</li></ul>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(1,8);var res=Q(a,9);return {q:'Encontre a fração geratriz de 0,'+a+a+a+'…',a:FQ(res),s:['É uma dízima simples com período '+a+' (1 algarismo).','Coloca o período sobre um 9: '+F(a,9)+'.'].concat(res.d!==9?['Simplifica: '+FQ(res)+'.']:[])};},
+function(){var ab;do{ab=r.i(10,98);}while(ab%11===0);var res=Q(ab,99);return {q:'Encontre a fração geratriz de 0,'+ab+ab+'…',a:FQ(res),s:['Período '+ab+' (2 algarismos) → denominador 99.',F(ab,99)+(res.d!==99?' = '+FQ(res)+' (simplificando)':'')+'.']};},
+function(){var k=r.i(1,5),a=r.i(1,8);var res=Q(9*k+a,9);return {q:'Encontre a fração geratriz de '+k+','+a+a+a+'…',a:FQ(res),s:['Separe a parte inteira: '+k+' + 0,'+a+a+a+'…','0,'+a+a+a+'… = '+F(a,9)+'.',k+' + '+F(a,9)+' = '+F(9*k,9)+' + '+F(a,9)+' = '+F(9*k+a,9)+(res.d!==9?' = '+FQ(res):'')+'.']};},
+function(){var b=r.i(1,9),a;do{a=r.i(1,9);}while(a===b);var num=10*b+a-b;var res=Q(num,90);return {q:'Encontre a fração geratriz de 0,'+b+a+a+a+'…',a:FQ(res),s:['Dízima composta: anteperíodo '+b+', período '+a+'.','Numerador: '+b+a+' − '+b+' = '+num+'.','Denominador: um 9 (período) e um 0 (anteperíodo) → 90.',F(num,90)+(res.d!==90?' = '+FQ(res):'')+'.']};}
+]);}});
+
+topic({id:'conjuntos-numericos',nome:'Conjuntos numéricos: naturais, inteiros, racionais, irracionais e reais',ano:'8º ano',area:'Números',
+tags:'conjuntos numéricos naturais inteiros racionais irracionais reais ℕ ℤ ℚ 𝕀 ℝ',
+teoria:'<ul><li><b>ℕ (naturais)</b>: 0, 1, 2, 3, …</li><li><b>ℤ (inteiros)</b>: naturais e seus negativos: …, −2, −1, 0, 1, 2, …</li><li><b>ℚ (racionais)</b>: podem ser escritos como fração de inteiros: inteiros, frações, decimais exatos e dízimas periódicas.</li><li><b>𝕀 (irracionais)</b>: decimais <b>infinitos e não periódicos</b>; não viram fração. Ex.: √2, √3, √5, π.</li><li><b>ℝ (reais)</b>: racionais e irracionais juntos.</li></ul><p>ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ e 𝕀 ⊂ ℝ.</p><p class="tip">√ de quadrado perfeito é racional (√16 = 4). √ de não-quadrado-perfeito é irracional.</p>',
+gen:function(r,i){var pool=[['7','ℕ (natural)','7 é um número natural (e também inteiro, racional e real).'],['0','ℕ (natural)','0 é natural.'],['−5','ℤ (inteiro)','Negativo sem parte decimal: inteiro, não natural.'],['−12','ℤ (inteiro)','Inteiro negativo.'],[F(3,4),'ℚ (racional)','É uma fração de inteiros.'],[MINUS+F(2,5),'ℚ (racional)','Fração de inteiros, negativa.'],['0,25','ℚ (racional)','Decimal exato: 0,25 = 1/4.'],['0,333…','ℚ (racional)','Dízima periódica: 0,333… = 1/3.'],['√2','𝕀 (irracional)','2 não é quadrado perfeito; o decimal é infinito e não periódico.'],['√5','𝕀 (irracional)','5 não é quadrado perfeito.'],['π','𝕀 (irracional)','π = 3,14159… não tem período.'],['√16','ℕ (natural)','√16 = 4, que é natural.'],['−√9','ℤ (inteiro)','−√9 = −3.'],['√'+F(4,9),'ℚ (racional)','√(4/9) = 2/3.'],['2,5','ℚ (racional)','2,5 = 5/2.'],['1,4142135…(sem período)','𝕀 (irracional)','Infinito e não periódico.'],['−0,7','ℚ (racional)','Decimal exato.'],['√7','𝕀 (irracional)','7 não é quadrado perfeito.'],['√100','ℕ (natural)','√100 = 10.'],[F(10,2),'ℕ (natural)','10/2 = 5.'],['3√2','𝕀 (irracional)','Número vezes irracional continua irracional.'],['−'+F(8,4),'ℤ (inteiro)','−8/4 = −2.']];
+return mix(i,[
+function(){var it=r.p(pool);return {q:'Qual é o menor conjunto numérico ao qual '+it[0]+' pertence? (ℕ, ℤ, ℚ ou 𝕀)',a:it[1],s:[it[2]]};},
+function(){var x=r.i(2,80);var sq=Math.sqrt(x)%1===0;return {q:raiz(x)+' é racional ou irracional?',a:sq?'Racional ('+raiz(x)+' = '+Math.sqrt(x)+')':'Irracional',s:[sq?x+' é quadrado perfeito ('+Math.sqrt(x)+sup(2)+' = '+x+').':x+' não é quadrado perfeito (fica entre '+Math.pow(Math.floor(Math.sqrt(x)),2)+' e '+Math.pow(Math.floor(Math.sqrt(x))+1,2)+'), então a raiz é um decimal infinito sem período.']};}
+]);}});
+
+topic({id:'radicais',nome:'Radicais: simplificação e operações',ano:'9º ano',area:'Números',
+tags:'radical raiz simplificar soma de radicais multiplicar raízes racionalizar',
+teoria:'<ul><li><b>Simplificar</b>: fatore o número e tire da raiz os fatores que formam quadrado. √50 = √(25 × 2) = 5√2.</li><li><b>Somar/subtrair</b>: só junta radicais <b>iguais</b> (mesmo índice e mesmo número dentro). 3√2 + 5√2 = 8√2. Às vezes é preciso simplificar antes: √8 + √2 = 2√2 + √2 = 3√2.</li><li><b>Multiplicar</b>: √a × √b = √(a·b). <b>Dividir</b>: √a ÷ √b = √(a/b).</li><li><b>Racionalizar</b>: tirar a raiz do denominador multiplicando em cima e embaixo pela raiz. <span class="fr"><span>6</span><span>√3</span></span> = <span class="fr"><span>6√3</span><span>3</span></span> = 2√3.</li></ul>',
+gen:function(r,i){return mix(i,[
+function(){var k=r.i(2,7),b=r.p([2,3,5,6,7,10]);var x=k*k*b;return {q:'Simplifique '+raiz(x)+'.',a:rad(k,b),s:['Procure o maior quadrado perfeito que divide '+x+': '+(k*k)+'.',raiz(x)+' = '+raiz((k*k)+' × '+b)+' = '+raiz(k*k)+' × '+raiz(b)+'.',raiz(k*k)+' = '+k+', então fica '+rad(k,b)+'.']};},
+function(){var b=r.p([2,3,5,7]),a=r.i(1,9),c=r.i(1,9),d=r.i(1,9);var t=a+c-d;return {q:'Calcule: '+rad(a,b)+' + '+rad(c,b)+' − '+rad(d,b),a:t===0?'0':rad(t,b),s:['Todos têm √'+b+': é como somar "coisas iguais".','Some só os números da frente: '+a+' + '+c+' − '+d+' = '+t+'.','Resultado: '+(t===0?'0':rad(t,b))+'.']};},
+function(){var b=r.p([2,3,5]),k=r.i(2,4),c=r.i(1,5);var x=k*k*b;return {q:'Calcule: '+raiz(x)+' + '+rad(c,b),a:rad(k+c,b),s:['Simplifique primeiro: '+raiz(x)+' = '+rad(k,b)+'.','Agora são radicais iguais: '+rad(k,b)+' + '+rad(c,b)+' = '+rad(k+c,b)+'.']};},
+function(){var b=r.p([2,3,5,6,7]),m=r.i(1,4),k=r.i(1,4);var A=b*m*m,B=b*k*k;var res=simpRad(A*B);return {q:'Calcule: '+raiz(A)+' × '+raiz(B),a:rad(res[0],res[1]),s:['Junte numa raiz só: '+raiz(A+' × '+B)+' = '+raiz(A*B)+'.',A*B+' = '+(res[0]*res[0])+(res[1]>1?' × '+res[1]:'')+', então '+raiz(A*B)+' = '+rad(res[0],res[1])+'.']};},
+function(){var b=r.p([2,3,5,6,7]),a=r.i(1,6)*(r.f()<0.6?b:1);var g=gcd(a,b);var num=a/g,den=b/g;var ans=den===1?rad(num,b):F(rad(num,b),den);return {q:'Racionalize: '+F(a,'√'+b),a:ans,s:['Multiplique em cima e embaixo por √'+b+'.',F(a+'√'+b,'√'+b+' × √'+b)+' = '+F(a+'√'+b,b)+'.'].concat(g>1?['Simplifique '+a+' com '+b+' (divide por '+g+'): '+ans+'.']:[])};}
+]);}});
+
+topic({id:'razao-proporcao',nome:'Razão e proporção',ano:'7º ano',area:'Números',
+tags:'razão proporção escala divisão proporcional quarta proporcional propriedade fundamental',
+teoria:'<ul><li><b>Razão</b> entre a e b é a divisão <span class="fr"><span>a</span><span>b</span></span> (ou a : b). Compara duas grandezas.</li><li><b>Proporção</b> é a igualdade entre duas razões: <span class="fr"><span>a</span><span>b</span></span> = <span class="fr"><span>c</span><span>d</span></span>.</li><li><b>Propriedade fundamental</b>: o produto dos meios é igual ao produto dos extremos: <b>a × d = b × c</b> ("multiplica cruzado").</li><li><b>Escala</b> = <span class="fr"><span>medida no desenho</span><span>medida real</span></span>. Escala 1 : 100.000 → 1 cm no mapa = 100.000 cm = 1 km.</li><li><b>Divisão proporcional</b>: some as partes, divida o total por essa soma e multiplique por cada parte.</li></ul>',
+gen:function(r,i){return mix(i,[
+function(){var g=r.i(2,6),a=r.i(2,9)*g,b=r.i(2,9)*g;if(a===b)b+=g;var res=Q(a,b);return {q:'Numa sala há '+a+' meninos e '+b+' meninas. Qual a razão entre o número de meninos e o de meninas (na forma mais simples)?',a:FQ(res),s:['Razão = meninos ÷ meninas = '+F(a,b)+'.','Simplifique dividindo por '+gcd(a,b)+': '+FQ(res)+'.','Significa: para cada '+res.n+' meninos há '+res.d+' meninas.']};},
+function(){var a=r.i(2,9),b=r.i(2,12),k=r.i(2,6);var c=a*k,x=b*k;return {q:'Encontre x na proporção: '+F(a,b)+' = '+F(c,'x'),a:'x = '+x,s:['Multiplique cruzado: '+a+' · x = '+b+' · '+c+'.',a+'x = '+(b*c)+'.','x = '+(b*c)+' ÷ '+a+' = '+x+'.']};},
+function(){var S=r.p([100000,200000,500000,1000000]),d=r.i(2,15);var km=d*S/100000;return {q:'Num mapa de escala 1 : '+n(S)+', duas cidades estão a '+d+' cm de distância. Qual a distância real em km?',a:n(km)+' km',s:['1 cm no mapa = '+n(S)+' cm reais.',d+' cm no mapa = '+d+' × '+n(S)+' = '+n(d*S)+' cm.','Para km divida por 100.000: '+n(km)+' km.']};},
+function(){var a=r.i(1,5),b=r.i(1,5);if(a===b)b++;var u=r.i(5,40)*10;var T=u*(a+b);return {q:'Dois sócios vão dividir um lucro de '+money(T)+' em partes proporcionais a '+a+' e '+b+'. Quanto recebe cada um?',a:money(u*a)+' e '+money(u*b),s:['Some as partes: '+a+' + '+b+' = '+(a+b)+'.','Valor de cada "parte": '+n(T)+' ÷ '+(a+b)+' = '+n(u)+'.','Primeiro: '+a+' × '+n(u)+' = '+money(u*a)+'. Segundo: '+b+' × '+n(u)+' = '+money(u*b)+'.']};},
+function(){var v=r.i(4,12)*10,t=r.i(2,5);return {q:'Um carro percorreu '+(v*t)+' km em '+t+' horas. Qual a razão entre distância e tempo (velocidade média)?',a:v+' km/h',s:['Velocidade média = distância ÷ tempo.',(v*t)+' ÷ '+t+' = '+v+' km/h.']};}
+]);}});
+
+topic({id:'regra-de-tres-simples',nome:'Regra de três simples (direta e inversa)',ano:'7º ano',area:'Números',
+tags:'regra de três simples diretamente proporcional inversamente proporcional grandezas',
+teoria:'<p>Usamos quando temos <b>duas grandezas</b> e conhecemos 3 valores.</p><ol><li>Monte uma tabela com as grandezas lado a lado.</li><li>Pergunte: se uma <b>aumenta</b>, a outra aumenta ou diminui?</li><li><b>Diretamente proporcional</b> (aumenta–aumenta): multiplica cruzado.</li><li><b>Inversamente proporcional</b> (aumenta–diminui): inverte uma das colunas antes, ou multiplica "na mesma linha".</li></ol><div class="ex"><b>Direta:</b> 3 kg custam R$ 12; 5 kg custam x. 3x = 5 × 12 → x = 20.<br><b>Inversa:</b> 4 pintores levam 6 dias; 8 pintores levam x. Mais pintores, menos dias: 4 × 6 = 8 × x → x = 3.</div>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(2,9),pr=r.i(2,15),b;do{b=r.i(2,15);}while(b===a);return {q:'Se '+a+' kg de arroz custam '+money(a*pr)+', quanto custam '+b+' kg?',a:money(b*pr),s:['Mais quilos → mais caro: <b>diretamente proporcional</b>.','Monte: '+a+' kg — '+(a*pr)+' / '+b+' kg — x.','Multiplique cruzado: '+a+'x = '+b+' × '+(a*pr)+' = '+(b*a*pr)+'.','x = '+(b*a*pr)+' ÷ '+a+' = '+money(b*pr)+'.']};},
+function(){var w1,d1,w2,tot;do{w1=r.i(2,12);d1=r.i(3,20);tot=w1*d1;w2=r.p(divisores(tot).filter(function(x){return x>1&&x!==w1&&x<=30;}));}while(!w2);var d2=tot/w2;return {q:w1+' pedreiros constroem um muro em '+d1+' dias. Em quantos dias '+w2+' pedreiros (no mesmo ritmo) construiriam o mesmo muro?',a:d2+' dias',s:['Mais pedreiros → menos dias: <b>inversamente proporcional</b>.','Na inversa, multiplica na mesma linha: '+w1+' × '+d1+' = '+w2+' × x.',tot+' = '+w2+'x → x = '+tot+' ÷ '+w2+' = '+d2+' dias.']};},
+function(){var L=r.i(5,15)*2,km=r.i(8,15),L2=r.i(2,30);return {q:'Um carro anda '+(L*km)+' km com '+L+' litros de gasolina. Quantos km anda com '+L2+' litros?',a:(L2*km)+' km',s:['Mais litros → mais km: <b>diretamente proporcional</b>.',L+' L — '+(L*km)+' km / '+L2+' L — x.',L+'x = '+L2+' × '+(L*km)+' → x = '+(L2*km)+' km.']};},
+function(){var v1,t1,v2,D;do{v1=r.i(4,12)*10;t1=r.i(2,6);D=v1*t1;v2=r.p(divisores(D).filter(function(x){return x>=30&&x<=120&&x!==v1;}));}while(!v2);var t2=D/v2;return {q:'A '+v1+' km/h uma viagem dura '+t1+' horas. Quanto tempo dura a '+v2+' km/h?',a:n(t2)+' horas',s:['Mais rápido → menos tempo: <b>inversamente proporcional</b>.',v1+' × '+t1+' = '+v2+' × x.',D+' = '+v2+'x → x = '+n(t2)+' h.']};}
+]);}});
+
+topic({id:'regra-de-tres-composta',nome:'Regra de três composta',ano:'7º ano',area:'Números',
+tags:'regra de três composta três grandezas',
+teoria:'<p>Usamos quando há <b>três ou mais grandezas</b>.</p><ol><li>Monte a tabela e destaque a coluna do <b>x</b>.</li><li>Compare <b>cada</b> grandeza com a do x, separadamente: direta (↑↑) ou inversa (↑↓)?</li><li>Escreva a razão do x igual ao produto das outras razões, <b>invertendo</b> as que forem inversas.</li><li>Resolva a equação.</li></ol><div class="ex"><b>Exemplo:</b> 2 máquinas, em 5 dias, fazem 400 peças. 3 máquinas, em 4 dias, fazem x?<br>Peças × máquinas: direta. Peças × dias: direta.<br><span class="fr"><span>400</span><span>x</span></span> = <span class="fr"><span>2</span><span>3</span></span> × <span class="fr"><span>5</span><span>4</span></span> = <span class="fr"><span>10</span><span>12</span></span> → 10x = 4800 → x = 480.</div>',
+gen:function(r,i){return mix(i,[
+function(){var rate=r.i(2,10),m1=r.i(2,6),h1=r.i(4,8),d1=r.i(2,6),m2=r.i(2,8),h2=r.i(4,10),d2=r.i(2,8);var P1=rate*m1*h1*d1,P2=rate*m2*h2*d2;return {q:m1+' máquinas, trabalhando '+h1+' h por dia, produzem '+P1+' peças em '+d1+' dias. Quantas peças '+m2+' máquinas produzem trabalhando '+h2+' h por dia durante '+d2+' dias?',a:P2+' peças',s:['Mais máquinas → mais peças (direta). Mais horas → mais peças (direta). Mais dias → mais peças (direta).','Todas diretas: '+F(P1,'x')+' = '+F(m1,m2)+' × '+F(h1,h2)+' × '+F(d1,d2)+' = '+F(m1*h1*d1,m2*h2*d2)+'.','Multiplique cruzado: '+(m1*h1*d1)+'x = '+P1+' × '+(m2*h2*d2)+'.','x = '+(P1*m2*h2*d2)+' ÷ '+(m1*h1*d1)+' = '+P2+'.']};},
+function(){var w1,h1,d1,w2,h2,W,d2,tries=0;do{w1=r.i(2,10);h1=r.i(4,10);d1=r.i(3,15);w2=r.i(2,12);h2=r.i(4,10);W=w1*h1*d1;d2=W/(w2*h2);tries++;}while((d2%1!==0||w2===w1)&&tries<200);if(d2%1!==0){w2=w1*2;h2=h1;d2=W/(w2*h2);}
+ return {q:w1+' operários, trabalhando '+h1+' h por dia, constroem uma casa em '+d1+' dias. Em quantos dias '+w2+' operários, trabalhando '+h2+' h por dia, constroem uma casa igual?',a:n(d2)+' dias',s:['Mais operários → menos dias (inversa). Mais horas por dia → menos dias (inversa).','Invertendo as duas: '+F(d1,'x')+' = '+F(w2,w1)+' × '+F(h2,h1)+' = '+F(w2*h2,w1*h1)+'.',(w2*h2)+'x = '+d1+' × '+(w1*h1)+' = '+W+'.','x = '+W+' ÷ '+(w2*h2)+' = '+n(d2)+' dias.']};}
+]);}});
+
+topic({id:'juros-simples',nome:'Juros simples',ano:'7º ano',area:'Números',
+tags:'juros simples capital taxa tempo montante matemática financeira',
+teoria:'<p>No <b>juro simples</b>, os juros de cada período são sempre calculados sobre o <b>capital inicial</b>.</p><ul><li><b>J = C × i × t</b> &nbsp; (C = capital, i = taxa em decimal, t = tempo)</li><li><b>M = C + J</b> &nbsp; (montante = quanto fica no final)</li><li>Taxa e tempo precisam estar na <b>mesma unidade</b> (ao mês com meses, ao ano com anos).</li><li>Taxa em decimal: 5% = 0,05.</li></ul><div class="ex"><b>Exemplo:</b> R$ 1.000 a 2% ao mês por 6 meses: J = 1000 × 0,02 × 6 = R$ 120; M = R$ 1.120.</div>',
+gen:function(r,i){return mix(i,[
+function(){var C=r.i(2,50)*100,ii=r.p([1,2,3,4,5,6,8,10]),t=r.i(2,12);var J=C*ii*t/100;return {q:'Um capital de '+money(C)+' foi aplicado a juros simples de '+ii+'% ao mês durante '+t+' meses. Quanto rendeu de juros?',a:money(J),s:['Fórmula: J = C × i × t.','Taxa em decimal: '+ii+'% = '+n(ii/100)+'.','J = '+n(C)+' × '+n(ii/100)+' × '+t+' = '+money(J)+'.']};},
+function(){var C=r.i(2,50)*100,ii=r.p([2,3,4,5,10,12]),t=r.i(1,5);var J=C*ii*t/100;return {q:'Qual o montante de '+money(C)+' aplicados a juros simples de '+ii+'% ao ano por '+t+' ano(s)?',a:money(C+J),s:['Juros: J = '+n(C)+' × '+n(ii/100)+' × '+t+' = '+money(J)+'.','Montante: M = C + J = '+money(C)+' + '+money(J)+' = '+money(C+J)+'.']};},
+function(){var C=r.i(2,40)*100,ii=r.p([2,4,5,10]),t=r.i(2,10);var J=C*ii*t/100;return {q:'Um capital de '+money(C)+', a '+ii+'% ao mês (juros simples), rendeu '+money(J)+'. Por quantos meses ficou aplicado?',a:t+' meses',s:['J = C × i × t → '+n(J)+' = '+n(C)+' × '+n(ii/100)+' × t.',n(J)+' = '+n(C*ii/100)+' × t.','t = '+n(J)+' ÷ '+n(C*ii/100)+' = '+t+' meses.']};},
+function(){var C=r.i(2,40)*100,ii=r.p([2,3,5,10]),t=r.i(2,10);var J=C*ii*t/100;return {q:'Que capital, aplicado a '+ii+'% ao mês (juros simples) por '+t+' meses, rende '+money(J)+' de juros?',a:money(C),s:['J = C × i × t → '+n(J)+' = C × '+n(ii/100)+' × '+t+'.',n(J)+' = C × '+n(ii*t/100)+'.','C = '+n(J)+' ÷ '+n(ii*t/100)+' = '+money(C)+'.']};}
+]);}});
+
+topic({id:'juros-compostos',nome:'Juros compostos',ano:'9º ano',area:'Números',
+tags:'juros compostos juros sobre juros montante capital',
+teoria:'<p>No <b>juro composto</b> ("juros sobre juros"), os juros de cada período entram no capital e passam a render também.</p><ul><li><b>M = C × (1 + i)<sup>t</sup></b></li><li><b>J = M − C</b></li><li>i em decimal e na mesma unidade do tempo.</li></ul><div class="ex"><b>Exemplo:</b> R$ 1.000 a 10% ao mês por 2 meses:<br>1º mês: 1000 × 1,1 = 1100. 2º mês: 1100 × 1,1 = 1210.<br>Pela fórmula: 1000 × 1,1<sup>2</sup> = 1000 × 1,21 = R$ 1.210.</div><p class="tip">Compare: no simples seriam R$ 1.200. A diferença cresce com o tempo.</p>',
+gen:function(r,i){return mix(i,[
+function(){var C=r.i(1,20)*500,ii=r.p([5,10,20]),t=r.i(2,3);var f=Math.pow(1+ii/100,t);var M=rnd(C*f,2);var steps=['Fórmula: M = C × (1 + i)'+sup('t')+'.','1 + '+n(ii/100)+' = '+n(1+ii/100)+'.',n(1+ii/100)+sup(t)+' = '+n(rnd(f,6))+'.','M = '+n(C)+' × '+n(rnd(f,6))+' = '+money(M)+'.'];return {q:'Quanto terei ao aplicar '+money(C)+' a juros compostos de '+ii+'% ao mês durante '+t+' meses?',a:money(M),s:steps};},
+function(){var C=r.i(1,20)*500,ii=r.p([5,10,20]),t=r.i(2,3);var M=rnd(C*Math.pow(1+ii/100,t),2);return {q:'Um capital de '+money(C)+' foi aplicado a '+ii+'% ao mês, juros compostos, por '+t+' meses. Quanto rendeu de juros?',a:money(M-C),s:['Montante: M = '+n(C)+' × '+n(1+ii/100)+sup(t)+' = '+money(M)+'.','Juros: J = M − C = '+money(M)+' − '+money(C)+' = '+money(M-C)+'.']};},
+function(){var C=r.i(1,10)*1000,ii=r.p([10,20]),t=2;var Ms=C*(1+ii*t/100),Mc=rnd(C*Math.pow(1+ii/100,t),2);return {q:'Compare: '+money(C)+' a '+ii+'% ao mês por 2 meses. Quanto dá no regime simples e no composto?',a:'Simples: '+money(Ms)+'; Composto: '+money(Mc),s:['Simples: J = '+n(C)+' × '+n(ii/100)+' × 2 = '+money(Ms-C)+' → M = '+money(Ms)+'.','Composto: M = '+n(C)+' × '+n(1+ii/100)+sup(2)+' = '+money(Mc)+'.','O composto rende '+money(Mc-Ms)+' a mais porque os juros do 1º mês também rendem no 2º.']};}
+]);}});
+
+/* ===== ÁLGEBRA ===== */
+function lin(a,b,v){return poly([[a,v||'x'],[b,'']]);}
+function quad(a,b,c,v){v=v||'x';return poly([[a,v+'²'],[b,v],[c,'']]);}
+
+topic({id:'valor-numerico',nome:'Expressões algébricas e valor numérico',ano:'7º ano',area:'Álgebra',
+tags:'expressão algébrica valor numérico substituir variável letra incógnita',
+teoria:'<p><b>Expressão algébrica</b> é uma expressão com números e letras (variáveis). Ex.: 2x + 3, a² − 4b.</p><p><b>Valor numérico</b>: troque cada letra pelo número dado (coloque <b>entre parênteses</b>, principalmente se for negativo!) e resolva respeitando a ordem das operações.</p><ul><li>3x significa 3 × x.</li><li>x² significa x × x.</li></ul><div class="ex"><b>Exemplo:</b> x² − 3x + 2 para x = −2:<br>(−2)² − 3·(−2) + 2 = 4 + 6 + 2 = 12.</div><p class="tip">Sem parênteses o aluno erra: −2² = −4, mas (−2)² = 4.</p>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.nz(-6,6),b=r.nz(-6,6),x=r.nz(-6,6),y=r.nz(-6,6);var v=a*x+b*y;return {q:'Calcule o valor numérico de '+poly([[a,'x'],[b,'y']])+' para x = '+n(x)+' e y = '+n(y)+'.',a:n(v),s:['Troque as letras pelos números, entre parênteses: '+n(a)+'·'+p(x)+' '+(b<0?'− '+(-b):'+ '+b)+'·'+p(y)+'.','Multiplicações: '+n(a*x)+' e '+n(b*y)+'.','Soma: '+n(a*x)+' + '+p(b*y)+' = '+n(v)+'.']};},
+function(){var b=r.nz(-6,6),c=r.i(-9,9),x=r.nz(-5,5);var v=x*x+b*x+c;return {q:'Calcule o valor numérico de '+quad(1,b,c)+' para x = '+n(x)+'.',a:n(v),s:['Substitua: '+p(x)+'² '+(b<0?'− '+(-b):'+ '+b)+'·'+p(x)+(c?(c<0?' − '+(-c):' + '+c):'')+'.','Potência: '+p(x)+'² = '+(x*x)+'.','Multiplicação: '+n(b)+'·'+p(x)+' = '+n(b*x)+'.','Soma tudo: '+(x*x)+' + '+p(b*x)+(c?' + '+p(c):'')+' = '+n(v)+'.']};},
+function(){var C=r.p([0,10,15,20,25,30,35,40,100,-10,-5]);var Fh=1.8*C+32;return {q:'A fórmula F = 1,8C + 32 converte Celsius em Fahrenheit. Quanto é '+n(C)+' °C em °F?',a:n(Fh)+' °F',s:['Troque C por '+n(C)+': F = 1,8 × '+p(C)+' + 32.','1,8 × '+p(C)+' = '+n(1.8*C)+'.',n(1.8*C)+' + 32 = '+n(Fh)+'.']};},
+function(){var a=r.i(1,6),b=r.i(1,6);return {q:'Para a = '+a+' e b = '+b+', calcule (a + b)² e a² + b². São iguais?',a:'(a + b)² = '+((a+b)*(a+b))+' e a² + b² = '+(a*a+b*b)+'. Não são iguais.',s:['(a + b)² = ('+a+' + '+b+')² = '+(a+b)+'² = '+((a+b)*(a+b))+'.','a² + b² = '+(a*a)+' + '+(b*b)+' = '+(a*a+b*b)+'.','A diferença ('+(2*a*b)+') é o termo 2ab que muita gente esquece.']};}
+]);}});
+
+topic({id:'polinomios',nome:'Monômios e polinômios: operações',ano:'8º ano',area:'Álgebra',
+tags:'monômio polinômio termos semelhantes somar polinômios multiplicar distributiva reduzir',
+teoria:'<ul><li><b>Monômio</b>: número × letras (ex.: 5x², −3ab). O número é o <b>coeficiente</b> e as letras a <b>parte literal</b>.</li><li><b>Termos semelhantes</b>: mesma parte literal (3x² e −7x² são semelhantes; 3x² e 3x não são).</li><li><b>Somar/subtrair</b>: junte só os semelhantes, somando os coeficientes. Na subtração, troque o sinal de <b>todos</b> os termos do segundo polinômio.</li><li><b>Multiplicar</b>: propriedade <b>distributiva</b> (cada termo por cada termo). Na mesma letra, <b>soma os expoentes</b>: x² · x³ = x⁵.</li><li><b>Dividir monômios</b>: divide os coeficientes e subtrai os expoentes.</li></ul><div class="ex"><b>Exemplo:</b> (2x + 3)(x − 4) = 2x² − 8x + 3x − 12 = 2x² − 5x − 12.</div>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.nz(-9,9),b=r.nz(-9,9),c=r.nz(-9,9),d=r.nz(-9,9);return {q:'Reduza os termos semelhantes: '+poly([[a,'x'],[b,'y'],[c,'x'],[d,'y']]),a:poly([[a+c,'x'],[b+d,'y']]),s:['Junte os termos com x: '+n(a)+' + '+p(c)+' = '+n(a+c)+' → '+poly([[a+c,'x']])+'.','Junte os termos com y: '+n(b)+' + '+p(d)+' = '+n(b+d)+' → '+poly([[b+d,'y']])+'.']};},
+function(){var A=[r.nz(-6,6),r.i(-9,9),r.i(-9,9)],B=[r.nz(-6,6),r.i(-9,9),r.i(-9,9)];var S=[A[0]+B[0],A[1]+B[1],A[2]+B[2]];return {q:'Calcule: ('+quad(A[0],A[1],A[2])+') + ('+quad(B[0],B[1],B[2])+')',a:quad(S[0],S[1],S[2]),s:['Some x² com x²: '+n(A[0])+' + '+p(B[0])+' = '+n(S[0])+'.','x com x: '+n(A[1])+' + '+p(B[1])+' = '+n(S[1])+'.','Números: '+n(A[2])+' + '+p(B[2])+' = '+n(S[2])+'.']};},
+function(){var A=[r.nz(-6,6),r.i(-9,9),r.i(-9,9)],B=[r.nz(-6,6),r.i(-9,9),r.i(-9,9)];var S=[A[0]-B[0],A[1]-B[1],A[2]-B[2]];return {q:'Calcule: ('+quad(A[0],A[1],A[2])+') − ('+quad(B[0],B[1],B[2])+')',a:quad(S[0],S[1],S[2]),s:['O sinal de menos na frente do parêntese troca o sinal de todos os termos: '+quad(-B[0],-B[1],-B[2])+'.','Agora some os semelhantes: x²: '+n(S[0])+'; x: '+n(S[1])+'; números: '+n(S[2])+'.']};},
+function(){var k=r.nz(-6,6),a=r.nz(-6,6),b=r.nz(-9,9);if(Math.abs(k)===1)k*=2;return {q:'Calcule: '+n(k)+'x · ('+lin(a,b)+')',a:quad(k*a,k*b,0),s:['Distributiva: multiplique '+n(k)+'x por cada termo.',n(k)+'x · '+poly([[a,'x']])+' = '+poly([[k*a,'x²']])+' (x · x = x²).',n(k)+'x · '+p(b)+' = '+poly([[k*b,'x']])+'.']};},
+function(){var a=r.nz(-4,4),b=r.nz(-7,7),c=r.nz(-4,4),d=r.nz(-7,7);return {q:'Calcule: ('+lin(a,b)+')('+lin(c,d)+')',a:quad(a*c,a*d+b*c,b*d),s:['Cada termo do 1º vezes cada termo do 2º:','('+poly([[a,'x']])+')·('+poly([[c,'x']])+') = '+poly([[a*c,'x²']])+'; ('+poly([[a,'x']])+')·'+p(d)+' = '+poly([[a*d,'x']])+'; '+p(b)+'·('+poly([[c,'x']])+') = '+poly([[b*c,'x']])+'; '+p(b)+'·'+p(d)+' = '+n(b*d)+'.','Junte os termos em x: '+n(a*d)+' + '+p(b*c)+' = '+n(a*d+b*c)+'.','Resultado: '+quad(a*c,a*d+b*c,b*d)+'.']};},
+function(){var b=r.nz(-6,6),q=r.nz(-6,6),m=r.i(2,4),k=r.i(1,m-1);var a=b*q;return {q:'Calcule: ('+poly([[a,'x'+sup(m+k)]])+') ÷ ('+poly([[b,'x'+sup(k)]])+')',a:poly([[q,m===1?'x':'x'+sup(m)]]),s:['Divida os números: '+n(a)+' ÷ '+p(b)+' = '+n(q)+'.','Subtraia os expoentes de x: '+(m+k)+' − '+k+' = '+m+'.']};}
+]);}});
+
+topic({id:'produtos-notaveis',nome:'Produtos notáveis',ano:'8º ano',area:'Álgebra',
+tags:'produtos notáveis quadrado da soma quadrado da diferença produto da soma pela diferença',
+teoria:'<table class="t"><tr><td><b>Quadrado da soma</b></td><td>(a + b)² = a² + 2ab + b²</td></tr><tr><td><b>Quadrado da diferença</b></td><td>(a − b)² = a² − 2ab + b²</td></tr><tr><td><b>Produto da soma pela diferença</b></td><td>(a + b)(a − b) = a² − b²</td></tr></table><p>Frase para decorar: “o <b>quadrado do primeiro</b>, <b>mais (ou menos) duas vezes o primeiro pelo segundo</b>, <b>mais o quadrado do segundo</b>”.</p><div class="ex"><b>Exemplo:</b> (3x − 5)² = (3x)² − 2·3x·5 + 5² = 9x² − 30x + 25.</div><p class="tip">Erro comum: (x + 3)² = x² + 9. Falta o 6x!</p>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(1,12);return {q:'Desenvolva: (x + '+a+')²',a:quad(1,2*a,a*a),s:['Quadrado do primeiro: x².','Duas vezes o primeiro pelo segundo: 2 · x · '+a+' = '+(2*a)+'x.','Quadrado do segundo: '+a+'² = '+(a*a)+'.','Resultado: '+quad(1,2*a,a*a)+'.']};},
+function(){var a=r.i(1,12);return {q:'Desenvolva: (x − '+a+')²',a:quad(1,-2*a,a*a),s:['Quadrado do primeiro: x².','Menos duas vezes o primeiro pelo segundo: −2 · x · '+a+' = −'+(2*a)+'x.','Quadrado do segundo: '+(a*a)+' (sempre positivo).','Resultado: '+quad(1,-2*a,a*a)+'.']};},
+function(){var a=r.i(1,12);return {q:'Desenvolva: (x + '+a+')(x − '+a+')',a:'x² − '+(a*a),s:['É o produto da soma pela diferença: quadrado do primeiro menos quadrado do segundo.','x² − '+a+'² = x² − '+(a*a)+'.']};},
+function(){var k=r.i(2,5),a=r.i(1,9),sg=r.s();return {q:'Desenvolva: ('+k+'x '+(sg>0?'+':'−')+' '+a+')²',a:quad(k*k,sg*2*k*a,a*a),s:['Quadrado do primeiro: ('+k+'x)² = '+(k*k)+'x².',(sg>0?'Mais':'Menos')+' duas vezes o primeiro pelo segundo: 2 · '+k+'x · '+a+' = '+(2*k*a)+'x.','Quadrado do segundo: '+(a*a)+'.','Resultado: '+quad(k*k,sg*2*k*a,a*a)+'.']};},
+function(){var k=r.i(2,6),a=r.i(1,9);return {q:'Desenvolva: ('+k+'x + '+a+')('+k+'x − '+a+')',a:(k*k)+'x² − '+(a*a),s:['Soma pela diferença: ('+k+'x)² − '+a+'².','= '+(k*k)+'x² − '+(a*a)+'.']};}
+]);}});
+
+topic({id:'fatoracao',nome:'Fatoração algébrica',ano:'8º ano',area:'Álgebra',
+tags:'fatoração fator comum evidência diferença de quadrados trinômio quadrado perfeito soma e produto',
+teoria:'<p>Fatorar é transformar uma soma em <b>multiplicação</b> (o caminho inverso dos produtos notáveis).</p><ul><li><b>Fator comum em evidência</b>: coloque para fora o que todos os termos têm em comum. 6x² + 9x = 3x(2x + 3).</li><li><b>Diferença de quadrados</b>: a² − b² = (a + b)(a − b). x² − 25 = (x + 5)(x − 5).</li><li><b>Trinômio quadrado perfeito</b>: a² ± 2ab + b² = (a ± b)². x² + 10x + 25 = (x + 5)².</li><li><b>Trinômio soma e produto</b>: x² + Sx + P = (x + m)(x + n), onde m + n = S e m × n = P.</li></ul><div class="ex"><b>Exemplo:</b> x² + 7x + 12: dois números que somam 7 e multiplicam 12 → 3 e 4 → (x + 3)(x + 4).</div>',
+gen:function(r,i){return mix(i,[
+function(){var g=r.i(2,9),a=r.nz(-9,9),b=r.nz(-9,9);if(gcd(a,b)!==1){a=1;}return {q:'Fatore colocando o fator comum em evidência: '+poly([[g*a,'x'],[g*b,'']]),a:g+'('+lin(a,b)+')',s:['Os dois termos são múltiplos de '+g+'.','Divida cada termo por '+g+': '+poly([[a,'x']])+' e '+n(b)+'.','Resultado: '+g+'('+lin(a,b)+').']};},
+function(){var g=r.i(1,5),a=r.i(1,6),b=r.nz(-9,9);if(gcd(a,Math.abs(b))!==1)b=b>0?1:-1;var gx=(g===1?'':g)+'x';return {q:'Fatore: '+quad(g*a,g*b,0),a:gx+'('+lin(a,b)+')',s:['Os dois termos têm '+gx+' em comum.',poly([[g*a,'x²']])+' ÷ '+gx+' = '+poly([[a,'x']])+'; '+poly([[g*b,'x']])+' ÷ '+gx+' = '+n(b)+'.','Resultado: '+gx+'('+lin(a,b)+').']};},
+function(){var k=r.p([1,1,2,3]),a=r.i(1,10);var kx=(k===1?'':k)+'x';return {q:'Fatore: '+(k*k===1?'':k*k)+'x² − '+(a*a),a:'('+kx+' + '+a+')('+kx+' − '+a+')',s:['É uma diferença de quadrados: '+(k*k===1?'x²':(k*k)+'x²')+' = ('+kx+')² e '+(a*a)+' = '+a+'².','a² − b² = (a + b)(a − b) → ('+kx+' + '+a+')('+kx+' − '+a+').']};},
+function(){var a=r.i(1,10),sg=r.s();return {q:'Fatore: '+quad(1,sg*2*a,a*a),a:'(x '+(sg>0?'+':'−')+' '+a+')²',s:['Primeiro termo: x² = (x)². Último: '+(a*a)+' = '+a+'².','Confira o meio: 2 · x · '+a+' = '+(2*a)+'x ✓ (trinômio quadrado perfeito).','Resultado: (x '+(sg>0?'+':'−')+' '+a+')².']};},
+function(){var m=r.nz(-9,9),k;do{k=r.nz(-9,9);}while(k===-m);var S=m+k,P=m*k;return {q:'Fatore: '+quad(1,S,P),a:'('+lin(1,m)+')('+lin(1,k)+')',s:['Procure dois números que <b>somam</b> '+n(S)+' e <b>multiplicam</b> '+n(P)+'.','São '+n(m)+' e '+n(k)+' (pois '+n(m)+' + '+p(k)+' = '+n(S)+' e '+n(m)+' × '+p(k)+' = '+n(P)+').','Resultado: ('+lin(1,m)+')('+lin(1,k)+').']};}
+]);}});
+
+topic({id:'equacao-1-grau',nome:'Equação do 1º grau',ano:'7º ano',area:'Álgebra',
+tags:'equação primeiro grau incógnita isolar x resolver equação',
+teoria:'<p>Uma equação é uma igualdade com um valor desconhecido (a <b>incógnita</b>, geralmente x). Resolver é descobrir o valor de x que torna a igualdade verdadeira.</p><p><b>Passo a passo:</b></p><ol><li>Se houver parênteses, aplique a distributiva.</li><li>Termos com x de um lado, números do outro. <b>Quem muda de lado, muda a operação</b>: somando vira subtraindo e vice-versa.</li><li>Junte os termos semelhantes.</li><li>O número que multiplica o x passa <b>dividindo</b>.</li><li>Confira substituindo x na equação original.</li></ol><div class="ex"><b>Exemplo:</b> 5x − 3 = 2x + 9 → 5x − 2x = 9 + 3 → 3x = 12 → x = 4.<br>Confere: 5·4 − 3 = 17 e 2·4 + 9 = 17 ✓</div>',
+gen:function(r,i){return mix(i,[
+function(){var x=r.i(-10,12),a=r.nz(-9,9),b=r.nz(-15,15);if(a===1)a=2;var c=a*x+b;return {q:'Resolva: '+lin(a,b)+' = '+n(c),a:'x = '+n(x),s:['O '+n(b)+' passa para o outro lado com a operação inversa: '+poly([[a,'x']])+' = '+n(c)+(b>0?' − '+b:' + '+(-b))+'.',poly([[a,'x']])+' = '+n(c-b)+'.','O '+n(a)+' que multiplica o x passa dividindo: x = '+n(c-b)+' ÷ '+p(a)+' = '+n(x)+'.','Confira: '+n(a)+'·'+p(x)+' '+(b<0?'− '+(-b):'+ '+b)+' = '+n(c)+' ✓']};},
+function(){var x=r.i(-8,10),a=r.nz(-9,9),c;do{c=r.nz(-9,9);}while(c===a);var b=r.nz(-15,15),d=(a-c)*x+b;return {q:'Resolva: '+lin(a,b)+' = '+lin(c,d),a:'x = '+n(x),s:['Termos com x para a esquerda, números para a direita (trocando a operação): '+poly([[a,'x']])+' '+(c>0?'− '+(c===1?'':c):'+ '+(c===-1?'':-c))+'x = '+n(d)+' '+(b>0?'− '+b:'+ '+(-b))+'.','Junte: '+poly([[a-c,'x']])+' = '+n(d-b)+'.','Divida: x = '+n(d-b)+' ÷ '+p(a-c)+' = '+n(x)+'.']};},
+function(){var x=r.i(-6,10),a=r.i(2,6),b=r.nz(-8,8);var c=a*(x+b);return {q:'Resolva: '+a+'('+lin(1,b)+') = '+n(c),a:'x = '+n(x),s:['Distributiva: '+a+' · x '+(b<0?'− ':'+ ')+a+' · '+Math.abs(b)+' = '+lin(a,a*b)+'.',lin(a,a*b)+' = '+n(c)+' → '+a+'x = '+n(c)+(a*b>0?' − '+(a*b):' + '+(-a*b))+' = '+n(c-a*b)+'.','x = '+n(c-a*b)+' ÷ '+a+' = '+n(x)+'.']};},
+function(){var a=r.i(2,6),k=r.i(-5,8),x=a*k,b=r.nz(-9,9),c=k+b;return {q:'Resolva: '+F('x',a)+' '+(b<0?'− '+(-b):'+ '+b)+' = '+n(c),a:'x = '+n(x),s:['Passe o '+n(b)+' para o outro lado: '+F('x',a)+' = '+n(c)+(b>0?' − '+b:' + '+(-b))+' = '+n(k)+'.','O '+a+' está dividindo o x, então passa multiplicando: x = '+n(k)+' × '+a+' = '+n(x)+'.']};}
+]);}});
+
+topic({id:'problemas-equacao-1-grau',nome:'Problemas com equação do 1º grau',ano:'7º ano',area:'Álgebra',
+tags:'problemas equação primeiro grau idades números consecutivos dobro triplo montar equação',
+teoria:'<p><b>Como transformar o texto em equação:</b></p><table class="t"><tr><td>um número</td><td>x</td></tr><tr><td>o dobro / o triplo</td><td>2x / 3x</td></tr><tr><td>a metade / a terça parte</td><td>x/2 / x/3</td></tr><tr><td>o sucessor / o antecessor</td><td>x + 1 / x − 1</td></tr><tr><td>três números consecutivos</td><td>x, x + 1, x + 2</td></tr><tr><td>"é", "resulta", "dá"</td><td>=</td></tr></table><ol><li>Leia e decida quem é o x.</li><li>Escreva as outras quantidades usando x.</li><li>Monte a equação e resolva.</li><li><b>Responda a pergunta</b> com a unidade (às vezes pedem outra coisa que não o x!).</li></ol>',
+gen:function(r,i){return mix(i,[
+function(){var k=r.p([2,3,4,5]),b=r.i(1,20),x=r.i(2,25);var nm={2:'O dobro',3:'O triplo',4:'O quádruplo',5:'O quíntuplo'}[k];return {q:nm+' de um número, mais '+b+', é igual a '+(k*x+b)+'. Qual é esse número?',a:n(x),s:['Chame o número de x. '+nm+' é '+k+'x.','Equação: '+k+'x + '+b+' = '+(k*x+b)+'.',k+'x = '+(k*x+b)+' − '+b+' = '+(k*x)+'.','x = '+(k*x)+' ÷ '+k+' = '+x+'.']};},
+function(){var x=r.i(5,60);var S=3*x+3;return {q:'A soma de três números consecutivos é '+S+'. Quais são os números?',a:x+', '+(x+1)+' e '+(x+2),s:['Os números são x, x + 1 e x + 2.','x + x + 1 + x + 2 = '+S+' → 3x + 3 = '+S+'.','3x = '+(S-3)+' → x = '+x+'.','Os números: '+x+', '+(x+1)+' e '+(x+2)+'.']};},
+function(){var f=r.i(5,15),d=r.i(20,35);var S=2*f+d;return {q:'A soma das idades de um pai e seu filho é '+S+' anos. O pai tem '+d+' anos a mais que o filho. Qual a idade de cada um?',a:'Filho: '+f+' anos; pai: '+(f+d)+' anos',s:['Idade do filho: x. Idade do pai: x + '+d+'.','x + x + '+d+' = '+S+' → 2x + '+d+' = '+S+'.','2x = '+(S-d)+' → x = '+f+'.','Filho: '+f+' anos; pai: '+f+' + '+d+' = '+(f+d)+' anos.']};},
+function(){var w=r.i(3,20);var P=2*(2*w+w);return {q:'O comprimento de um retângulo é o dobro da largura e o perímetro é '+P+' cm. Quais são as medidas?',a:'Largura '+w+' cm e comprimento '+(2*w)+' cm',s:['Largura: x. Comprimento: 2x.','Perímetro = soma dos 4 lados: x + 2x + x + 2x = 6x.','6x = '+P+' → x = '+w+'.','Largura '+w+' cm; comprimento '+(2*w)+' cm.']};},
+function(){var pr=r.i(3,12),k=r.i(2,8),tot=r.i(20,80);var dinheiro=pr*k+tot;return {q:'João tinha '+money(dinheiro)+', comprou '+k+' cadernos iguais e ficou com '+money(tot)+'. Quanto custou cada caderno?',a:money(pr),s:['Preço de cada caderno: x. Gastou '+k+'x.',n(dinheiro)+' − '+k+'x = '+tot+'.','−'+k+'x = '+tot+' − '+dinheiro+' = '+n(tot-dinheiro)+' → '+k+'x = '+(dinheiro-tot)+' → x = '+pr+'.','Cada caderno: '+money(pr)+'.']};}
+]);}});
+
+topic({id:'inequacao-1-grau',nome:'Inequação do 1º grau',ano:'7º ano',area:'Álgebra',
+tags:'inequação desigualdade maior que menor que inverter sinal',
+teoria:'<p>Inequação usa &gt;, &lt;, ≥ ou ≤ em vez de =. A resposta é um <b>conjunto de valores</b>.</p><p>Resolve-se <b>igual à equação</b>, com uma regra extra:</p><p class="tip">Ao multiplicar ou dividir os dois lados por um número <b>negativo</b>, o sinal da desigualdade <b>inverte</b> (&gt; vira &lt;, ≥ vira ≤).</p><div class="ex"><b>Exemplo:</b> −2x + 5 &gt; 11 → −2x &gt; 6 → dividindo por −2 (inverte!): x &lt; −3.</div><p>Pergunta "qual o menor/maior inteiro que satisfaz?" → olhe a resposta: x &gt; 4 → menor inteiro é 5.</p>',
+gen:function(r,i){var sym=['&gt;','&lt;','≥','≤'],inv={'&gt;':'&lt;','&lt;':'&gt;','≥':'≤','≤':'≥'};return mix(i,[
+function(){var k=r.i(-8,10),a=r.i(2,9),b=r.nz(-12,12),s=r.p(sym);var c=a*k+b;return {q:'Resolva: '+lin(a,b)+' '+s+' '+n(c),a:'x '+s+' '+n(k),s:['Passe o '+n(b)+' para o outro lado: '+a+'x '+s+' '+n(c)+(b>0?' − '+b:' + '+(-b))+' = '+n(c-b)+'.','Divida por '+a+' (positivo, o sinal não muda): x '+s+' '+n(k)+'.']};},
+function(){var k=r.i(-8,10),a=-r.i(2,9),b=r.nz(-12,12),s=r.p(sym);var c=a*k+b;return {q:'Resolva: '+lin(a,b)+' '+s+' '+n(c),a:'x '+inv[s]+' '+n(k),s:['Passe o '+n(b)+' para o outro lado: '+poly([[a,'x']])+' '+s+' '+n(c-b)+'.','Divida por '+n(a)+'. Como é <b>negativo</b>, o sinal inverte: x '+inv[s]+' '+n(k)+'.']};},
+function(){var k=r.i(-5,10),a=r.i(2,7),b=r.nz(-9,9);var c=a*k+b;return {q:'Qual é o menor número inteiro que satisfaz '+lin(a,b)+' &gt; '+n(c)+'?',a:n(k+1),s:['Resolvendo: '+a+'x &gt; '+n(c-b)+' → x &gt; '+n(k)+'.','x tem que ser maior que '+n(k)+' (não pode ser igual), então o menor inteiro é '+n(k+1)+'.']};}
+]);}});
+
+topic({id:'sistemas',nome:'Sistemas de equações do 1º grau',ano:'8º ano',area:'Álgebra',
+tags:'sistema de equações duas incógnitas método da adição substituição galinhas e coelhos',
+teoria:'<p>Um sistema tem duas equações com duas incógnitas (x e y). A solução é o par (x, y) que satisfaz as duas ao mesmo tempo.</p><p><b>Método da substituição</b>: isole uma letra numa equação e substitua na outra.</p><p><b>Método da adição</b>: some (ou subtraia) as equações para eliminar uma letra; se precisar, multiplique uma delas antes.</p><div class="ex"><b>Exemplo (adição):</b><br>x + y = 10<br>x − y = 4<br>Somando: 2x = 14 → x = 7. Volta numa equação: 7 + y = 10 → y = 3. Solução (7, 3).</div>',
+gen:function(r,i){return mix(i,[
+function(){var x=r.i(-5,15),y=r.i(-5,15);return {q:'Resolva o sistema:<br>x + y = '+n(x+y)+'<br>x − y = '+n(x-y),a:'x = '+n(x)+' e y = '+n(y),s:['Some as duas equações (o y some): 2x = '+n(x+y)+' + '+p(x-y)+' = '+n(2*x)+'.','x = '+n(2*x)+' ÷ 2 = '+n(x)+'.','Substitua na 1ª: '+n(x)+' + y = '+n(x+y)+' → y = '+n(y)+'.']};},
+function(){var x=r.i(-6,8),y=r.i(-6,8),b=r.nz(-4,4),d=r.nz(-4,4),e;do{e=r.nz(-5,5);}while(e-d*b===0);var c=x+b*y,f=d*x+e*y;var k=e-d*b;return {q:'Resolva o sistema:<br>'+poly([[1,'x'],[b,'y']])+' = '+n(c)+'<br>'+poly([[d,'x'],[e,'y']])+' = '+n(f),a:'x = '+n(x)+' e y = '+n(y),s:['Isole x na 1ª equação: x = '+n(c)+(b>0?' − ':' + ')+(Math.abs(b)===1?'':Math.abs(b))+'y.','Substitua na 2ª: '+n(d)+'·('+poly([[c,''],[-b,'y']])+') '+(e<0?'− ':'+ ')+(Math.abs(e)===1?'':Math.abs(e))+'y = '+n(f)+'.','Distributiva: '+n(d*c)+' '+(-d*b<0?'− ':'+ ')+Math.abs(d*b)+'y '+(e<0?'− ':'+ ')+Math.abs(e)+'y = '+n(f)+' → '+n(k)+'y = '+n(f-d*c)+'.','y = '+n(f-d*c)+' ÷ '+p(k)+' = '+n(y)+'.','Volte: x = '+n(c)+' − '+p(b)+'·'+p(y)+' = '+n(x)+'.']};},
+function(){var g=r.i(5,30),c=r.i(5,30);var H=g+c,P=2*g+4*c;return {q:'Num quintal há galinhas e coelhos: ao todo são '+H+' cabeças e '+P+' pés. Quantas galinhas e quantos coelhos?',a:g+' galinhas e '+c+' coelhos',s:['Galinhas: x; coelhos: y. Cabeças: x + y = '+H+'. Pés: 2x + 4y = '+P+'.','Multiplique a 1ª por 2: 2x + 2y = '+(2*H)+'.','Subtraia da 2ª: (2x + 4y) − (2x + 2y) = '+P+' − '+(2*H)+' → 2y = '+(P-2*H)+' → y = '+c+'.','x = '+H+' − '+c+' = '+g+'.']};},
+function(){var pi=r.i(2,8)*5,qi=r.i(5,40),qm=r.i(5,40);var pm=pi/2;var T=qi+qm,V=pi*qi+pm*qm;return {q:'Num cinema a inteira custa '+money(pi)+' e a meia '+money(pm)+'. Foram vendidos '+T+' ingressos e arrecadados '+money(V)+'. Quantas inteiras e quantas meias?',a:qi+' inteiras e '+qm+' meias',s:['Inteiras: x; meias: y. x + y = '+T+' e '+n(pi)+'x + '+n(pm)+'y = '+n(V)+'.','Da 1ª: y = '+T+' − x.','Substitua: '+n(pi)+'x + '+n(pm)+'('+T+' − x) = '+n(V)+' → '+n(pi-pm)+'x + '+n(pm*T)+' = '+n(V)+'.',n(pi-pm)+'x = '+n(V-pm*T)+' → x = '+qi+'; y = '+qm+'.']};}
+]);}});
+
+topic({id:'equacao-2-grau-incompleta',nome:'Equação do 2º grau incompleta',ano:'9º ano',area:'Álgebra',
+tags:'equação segundo grau incompleta ax² = c x² colocar em evidência',
+teoria:'<p>Equação do 2º grau: <b>ax² + bx + c = 0</b> (a ≠ 0). É <b>incompleta</b> quando b = 0 ou c = 0.</p><ul><li><b>b = 0</b> (ax² + c = 0): isole x² e tire a raiz. Não esqueça do <b>±</b>! x² = 25 → x = 5 ou x = −5. Se x² der negativo, não há solução real.</li><li><b>c = 0</b> (ax² + bx = 0): coloque x em evidência: x(ax + b) = 0. Um produto é zero quando um dos fatores é zero: <b>x = 0</b> ou ax + b = 0.</li></ul><div class="ex"><b>Exemplo:</b> 3x² − 12x = 0 → 3x(x − 4) = 0 → x = 0 ou x = 4.</div>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.p([1,1,2,3,4,5]),k=r.i(1,12);var c=a*k*k;return {q:'Resolva: '+(a===1?'':a)+'x² − '+c+' = 0',a:'x = '+k+' ou x = '+MINUS+k,s:['Isole o x²: '+(a===1?'':a)+'x² = '+c+(a>1?' → x² = '+c+' ÷ '+a+' = '+(k*k):'')+'.','Tire a raiz dos dois lados (com ±): x = ±'+raiz(k*k)+' = ±'+k+'.']};},
+function(){var a=r.p([1,2,3,4,6]),b=r.nz(-12,12)*a;var x2=-b/a;return {q:'Resolva: '+quad(a,b,0)+' = 0',a:'x = 0 ou x = '+n(x2),s:['Coloque x em evidência: x('+lin(a,b)+') = 0.','Primeiro fator: x = 0.','Segundo fator: '+lin(a,b)+' = 0 → '+(a===1?'x = '+n(-b):a+'x = '+n(-b)+' → x = '+n(x2))+'.']};},
+function(){var a=r.i(1,5),c=r.i(1,30)*a;return {q:'Resolva em ℝ: '+(a===1?'':a)+'x² + '+c+' = 0',a:'Não tem solução real',s:['Isole: '+(a===1?'':a)+'x² = −'+c+(a>1?' → x² = −'+(c/a):'')+'.','Nenhum número real elevado ao quadrado dá negativo. Solução: conjunto vazio.']};}
+]);}});
+
+topic({id:'equacao-2-grau',nome:'Equação do 2º grau completa (Bhaskara)',ano:'9º ano',area:'Álgebra',
+tags:'equação segundo grau bhaskara delta discriminante raízes soma e produto',
+teoria:'<p>Para <b>ax² + bx + c = 0</b>:</p><ol><li>Identifique <b>a</b>, <b>b</b> e <b>c</b> (com os sinais!).</li><li>Calcule o <b>delta</b>: <b>Δ = b² − 4ac</b>.<ul><li>Δ &gt; 0: duas raízes reais diferentes.</li><li>Δ = 0: duas raízes iguais (uma só).</li><li>Δ &lt; 0: não há raiz real.</li></ul></li><li>Aplique <b>Bhaskara</b>: <b>x = <span class="fr"><span>−b ± √Δ</span><span>2a</span></span></b></li></ol><div class="ex"><b>Exemplo:</b> x² − 5x + 6 = 0 → a = 1, b = −5, c = 6.<br>Δ = 25 − 24 = 1 → x = (5 ± 1)/2 → x = 3 ou x = 2.</div><p><b>Atalho (soma e produto)</b>: se a = 1, as raízes somam −b e multiplicam c.</p>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.p([1,1,1,2,-1,3]),r1=r.i(-9,9),r2=r.i(-9,9);var b=-a*(r1+r2),c=a*r1*r2;var D=b*b-4*a*c,sq=Math.sqrt(D);var hi=Math.max(r1,r2),lo=Math.min(r1,r2);
+ var st=['a = '+n(a)+', b = '+n(b)+', c = '+n(c)+'.','Δ = b² − 4ac = '+p(b)+'² − 4·'+p(a)+'·'+p(c)+' = '+(b*b)+' '+(4*a*c<0?'+ '+(-4*a*c):'− '+(4*a*c))+' = '+D+'.'];
+ if(D===0){st.push('Δ = 0: uma raiz só. x = −b ÷ 2a = '+n(-b)+' ÷ '+p(2*a)+' = '+n(r1)+'.');return {q:'Resolva: '+quad(a,b,c)+' = 0',a:'x = '+n(r1)+' (raiz dupla)',s:st};}
+ st.push('√Δ = '+sq+'.');st.push('x = ('+n(-b)+' ± '+sq+') ÷ '+p(2*a)+'.');st.push('x₁ = ('+n(-b)+' + '+sq+') ÷ '+p(2*a)+' = '+n((-b+sq)/(2*a))+'; x₂ = ('+n(-b)+' − '+sq+') ÷ '+p(2*a)+' = '+n((-b-sq)/(2*a))+'.');
+ return {q:'Resolva: '+quad(a,b,c)+' = 0',a:'x = '+n(hi)+' ou x = '+n(lo),s:st};},
+function(){var b=r.nz(-4,4),c;do{c=r.i(1,15);}while(b*b-4*c>=0);var D=b*b-4*c;return {q:'Resolva em ℝ: '+quad(1,b,c)+' = 0',a:'Não tem raízes reais (Δ = '+n(D)+')',s:['a = 1, b = '+n(b)+', c = '+c+'.','Δ = '+p(b)+'² − 4·1·'+c+' = '+(b*b)+' − '+(4*c)+' = '+n(D)+'.','Δ negativo: não existe raiz quadrada real de número negativo. Não há solução real.']};},
+function(){var r1=r.i(-9,9),r2=r.i(-9,9);if(r1===r2)r2++;var S=r1+r2,P=r1*r2;return {q:'Usando soma e produto, encontre as raízes de '+quad(1,-S,P)+' = 0.',a:'x = '+n(Math.max(r1,r2))+' e x = '+n(Math.min(r1,r2)),s:['Com a = 1: soma das raízes = −b = '+n(S)+'; produto = c = '+n(P)+'.','Quais dois números somam '+n(S)+' e multiplicam '+n(P)+'? '+n(r1)+' e '+n(r2)+'.']};},
+function(){var a=r.p([1,2]),r1=r.i(-6,6),r2=r.i(-6,6);var b=-a*(r1+r2),c=a*r1*r2;var D=b*b-4*a*c;return {q:'Calcule o Δ de '+quad(a,b,c)+' = 0 e diga quantas raízes reais a equação tem.',a:'Δ = '+D+'; '+(D>0?'duas raízes reais diferentes':'uma raiz real (dupla)'),s:['a = '+a+', b = '+n(b)+', c = '+n(c)+'.','Δ = '+p(b)+'² − 4·'+a+'·'+p(c)+' = '+D+'.',D>0?'Δ &gt; 0 → duas raízes.':'Δ = 0 → raízes iguais.']};}
+]);}});
+
+topic({id:'funcao-afim',nome:'Função afim (1º grau)',ano:'9º ano',area:'Álgebra',
+tags:'função afim função do primeiro grau reta coeficiente angular linear zero da função crescente decrescente',
+teoria:'<p><b>Função afim</b>: <b>f(x) = ax + b</b>, com a ≠ 0. O gráfico é uma <b>reta</b>.</p><ul><li><b>a</b> (coeficiente angular / taxa de variação): quanto y muda quando x aumenta 1. a &gt; 0 → <b>crescente</b>; a &lt; 0 → <b>decrescente</b>.</li><li><b>b</b> (coeficiente linear): onde a reta corta o eixo y (f(0) = b).</li><li><b>Zero (raiz)</b>: valor de x em que f(x) = 0. Resolve ax + b = 0 → x = −b/a.</li><li>Dados dois pontos: a = <span class="fr"><span>y₂ − y₁</span><span>x₂ − x₁</span></span>; depois b = y₁ − a·x₁.</li></ul><div class="ex"><b>Exemplo:</b> táxi cobra R$ 5 fixo + R$ 2 por km → f(x) = 2x + 5. Para 10 km: f(10) = 25.</div>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.nz(-8,8),b=r.i(-10,10),x=r.i(-6,8);return {q:'Dada f(x) = '+lin(a,b)+', calcule f('+n(x)+').',a:n(a*x+b),s:['Troque x por '+n(x)+': f('+n(x)+') = '+n(a)+'·'+p(x)+(b?(b<0?' − '+(-b):' + '+b):'')+'.','= '+n(a*x)+(b?' + '+p(b):'')+' = '+n(a*x+b)+'.']};},
+function(){var a=r.nz(-8,8),b=r.nz(-12,12);var z=Q(-b,a);return {q:'Qual é o zero (raiz) da função f(x) = '+lin(a,b)+'?',a:'x = '+FQ(z),s:['Faça f(x) = 0: '+lin(a,b)+' = 0.',poly([[a,'x']])+' = '+n(-b)+'.','x = '+n(-b)+' ÷ '+p(a)+' = '+FQ(z)+'.']};},
+function(){var a=r.nz(-5,5),b=r.i(-8,8),x1=r.i(-4,3),x2=x1+r.i(1,4);var y1=a*x1+b,y2=a*x2+b;return {q:'Uma função afim passa pelos pontos ('+n(x1)+', '+n(y1)+') e ('+n(x2)+', '+n(y2)+'). Encontre a lei f(x) = ax + b.',a:'f(x) = '+lin(a,b),s:['a = (y₂ − y₁) ÷ (x₂ − x₁) = ('+n(y2)+' − '+p(y1)+') ÷ ('+n(x2)+' − '+p(x1)+') = '+n(y2-y1)+' ÷ '+(x2-x1)+' = '+n(a)+'.','b = y₁ − a·x₁ = '+n(y1)+' − '+p(a)+'·'+p(x1)+' = '+n(b)+'.']};},
+function(){var a=r.nz(-9,9),b=r.i(-9,9);return {q:'A função f(x) = '+lin(a,b)+' é crescente ou decrescente?',a:a>0?'Crescente':'Decrescente',s:['Olhe o número que multiplica o x: a = '+n(a)+'.',a>0?'a positivo → quando x aumenta, y aumenta: crescente.':'a negativo → quando x aumenta, y diminui: decrescente.']};},
+function(){var fx=r.i(3,8),pk=r.i(2,5),km=r.i(3,25);return {q:'Um táxi cobra '+money(fx)+' de bandeirada mais '+money(pk)+' por km rodado. Escreva a função e calcule o valor de uma corrida de '+km+' km.',a:'f(x) = '+pk+'x + '+fx+'; '+money(pk*km+fx),s:['Parte fixa (b) = '+fx+'; parte que depende do km (a) = '+pk+'.','f(x) = '+pk+'x + '+fx+'.','f('+km+') = '+pk+' × '+km+' + '+fx+' = '+(pk*km)+' + '+fx+' = '+money(pk*km+fx)+'.']};}
+]);}});
+
+topic({id:'funcao-quadratica',nome:'Função quadrática (2º grau)',ano:'9º ano',area:'Álgebra',
+tags:'função quadrática segundo grau parábola vértice concavidade máximo mínimo',
+teoria:'<p><b>Função quadrática</b>: <b>f(x) = ax² + bx + c</b>, a ≠ 0. O gráfico é uma <b>parábola</b>.</p><ul><li><b>a &gt; 0</b>: concavidade para cima (“sorriso”) → tem ponto de <b>mínimo</b>.</li><li><b>a &lt; 0</b>: concavidade para baixo → tem ponto de <b>máximo</b>.</li><li><b>Vértice</b>: x<sub>v</sub> = <span class="fr"><span>−b</span><span>2a</span></span> e y<sub>v</sub> = f(x<sub>v</sub>) (ou −Δ/4a).</li><li>Corta o eixo y em (0, c).</li><li>Corta o eixo x nas raízes (Bhaskara).</li></ul><div class="ex"><b>Exemplo:</b> f(x) = x² − 4x + 3: x<sub>v</sub> = 4/2 = 2; y<sub>v</sub> = 4 − 8 + 3 = −1. Vértice (2, −1), ponto de mínimo.</div>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.p([1,1,-1,2,-2]),xv=r.i(-5,5),c=r.i(-9,9);var b=-2*a*xv;var yv=a*xv*xv+b*xv+c;return {q:'Encontre o vértice da parábola f(x) = '+quad(a,b,c)+'.',a:'V('+n(xv)+', '+n(yv)+')',s:['a = '+n(a)+', b = '+n(b)+', c = '+n(c)+'.','x<sub>v</sub> = −b ÷ 2a = '+n(-b)+' ÷ '+p(2*a)+' = '+n(xv)+'.','y<sub>v</sub> = f('+n(xv)+') = '+n(a)+'·'+p(xv)+'² '+(b<0?'− ':'+ ')+Math.abs(b)+'·'+p(xv)+' '+(c<0?'− '+(-c):'+ '+c)+' = '+n(yv)+'.']};},
+function(){var a=r.nz(-5,5),b=r.i(-9,9),c=r.i(-9,9);return {q:'A parábola de f(x) = '+quad(a,b,c)+' tem concavidade para cima ou para baixo? Tem ponto de máximo ou de mínimo?',a:a>0?'Para cima; ponto de mínimo':'Para baixo; ponto de máximo',s:['Olhe o a (número do x²): '+n(a)+'.',a>0?'a &gt; 0 → “sorriso”, o vértice é o ponto mais baixo (mínimo).':'a &lt; 0 → “boca para baixo”, o vértice é o ponto mais alto (máximo).']};},
+function(){var a=r.nz(-3,3),b=r.i(-6,6),c=r.i(-9,9),x=r.i(-4,4);var v=a*x*x+b*x+c;return {q:'Dada f(x) = '+quad(a,b,c)+', calcule f('+n(x)+').',a:n(v),s:['Substitua x por '+n(x)+' (entre parênteses).',n(a)+'·'+p(x)+'² = '+n(a*x*x)+'; '+n(b)+'·'+p(x)+' = '+n(b*x)+'.','Soma: '+n(a*x*x)+' + '+p(b*x)+' + '+p(c)+' = '+n(v)+'.']};},
+function(){var a=r.nz(-4,4),b=r.i(-9,9),c=r.i(-15,15);return {q:'Em que ponto a parábola f(x) = '+quad(a,b,c)+' corta o eixo y?',a:'(0, '+n(c)+')',s:['No eixo y, x = 0.','f(0) = '+n(a)+'·0² + '+p(b)+'·0 + '+p(c)+' = '+n(c)+'.']};}
+]);}});
+
+topic({id:'sequencias',nome:'Sequências e padrões (progressões)',ano:'7º ano',area:'Álgebra',
+tags:'sequência padrão regularidade termo geral progressão aritmética geométrica PA PG',
+teoria:'<ul><li><b>Sequência</b>: lista ordenada que segue uma regra.</li><li><b>Progressão aritmética (PA)</b>: soma sempre o mesmo número (a <b>razão r</b>). 3, 7, 11, 15… (r = 4).<br>Termo geral: <b>a<sub>n</sub> = a<sub>1</sub> + (n − 1)·r</b>.</li><li><b>Progressão geométrica (PG)</b>: multiplica sempre pelo mesmo número (a razão q). 2, 6, 18, 54… (q = 3).</li><li>Em padrões de figuras, monte uma tabela (figura × quantidade) e descubra quanto aumenta de uma para a outra.</li></ul><div class="ex"><b>Exemplo:</b> 5, 8, 11, … qual o 20º termo? a<sub>20</sub> = 5 + 19 × 3 = 62.</div>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(-10,20),d=r.nz(-7,9);var t=[0,1,2,3].map(function(k){return a+k*d;});return {q:'Qual é o próximo termo da sequência '+t.map(n).join(', ')+', …?',a:n(a+4*d),s:['De um termo para o outro soma-se '+n(d)+' (razão).',n(t[3])+' + '+p(d)+' = '+n(a+4*d)+'.']};},
+function(){var a=r.i(-5,15),d=r.nz(-5,8),N=r.p([10,15,20,25,30,50,100]);return {q:'Na PA '+[0,1,2].map(function(k){return n(a+k*d);}).join(', ')+', …, qual é o '+N+'º termo?',a:n(a+(N-1)*d),s:['a₁ = '+n(a)+' e r = '+n(d)+'.','a<sub>'+N+'</sub> = a₁ + ('+N+' − 1)·r = '+n(a)+' + '+(N-1)+'·'+p(d)+'.','= '+n(a)+' + '+p((N-1)*d)+' = '+n(a+(N-1)*d)+'.']};},
+function(){var a=r.i(1,5),q=r.p([2,3,-2,4]);var t=[0,1,2,3].map(function(k){return a*Math.pow(q,k);});return {q:'Qual é o próximo termo da sequência '+t.map(n).join(', ')+', …?',a:n(a*Math.pow(q,4)),s:['Cada termo é o anterior multiplicado por '+n(q)+' (PG).',n(t[3])+' × '+p(q)+' = '+n(a*Math.pow(q,4))+'.']};},
+function(){var d=r.i(2,6),c=r.i(1,6),N=r.i(10,30);var t=[1,2,3].map(function(k){return d*k+c;});return {q:'Num padrão de palitos, a figura 1 tem '+t[0]+' palitos, a figura 2 tem '+t[1]+' e a figura 3 tem '+t[2]+'. Quantos palitos terá a figura '+N+'?',a:(d*N+c)+' palitos',s:['De uma figura para a outra aumentam '+d+' palitos.','Regra: palitos = '+d+' × (nº da figura) + '+c+' (confira: '+d+'·1 + '+c+' = '+t[0]+').','Figura '+N+': '+d+' × '+N+' + '+c+' = '+(d*N+c)+'.']};}
+]);}});
+
+/* ===== GEOMETRIA, GRANDEZAS E MEDIDAS, ESTATÍSTICA E PROBABILIDADE ===== */
+var PI='3,14';
+function solveX(k,v,x){return k===1?'x = '+n(v):poly([[k,'x']])+' = '+n(v)+' → x = '+n(v)+' ÷ '+p(k)+' = '+n(x);}
+function plus(v){return v===0?'':v<0?' − '+(-v):' + '+v;}
+function grau(x){return n(x)+'°';}
+var POL={3:'triângulo',4:'quadrilátero',5:'pentágono',6:'hexágono',7:'heptágono',8:'octógono',9:'eneágono',10:'decágono',11:'undecágono',12:'dodecágono',15:'pentadecágono',20:'icoságono'};
+
+topic({id:'angulos',nome:'Ângulos: complementares, suplementares e opostos pelo vértice',ano:'7º ano',area:'Geometria',
+tags:'ângulo complementar suplementar opostos pelo vértice reto raso agudo obtuso adjacentes',
+teoria:'<ul><li><b>Agudo</b>: menor que 90°. <b>Reto</b>: 90°. <b>Obtuso</b>: entre 90° e 180°. <b>Raso</b>: 180°.</li><li><b>Complementares</b>: somam <b>90°</b>. Complemento de x = 90° − x.</li><li><b>Suplementares</b>: somam <b>180°</b>. Suplemento de x = 180° − x.</li><li><b>Opostos pelo vértice</b> (formados por duas retas que se cruzam): são <b>iguais</b>.</li><li>Ângulos em volta de um ponto somam 360°.</li></ul><div class="ex"><b>Exemplo:</b> dois ângulos opostos pelo vértice medem 3x + 10° e 5x − 30°. Iguale: 3x + 10 = 5x − 30 → 40 = 2x → x = 20 → cada ângulo mede 70°.</div>',
+gen:function(r,i){return mix(i,[
+function(){var x=r.i(5,85);return {q:'Qual é o complemento de um ângulo de '+grau(x)+'?',a:grau(90-x),s:['Complementares somam 90°.','90° − '+x+'° = '+(90-x)+'°.']};},
+function(){var x=r.i(5,175);return {q:'Qual é o suplemento de um ângulo de '+grau(x)+'?',a:grau(180-x),s:['Suplementares somam 180°.','180° − '+x+'° = '+(180-x)+'°.']};},
+function(){var x=r.i(5,40),a,c;do{a=r.i(1,6);c=r.i(1,6);}while(a===c);var ang=r.i(30,150);var b=ang-a*x,d=ang-c*x;return {q:'Dois ângulos opostos pelo vértice medem ('+lin(a,b)+')° e ('+lin(c,d)+')°. Quanto vale x e quanto mede cada ângulo?',a:'x = '+x+'; cada ângulo mede '+ang+'°',s:['Opostos pelo vértice são iguais: '+lin(a,b)+' = '+lin(c,d)+'.',solveX(a-c,d-b,x)+'.','Ângulo: '+a+'·'+x+' '+(b<0?'− '+(-b):'+ '+b)+' = '+ang+'°.']};},
+function(){var x=r.i(5,25),a=r.i(1,4),c=r.i(1,4);var b=r.i(-10,20),tot=r.p([90,180]);var d=tot-(a+c)*x-b;return {q:'Dois ângulos '+(tot===90?'complementares':'suplementares')+' medem ('+lin(a,b)+')° e ('+lin(c,d)+')°. Encontre x.',a:'x = '+x,s:['Eles somam '+tot+'°: '+lin(a,b)+' + '+lin(c,d)+' = '+tot+'.',poly([[a+c,'x']])+plus(b+d)+' = '+tot+'.',poly([[a+c,'x']])+' = '+(tot-b-d)+' → x = '+x+'.']};},
+function(){var x=r.i(1,179);var t=x<90?'agudo':x===90?'reto':'obtuso';if(r.f()<0.15){x=90;t='reto';}return {q:'Classifique o ângulo de '+grau(x)+'.',a:t.charAt(0).toUpperCase()+t.slice(1),s:[x<90?'É menor que 90°.':x===90?'É exatamente 90°.':'Está entre 90° e 180°.']};}
+]);}});
+
+topic({id:'retas-paralelas-transversal',nome:'Retas paralelas cortadas por uma transversal',ano:'8º ano',area:'Geometria',
+tags:'retas paralelas transversal alternos internos correspondentes colaterais',
+teoria:'<p>Quando duas retas <b>paralelas</b> são cortadas por uma <b>transversal</b>, formam-se 8 ângulos, que só têm <b>duas medidas</b> (agudo e obtuso, que somam 180°).</p><ul><li><b>Correspondentes</b> (mesma posição em cada cruzamento): iguais.</li><li><b>Alternos internos</b> (entre as paralelas, lados opostos da transversal): iguais.</li><li><b>Alternos externos</b>: iguais.</li><li><b>Colaterais internos/externos</b> (mesmo lado da transversal): <b>somam 180°</b>.</li></ul><p class="tip">Resumo: "parecidos" (ambos agudos ou ambos obtusos) são iguais; um agudo com um obtuso somam 180°.</p>',
+gen:function(r,i){return mix(i,[
+function(){var x=r.i(5,30),a,c;do{a=r.i(1,6);c=r.i(1,6);}while(a===c);var ang=r.i(30,150),b=ang-a*x,d=ang-c*x;var tipo=r.p(['alternos internos','correspondentes','alternos externos']);return {q:'Duas retas paralelas são cortadas por uma transversal. Dois ângulos '+tipo+' medem ('+lin(a,b)+')° e ('+lin(c,d)+')°. Quanto mede cada ângulo?',a:ang+'°',s:['Ângulos '+tipo+' são iguais: '+lin(a,b)+' = '+lin(c,d)+'.',solveX(a-c,d-b,x)+'.','Ângulo = '+a+'·'+x+' '+(b<0?'− '+(-b):'+ '+b)+' = '+ang+'°.']};},
+function(){var x=r.i(5,25),a=r.i(1,5),c=r.i(1,5),b=r.i(-10,30);var d=180-(a+c)*x-b;var ang1=a*x+b;return {q:'Duas paralelas são cortadas por uma transversal. Dois ângulos colaterais internos medem ('+lin(a,b)+')° e ('+lin(c,d)+')°. Encontre x e os ângulos.',a:'x = '+x+'; '+ang1+'° e '+(180-ang1)+'°',s:['Colaterais somam 180°: '+lin(a,b)+' + '+lin(c,d)+' = 180.',(a+c)+'x'+plus(b+d)+' = 180 → '+(a+c)+'x = '+(180-b-d)+' → x = '+x+'.','Ângulos: '+ang1+'° e '+(180-ang1)+'°.']};},
+function(){var ang=r.i(20,160);return {q:'Duas paralelas cortadas por uma transversal formam um ângulo de '+grau(ang)+'. Quais são as medidas dos outros sete ângulos?',a:'Quatro medem '+ang+'° e quatro medem '+(180-ang)+'° (contando o dado)',s:['Só existem duas medidas: a dada e a suplementar dela.','180° − '+ang+'° = '+(180-ang)+'°.']};}
+]);}});
+
+topic({id:'triangulos',nome:'Triângulos: ângulos, classificação e existência',ano:'7º ano',area:'Geometria',
+tags:'triângulo soma dos ângulos internos ângulo externo equilátero isósceles escaleno acutângulo retângulo obtusângulo condição de existência',
+teoria:'<ul><li>A soma dos ângulos internos de qualquer triângulo é <b>180°</b>.</li><li><b>Ângulo externo</b> = soma dos dois internos não vizinhos a ele.</li><li><b>Pelos lados</b>: equilátero (3 iguais), isósceles (2 iguais), escaleno (todos diferentes).</li><li><b>Pelos ângulos</b>: acutângulo (todos &lt; 90°), retângulo (um de 90°), obtusângulo (um &gt; 90°).</li><li>No <b>isósceles</b>, os ângulos da base são iguais. No <b>equilátero</b>, todos medem 60°.</li><li><b>Condição de existência</b>: cada lado tem que ser <b>menor que a soma dos outros dois</b>.</li></ul><div class="ex"><b>Exemplo:</b> ângulos x, 2x e 3x → 6x = 180 → x = 30 → 30°, 60°, 90°.</div>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(20,100),b=r.i(20,160-a);return {q:'Dois ângulos de um triângulo medem '+grau(a)+' e '+grau(b)+'. Quanto mede o terceiro?',a:grau(180-a-b),s:['A soma dos três é 180°.','180° − '+a+'° − '+b+'° = '+(180-a-b)+'°.']};},
+function(){var ks=r.p([[1,2,3],[1,1,2],[2,3,4],[1,2,6],[3,4,5],[1,3,5],[2,3,7]]);var s=ks[0]+ks[1]+ks[2];var x=180/s;return {q:'Os ângulos de um triângulo medem '+ks.map(function(k){return k===1?'x':k+'x';}).join(', ')+'. Quanto mede cada um?',a:ks.map(function(k){return n(k*x)+'°';}).join(', '),s:['Some: '+ks.map(function(k){return k===1?'x':k+'x';}).join(' + ')+' = 180 → '+s+'x = 180.','x = 180 ÷ '+s+' = '+n(x)+'.','Ângulos: '+ks.map(function(k){return n(k*x)+'°';}).join(', ')+'.']};},
+function(){var a=r.i(20,80),b=r.i(20,80);return {q:'Num triângulo, dois ângulos internos medem '+grau(a)+' e '+grau(b)+'. Quanto mede o ângulo externo vizinho ao terceiro ângulo?',a:grau(a+b),s:['O ângulo externo é a soma dos dois internos que não são vizinhos dele.',a+'° + '+b+'° = '+(a+b)+'°.']};},
+function(){var v=r.i(20,140);if(v%2)v++;return {q:'Num triângulo isósceles, o ângulo do vértice (entre os lados iguais) mede '+grau(v)+'. Quanto mede cada ângulo da base?',a:grau((180-v)/2),s:['Sobram 180° − '+v+'° = '+(180-v)+'° para os dois ângulos da base.','Eles são iguais: '+(180-v)+'° ÷ 2 = '+((180-v)/2)+'°.']};},
+function(){var a=r.i(2,12),b=r.i(2,12),c=r.i(2,20);var ok=a<b+c&&b<a+c&&c<a+b;var L=[a,b,c].sort(function(x,y){return x-y;});return {q:'Existe triângulo com lados '+a+' cm, '+b+' cm e '+c+' cm?',a:ok?'Sim':'Não',s:['Basta testar o maior lado: ele tem que ser menor que a soma dos outros dois.',L[2]+' '+(L[2]<L[0]+L[1]?'&lt;':'≥')+' '+L[0]+' + '+L[1]+' = '+(L[0]+L[1])+'.',ok?'Condição satisfeita.':'Não satisfaz: os dois lados menores não conseguem "se encontrar".']};},
+function(){var t=r.p([[5,5,5,'equilátero'],[6,6,4,'isósceles'],[7,7,10,'isósceles'],[3,4,5,'escaleno'],[5,6,8,'escaleno'],[9,9,9,'equilátero'],[4,9,9,'isósceles'],[6,7,9,'escaleno']]);return {q:'Classifique quanto aos lados o triângulo de lados '+t[0]+' cm, '+t[1]+' cm e '+t[2]+' cm.',a:t[3].charAt(0).toUpperCase()+t[3].slice(1),s:[t[3]==='equilátero'?'Os três lados são iguais.':t[3]==='isósceles'?'Dois lados são iguais.':'Os três lados são diferentes.']};}
+]);}});
+
+topic({id:'poligonos',nome:'Polígonos: ângulos internos e diagonais',ano:'8º ano',area:'Geometria',
+tags:'polígono soma dos ângulos internos ângulo interno regular ângulo externo diagonais',
+teoria:'<p>Para um polígono de <b>n lados</b>:</p><ul><li><b>Soma dos ângulos internos</b>: S = (n − 2) × 180°.</li><li><b>Polígono regular</b> (lados e ângulos iguais): cada ângulo interno = <span class="fr"><span>(n − 2) × 180°</span><span>n</span></span>.</li><li><b>Soma dos ângulos externos</b> = 360° sempre. No regular, cada externo = 360° ÷ n.</li><li><b>Número de diagonais</b>: d = <span class="fr"><span>n(n − 3)</span><span>2</span></span>.</li></ul><p>Nomes: 3 triângulo, 4 quadrilátero, 5 pentágono, 6 hexágono, 7 heptágono, 8 octógono, 9 eneágono, 10 decágono, 12 dodecágono.</p><div class="ex"><b>Exemplo:</b> hexágono regular: S = 4 × 180 = 720°; cada ângulo = 120°; diagonais = 6·3/2 = 9.</div>',
+gen:function(r,i){var ns=[4,5,6,7,8,9,10,12,15,20];function nm(k){return POL[k]||'polígono de '+k+' lados';}return mix(i,[
+function(){var k=r.p(ns);return {q:'Qual é a soma dos ângulos internos de um '+nm(k)+' ('+k+' lados)?',a:n((k-2)*180)+'°',s:['S = (n − 2) × 180°.','S = ('+k+' − 2) × 180° = '+(k-2)+' × 180° = '+n((k-2)*180)+'°.']};},
+function(){var k=r.p([3,4,5,6,8,9,10,12,15,18,20]);return {q:'Quanto mede cada ângulo interno de um '+nm(k)+' regular?',a:n((k-2)*180/k)+'°',s:['Soma: ('+k+' − 2) × 180° = '+n((k-2)*180)+'°.','Divida igualmente entre os '+k+' ângulos: '+n((k-2)*180)+' ÷ '+k+' = '+n((k-2)*180/k)+'°.']};},
+function(){var k=r.p(ns.concat([3,11]));return {q:'Quantas diagonais tem um '+nm(k)+' ('+k+' lados)?',a:n(k*(k-3)/2),s:['d = n(n − 3) ÷ 2.','d = '+k+' × '+(k-3)+' ÷ 2 = '+(k*(k-3))+' ÷ 2 = '+n(k*(k-3)/2)+'.']};},
+function(){var k=r.p(ns);var S=(k-2)*180;return {q:'A soma dos ângulos internos de um polígono é '+n(S)+'°. Quantos lados ele tem?',a:k+' lados ('+nm(k)+')',s:['(n − 2) × 180 = '+n(S)+'.','n − 2 = '+n(S)+' ÷ 180 = '+(k-2)+'.','n = '+k+'.']};},
+function(){var k=r.p([3,4,5,6,8,9,10,12,15,18,20,24,36]);return {q:'Quanto mede cada ângulo externo de um polígono regular de '+k+' lados?',a:n(360/k)+'°',s:['Os externos sempre somam 360°.','360° ÷ '+k+' = '+n(360/k)+'°.']};}
+]);}});
+
+topic({id:'perimetro',nome:'Perímetro',ano:'6º ano',area:'Geometria',
+tags:'perímetro contorno soma dos lados cerca moldura',
+teoria:'<p><b>Perímetro</b> é a medida do <b>contorno</b> de uma figura: a soma de todos os lados.</p><ul><li>Quadrado de lado L: P = 4L.</li><li>Retângulo de lados a e b: P = 2a + 2b.</li><li>Polígono regular de n lados de medida L: P = n × L.</li><li>Triângulo: soma dos três lados.</li></ul><div class="ex"><b>Exemplo:</b> um terreno retangular de 12 m por 8 m precisa de 2·12 + 2·8 = 40 m de cerca.</div><p class="tip">Perímetro é medida de comprimento (m, cm); área é de superfície (m², cm²). Não confunda!</p>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(3,40),b=r.i(2,30);return {q:'Qual o perímetro de um retângulo de '+a+' cm por '+b+' cm?',a:(2*a+2*b)+' cm',s:['O retângulo tem dois lados de '+a+' e dois de '+b+'.','P = 2·'+a+' + 2·'+b+' = '+(2*a)+' + '+(2*b)+' = '+(2*a+2*b)+' cm.']};},
+function(){var L=r.i(2,50);return {q:'Um quadrado tem lado de '+L+' m. Qual o seu perímetro?',a:(4*L)+' m',s:['Quatro lados iguais: P = 4 × '+L+' = '+(4*L)+' m.']};},
+function(){var k=r.p([5,6,8,10,12]),L=r.i(2,15);return {q:'Qual o perímetro de um '+POL[k]+' regular de lado '+L+' cm?',a:(k*L)+' cm',s:['Um '+POL[k]+' tem '+k+' lados iguais.','P = '+k+' × '+L+' = '+(k*L)+' cm.']};},
+function(){var L=r.i(2,40);return {q:'O perímetro de um quadrado é '+(4*L)+' cm. Quanto mede cada lado?',a:L+' cm',s:['P = 4 × lado → '+(4*L)+' = 4 × lado.','Lado = '+(4*L)+' ÷ 4 = '+L+' cm.']};},
+function(){var a=r.i(10,60),b=r.i(5,40),v=r.p([3,4,5]);var P=2*(a+b);return {q:'Um terreno retangular mede '+a+' m por '+b+' m. Quero cercá-lo com '+v+' voltas de arame. Quantos metros de arame preciso?',a:(v*P)+' m',s:['Perímetro (uma volta): 2·'+a+' + 2·'+b+' = '+P+' m.','Para '+v+' voltas: '+v+' × '+P+' = '+(v*P)+' m.']};}
+]);}});
+
+topic({id:'areas',nome:'Área de figuras planas',ano:'7º ano',area:'Geometria',
+tags:'área retângulo quadrado triângulo paralelogramo trapézio losango metro quadrado',
+teoria:'<table class="t"><tr><td><b>Retângulo</b></td><td>A = base × altura</td></tr><tr><td><b>Quadrado</b></td><td>A = lado × lado = L²</td></tr><tr><td><b>Paralelogramo</b></td><td>A = base × altura</td></tr><tr><td><b>Triângulo</b></td><td>A = <span class="fr"><span>base × altura</span><span>2</span></span></td></tr><tr><td><b>Trapézio</b></td><td>A = <span class="fr"><span>(Base maior + base menor) × altura</span><span>2</span></span></td></tr><tr><td><b>Losango</b></td><td>A = <span class="fr"><span>Diagonal maior × diagonal menor</span><span>2</span></span></td></tr></table><p>A área é dada em unidades <b>quadradas</b>: cm², m², km².</p><div class="ex"><b>Exemplo:</b> triângulo de base 10 cm e altura 6 cm: A = 10 × 6 ÷ 2 = 30 cm².</div><p class="tip">A altura é sempre <b>perpendicular</b> (faz 90°) à base.</p>',
+gen:function(r,i){return mix(i,[
+function(){var b=r.i(2,30),h=r.i(2,25);return {q:'Calcule a área de um retângulo de base '+b+' cm e altura '+h+' cm.',a:(b*h)+' cm²',s:['A = base × altura.','A = '+b+' × '+h+' = '+(b*h)+' cm².']};},
+function(){var L=r.i(2,25);return {q:'Calcule a área de um quadrado de lado '+L+' m.',a:(L*L)+' m²',s:['A = lado × lado = '+L+' × '+L+' = '+(L*L)+' m².']};},
+function(){var b=r.i(2,30),h=r.i(2,20);return {q:'Calcule a área de um triângulo de base '+b+' cm e altura '+h+' cm.',a:n(b*h/2)+' cm²',s:['A = (base × altura) ÷ 2.','A = '+b+' × '+h+' ÷ 2 = '+(b*h)+' ÷ 2 = '+n(b*h/2)+' cm².']};},
+function(){var B=r.i(6,30),b=r.i(2,B-1),h=r.i(2,20);return {q:'Calcule a área de um trapézio de bases '+B+' cm e '+b+' cm e altura '+h+' cm.',a:n((B+b)*h/2)+' cm²',s:['A = (B + b) × h ÷ 2.','Some as bases: '+B+' + '+b+' = '+(B+b)+'.','Multiplique pela altura: '+(B+b)+' × '+h+' = '+((B+b)*h)+'.','Divida por 2: '+n((B+b)*h/2)+' cm².']};},
+function(){var D=r.i(4,30),d=r.i(2,D);return {q:'Calcule a área de um losango de diagonais '+D+' cm e '+d+' cm.',a:n(D*d/2)+' cm²',s:['A = (D × d) ÷ 2.','A = '+D+' × '+d+' ÷ 2 = '+(D*d)+' ÷ 2 = '+n(D*d/2)+' cm².']};},
+function(){var b=r.i(3,25),h=r.i(2,20);return {q:'Calcule a área de um paralelogramo de base '+b+' m e altura '+h+' m.',a:(b*h)+' m²',s:['A = base × altura (igual ao retângulo).','A = '+b+' × '+h+' = '+(b*h)+' m².']};},
+function(){var a=r.i(3,8),b=r.i(3,6),pr=r.p([30,40,45,50,60,80]);return {q:'Um quarto retangular mede '+a+' m por '+b+' m. O piso custa '+money(pr)+' o m². Quanto vou gastar?',a:money(a*b*pr),s:['Área do quarto: '+a+' × '+b+' = '+(a*b)+' m².','Custo: '+(a*b)+' × '+pr+' = '+money(a*b*pr)+'.']};}
+]);}});
+
+topic({id:'circunferencia-circulo',nome:'Circunferência e círculo: comprimento e área',ano:'8º ano',area:'Geometria',
+tags:'circunferência círculo raio diâmetro pi comprimento área do círculo',
+teoria:'<ul><li><b>Raio (r)</b>: do centro até a borda. <b>Diâmetro (d)</b>: atravessa passando pelo centro. <b>d = 2r</b>.</li><li><b>π (pi)</b> ≈ 3,14.</li><li><b>Comprimento da circunferência</b> (o contorno): <b>C = 2πr</b> (ou π·d).</li><li><b>Área do círculo</b> (a região de dentro): <b>A = πr²</b>.</li></ul><div class="ex"><b>Exemplo:</b> r = 5 cm → C = 2 × 3,14 × 5 = 31,4 cm; A = 3,14 × 25 = 78,5 cm².</div><p class="tip">Se o problema der o diâmetro, divida por 2 antes de usar na fórmula da área!</p>',
+gen:function(r,i){return mix(i,[
+function(){var R_=r.i(1,20);return {q:'Calcule o comprimento de uma circunferência de raio '+R_+' cm (use π = '+PI+').',a:n(rnd(2*3.14*R_,2))+' cm',s:['C = 2 × π × r.','C = 2 × '+PI+' × '+R_+' = '+n(rnd(2*3.14*R_,2))+' cm.']};},
+function(){var R_=r.i(1,15);return {q:'Calcule a área de um círculo de raio '+R_+' m (use π = '+PI+').',a:n(rnd(3.14*R_*R_,2))+' m²',s:['A = π × r².','r² = '+R_+' × '+R_+' = '+(R_*R_)+'.','A = '+PI+' × '+(R_*R_)+' = '+n(rnd(3.14*R_*R_,2))+' m².']};},
+function(){var R_=r.i(1,12),D=2*R_;return {q:'Uma pizza tem '+D+' cm de diâmetro. Qual a sua área? (π = '+PI+')',a:n(rnd(3.14*R_*R_,2))+' cm²',s:['Raio = metade do diâmetro: '+D+' ÷ 2 = '+R_+' cm.','A = '+PI+' × '+R_+'² = '+PI+' × '+(R_*R_)+' = '+n(rnd(3.14*R_*R_,2))+' cm².']};},
+function(){var R_=r.p([10,20,25,30,35,40]),v=r.p([10,50,100,500,1000]);var C=2*3.14*R_;return {q:'Uma roda de bicicleta tem raio de '+R_+' cm. Quantos metros a bicicleta anda quando a roda dá '+v+' voltas? (π = '+PI+')',a:n(rnd(C*v/100,2))+' m',s:['Uma volta = comprimento da roda: C = 2 × '+PI+' × '+R_+' = '+n(rnd(C,2))+' cm.',v+' voltas: '+n(rnd(C,2))+' × '+v+' = '+n(rnd(C*v,2))+' cm.','Em metros (÷ 100): '+n(rnd(C*v/100,2))+' m.']};}
+]);}});
+
+var TRIPLES=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29],[9,40,41]];
+topic({id:'pitagoras',nome:'Teorema de Pitágoras',ano:'9º ano',area:'Geometria',
+tags:'teorema de pitágoras triângulo retângulo hipotenusa catetos diagonal escada',
+teoria:'<p>Em todo <b>triângulo retângulo</b> (que tem um ângulo de 90°):</p><p class="big"><b>a² = b² + c²</b></p><p>“O quadrado da <b>hipotenusa</b> é igual à soma dos quadrados dos <b>catetos</b>.”</p><ul><li><b>Hipotenusa (a)</b>: o maior lado, fica de frente para o ângulo de 90°.</li><li><b>Catetos (b e c)</b>: os dois lados que formam o ângulo de 90°.</li><li>Achar a hipotenusa: some os quadrados e tire a raiz.</li><li>Achar um cateto: <b>subtraia</b> (hipotenusa² − cateto²) e tire a raiz.</li></ul><div class="ex"><b>Exemplo:</b> catetos 6 e 8: a² = 36 + 64 = 100 → a = 10.</div><p class="tip">Ternos famosos: 3-4-5, 5-12-13, 8-15-17 (e seus múltiplos: 6-8-10, 9-12-15…).</p>',
+gen:function(r,i){function tr(){var t=r.p(TRIPLES),k=t[2]>30?1:r.i(1,t[2]>15?2:4);return [t[0]*k,t[1]*k,t[2]*k];}return mix(i,[
+function(){var t=tr();return {q:'Os catetos de um triângulo retângulo medem '+t[0]+' cm e '+t[1]+' cm. Quanto mede a hipotenusa?',a:t[2]+' cm',s:['a² = b² + c² = '+t[0]+'² + '+t[1]+'².','a² = '+(t[0]*t[0])+' + '+(t[1]*t[1])+' = '+(t[2]*t[2])+'.','a = '+raiz(t[2]*t[2])+' = '+t[2]+' cm.']};},
+function(){var t=tr();return {q:'Num triângulo retângulo, a hipotenusa mede '+t[2]+' cm e um cateto mede '+t[0]+' cm. Quanto mede o outro cateto?',a:t[1]+' cm',s:['a² = b² + c² → '+t[2]+'² = '+t[0]+'² + c².',(t[2]*t[2])+' = '+(t[0]*t[0])+' + c² → c² = '+(t[2]*t[2])+' − '+(t[0]*t[0])+' = '+(t[1]*t[1])+'.','c = '+raiz(t[1]*t[1])+' = '+t[1]+' cm.']};},
+function(){var t=tr();return {q:'Uma escada de '+t[2]+' m está apoiada numa parede, com o pé a '+t[0]+' m da parede. A que altura ela toca a parede?',a:t[1]+' m',s:['Parede, chão e escada formam um triângulo retângulo; a escada é a hipotenusa.',t[2]+'² = '+t[0]+'² + h² → h² = '+(t[2]*t[2])+' − '+(t[0]*t[0])+' = '+(t[1]*t[1])+'.','h = '+t[1]+' m.']};},
+function(){var t=tr();return {q:'Qual a diagonal de um retângulo de '+t[0]+' cm por '+t[1]+' cm?',a:t[2]+' cm',s:['A diagonal divide o retângulo em dois triângulos retângulos; ela é a hipotenusa.','d² = '+(t[0]*t[0])+' + '+(t[1]*t[1])+' = '+(t[2]*t[2])+' → d = '+t[2]+' cm.']};},
+function(){var L=r.i(2,12);return {q:'Qual a diagonal de um quadrado de lado '+L+' cm?',a:L+'√2 cm',s:['d² = '+L+'² + '+L+'² = '+(L*L)+' + '+(L*L)+' = '+(2*L*L)+'.','d = '+raiz(2*L*L)+' = '+raiz(L*L+' × 2')+' = '+L+'√2 cm (≈ '+n(rnd(L*1.414,2))+' cm).']};},
+function(){var b=r.i(1,6),c=r.i(1,6);var s=b*b+c*c;var sr=simpRad(s);return {q:'Os catetos de um triângulo retângulo medem '+b+' e '+c+'. Quanto mede a hipotenusa?',a:rad(sr[0],sr[1]),s:['a² = '+b+'² + '+c+'² = '+(b*b)+' + '+(c*c)+' = '+s+'.','a = '+raiz(s)+(sr[0]>1&&sr[1]>1?' = '+rad(sr[0],sr[1]):'')+'.']};}
+]);}});
+
+topic({id:'tales-semelhanca',nome:'Teorema de Tales e semelhança de triângulos',ano:'9º ano',area:'Geometria',
+tags:'teorema de tales feixe de paralelas semelhança de triângulos proporcionalidade sombra',
+teoria:'<ul><li><b>Teorema de Tales</b>: um feixe de retas <b>paralelas</b> cortado por duas transversais determina segmentos <b>proporcionais</b>: <span class="fr"><span>AB</span><span>BC</span></span> = <span class="fr"><span>DE</span><span>EF</span></span>.</li><li><b>Triângulos semelhantes</b>: mesmos ângulos e lados proporcionais. A razão entre lados correspondentes é a <b>razão de semelhança</b> (k).</li><li>Se a razão entre os lados é k, a razão entre os perímetros também é k, e entre as áreas é k².</li></ul><div class="ex"><b>Exemplo (sombra):</b> um poste de 2 m faz sombra de 3 m; na mesma hora um prédio faz sombra de 18 m. <span class="fr"><span>h</span><span>18</span></span> = <span class="fr"><span>2</span><span>3</span></span> → 3h = 36 → h = 12 m.</div>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(2,10),b=r.i(2,10),k=r.i(2,4);var c=a*k,x=b*k;return {q:'Um feixe de paralelas determina, numa transversal, segmentos de '+a+' cm e '+b+' cm e, na outra, os segmentos correspondentes medem '+c+' cm e x. Quanto vale x?',a:'x = '+x+' cm',s:['Tales: '+F(a,b)+' = '+F(c,'x')+'.','Multiplique cruzado: '+a+'x = '+b+' × '+c+' = '+(b*c)+'.','x = '+(b*c)+' ÷ '+a+' = '+x+' cm.']};},
+function(){var hp=r.i(1,3),sp=r.i(2,4),k=r.i(3,10);var sP=sp*k,hP=hp*k;return {q:'Uma pessoa de '+hp+' m de altura projeta uma sombra de '+sp+' m. No mesmo instante, um prédio projeta uma sombra de '+sP+' m. Qual a altura do prédio?',a:hP+' m',s:['Os raios de sol são paralelos: os triângulos são semelhantes.',F('h',sP)+' = '+F(hp,sp)+'.',sp+'h = '+hp+' × '+sP+' = '+(hp*sP)+' → h = '+hP+' m.']};},
+function(){var a=r.i(2,9),b=r.i(2,9),c=r.i(2,9),k=r.i(2,4);return {q:'Um triângulo tem lados '+a+', '+b+' e '+c+' cm. Um triângulo semelhante a ele tem o menor lado medindo '+(Math.min(a,b,c)*k)+' cm. Quais as medidas dos outros lados?',a:[a,b,c].sort(function(x,y){return x-y;}).map(function(x){return x*k;}).join(', ')+' cm',s:['Razão de semelhança: '+(Math.min(a,b,c)*k)+' ÷ '+Math.min(a,b,c)+' = '+k+'.','Multiplique todos os lados por '+k+'.']};},
+function(){var k=r.i(2,5),A=r.i(3,20);return {q:'Dois triângulos são semelhantes com razão de semelhança '+k+'. Se a área do menor é '+A+' cm², qual a área do maior?',a:(A*k*k)+' cm²',s:['Áreas ficam multiplicadas por k² = '+k+'² = '+(k*k)+'.',A+' × '+(k*k)+' = '+(A*k*k)+' cm².']};}
+]);}});
+
+topic({id:'relacoes-metricas',nome:'Relações métricas no triângulo retângulo',ano:'9º ano',area:'Geometria',
+tags:'relações métricas triângulo retângulo altura projeções hipotenusa',
+teoria:'<p>Num triângulo retângulo, com <b>a</b> = hipotenusa, <b>b</b> e <b>c</b> = catetos, <b>h</b> = altura relativa à hipotenusa, <b>m</b> e <b>n</b> = projeções dos catetos c e b sobre a hipotenusa:</p><table class="t"><tr><td>a = m + n</td><td>h² = m · n</td></tr><tr><td>b² = a · n</td><td>c² = a · m</td></tr><tr><td>a · h = b · c</td><td>a² = b² + c² (Pitágoras)</td></tr></table><div class="ex"><b>Exemplo:</b> m = 9 e n = 16 → h² = 144 → h = 12; a = 25; c² = 25·9 = 225 → c = 15.</div>',
+gen:function(r,i){var S=r.p([[25,20,15,16,9,12],[50,40,30,32,18,24],[169,156,65,144,25,60],[10,8,6,6.4,3.6,4.8],[100,80,60,64,36,48]]);var a=S[0],b=S[1],c=S[2],nn=S[3],m=S[4],h=S[5];return mix(i,[
+function(){return {q:'Num triângulo retângulo, as projeções dos catetos sobre a hipotenusa medem m = '+n(m)+' e n = '+n(nn)+'. Calcule a altura h.',a:'h = '+n(h),s:['Use h² = m · n.','h² = '+n(m)+' × '+n(nn)+' = '+n(m*nn)+'.','h = '+raiz(n(m*nn))+' = '+n(h)+'.']};},
+function(){return {q:'Num triângulo retângulo, a hipotenusa mede '+n(a)+' e a projeção do cateto c sobre ela mede m = '+n(m)+'. Calcule c.',a:'c = '+n(c),s:['Use c² = a · m.','c² = '+n(a)+' × '+n(m)+' = '+n(a*m)+'.','c = '+raiz(n(a*m))+' = '+n(c)+'.']};},
+function(){return {q:'Os catetos de um triângulo retângulo medem '+n(b)+' e '+n(c)+', e a hipotenusa mede '+n(a)+'. Calcule a altura relativa à hipotenusa.',a:'h = '+n(h),s:['Use a · h = b · c.',n(a)+' · h = '+n(b)+' × '+n(c)+' = '+n(b*c)+'.','h = '+n(b*c)+' ÷ '+n(a)+' = '+n(h)+'.']};},
+function(){return {q:'Num triângulo retângulo, a hipotenusa mede '+n(a)+' e o cateto b mede '+n(b)+'. Calcule a projeção n desse cateto.',a:'n = '+n(nn),s:['Use b² = a · n.',n(b)+'² = '+n(a)+' · n → '+n(b*b)+' = '+n(a)+' · n.','n = '+n(b*b)+' ÷ '+n(a)+' = '+n(nn)+'.']};},
+function(){return {q:'As projeções dos catetos sobre a hipotenusa medem '+n(m)+' e '+n(nn)+'. Quanto mede a hipotenusa?',a:'a = '+n(a),s:['A hipotenusa é a soma das projeções: a = m + n.','a = '+n(m)+' + '+n(nn)+' = '+n(a)+'.']};}
+]);}});
+
+topic({id:'trigonometria',nome:'Razões trigonométricas: seno, cosseno e tangente',ano:'9º ano',area:'Geometria',
+tags:'trigonometria seno cosseno tangente ângulos notáveis 30 45 60 triângulo retângulo',
+teoria:'<p>No triângulo retângulo, para um ângulo agudo α:</p><table class="t"><tr><td><b>sen α</b></td><td><span class="fr"><span>cateto oposto</span><span>hipotenusa</span></span></td></tr><tr><td><b>cos α</b></td><td><span class="fr"><span>cateto adjacente</span><span>hipotenusa</span></span></td></tr><tr><td><b>tg α</b></td><td><span class="fr"><span>cateto oposto</span><span>cateto adjacente</span></span></td></tr></table><p>Macete: <b>SOH-CAH-TOA</b> (Seno = Oposto/Hipotenusa, Cosseno = Adjacente/Hipotenusa, Tangente = Oposto/Adjacente).</p><table class="t"><tr><th></th><th>30°</th><th>45°</th><th>60°</th></tr><tr><td>sen</td><td>1/2</td><td>√2/2</td><td>√3/2</td></tr><tr><td>cos</td><td>√3/2</td><td>√2/2</td><td>1/2</td></tr><tr><td>tg</td><td>√3/3</td><td>1</td><td>√3</td></tr></table>',
+gen:function(r,i){return mix(i,[
+function(){var t=r.p(TRIPLES.slice(0,4));var w=r.p(['sen','cos','tg']);var op=t[0],ad=t[1],hi=t[2];var v=w==='sen'?Q(op,hi):w==='cos'?Q(ad,hi):Q(op,ad);return {q:'Num triângulo retângulo, o ângulo α tem cateto oposto '+op+', cateto adjacente '+ad+' e hipotenusa '+hi+'. Calcule '+w+' α.',a:FQ(v),s:[w==='sen'?'sen = oposto ÷ hipotenusa = '+F(op,hi)+'.':w==='cos'?'cos = adjacente ÷ hipotenusa = '+F(ad,hi)+'.':'tg = oposto ÷ adjacente = '+F(op,ad)+'.']};},
+function(){var H=2*r.i(2,15);return {q:'Num triângulo retângulo, a hipotenusa mede '+H+' cm e um ângulo agudo mede 30°. Quanto mede o cateto oposto a esse ângulo?',a:(H/2)+' cm',s:['sen 30° = oposto ÷ hipotenusa.',F(1,2)+' = '+F('x',H)+'.','x = '+H+' ÷ 2 = '+(H/2)+' cm.']};},
+function(){var H=2*r.i(2,15);return {q:'Num triângulo retângulo, a hipotenusa mede '+H+' cm e um ângulo agudo mede 60°. Quanto mede o cateto oposto a esse ângulo?',a:(H/2)+'√3 cm',s:['sen 60° = oposto ÷ hipotenusa.',F('√3',2)+' = '+F('x',H)+'.','x = '+H+' × √3 ÷ 2 = '+(H/2)+'√3 cm (≈ '+n(rnd(H/2*1.732,2))+' cm).']};},
+function(){var d=r.i(3,40);return {q:'Do chão, a '+d+' m de uma árvore, vejo o topo dela sob um ângulo de 45°. Qual a altura da árvore?',a:d+' m',s:['tg 45° = altura ÷ distância.','1 = '+F('h',d)+' → h = '+d+' m.']};},
+function(){var L=2*r.i(2,20);return {q:'Uma rampa de '+L+' m de comprimento faz um ângulo de 30° com o chão. Que altura ela atinge?',a:(L/2)+' m',s:['A rampa é a hipotenusa; a altura é o cateto oposto ao ângulo de 30°.','sen 30° = h ÷ '+L+' → '+F(1,2)+' = '+F('h',L)+'.','h = '+(L/2)+' m.']};},
+function(){var a=r.i(2,20);return {q:'Num triângulo retângulo, um ângulo agudo mede 60° e o cateto adjacente a ele mede '+a+' cm. Quanto mede a hipotenusa?',a:(2*a)+' cm',s:['cos 60° = adjacente ÷ hipotenusa.',F(1,2)+' = '+F(a,'H')+'.','H = '+a+' × 2 = '+(2*a)+' cm.']};}
+]);}});
+
+topic({id:'volume',nome:'Volume e capacidade',ano:'7º ano',area:'Geometria',
+tags:'volume cubo paralelepípedo prisma cilindro capacidade litros metro cúbico',
+teoria:'<ul><li><b>Paralelepípedo (caixa)</b>: V = comprimento × largura × altura.</li><li><b>Cubo</b> de aresta a: V = a³.</li><li><b>Prisma</b> qualquer: V = área da base × altura.</li><li><b>Cilindro</b>: V = π r² × h.</li><li>Volume é medido em unidades <b>cúbicas</b>: cm³, m³.</li></ul><p><b>Relação com litros:</b></p><ul><li>1 dm³ = 1 L</li><li>1 m³ = 1.000 L</li><li>1 cm³ = 1 mL</li></ul><div class="ex"><b>Exemplo:</b> caixa-d’água de 2 m × 1 m × 1,5 m: V = 3 m³ = 3.000 L.</div>',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(2,20),b=r.i(2,15),c=r.i(2,12);return {q:'Calcule o volume de um paralelepípedo de '+a+' cm × '+b+' cm × '+c+' cm.',a:(a*b*c)+' cm³',s:['V = comprimento × largura × altura.','V = '+a+' × '+b+' × '+c+' = '+(a*b)+' × '+c+' = '+(a*b*c)+' cm³.']};},
+function(){var a=r.i(2,12);return {q:'Calcule o volume de um cubo de aresta '+a+' cm.',a:(a*a*a)+' cm³',s:['V = a³ = '+a+' × '+a+' × '+a+' = '+(a*a*a)+' cm³.']};},
+function(){var a=r.p([1,2,3]),b=r.p([1,2]),c=r.p([0.5,1,1.5,2]);var V=a*b*c;return {q:'Uma caixa-d’água tem a forma de um paralelepípedo de '+n(a)+' m × '+n(b)+' m × '+n(c)+' m. Quantos litros ela comporta?',a:n(V*1000)+' L',s:['V = '+n(a)+' × '+n(b)+' × '+n(c)+' = '+n(V)+' m³.','1 m³ = 1.000 L → '+n(V)+' × 1.000 = '+n(V*1000)+' L.']};},
+function(){var R_=r.i(1,10),h=r.i(2,20);var V=rnd(3.14*R_*R_*h,2);return {q:'Calcule o volume de um cilindro de raio '+R_+' cm e altura '+h+' cm (π = '+PI+').',a:n(V)+' cm³',s:['V = π × r² × h.','r² = '+(R_*R_)+'.','V = '+PI+' × '+(R_*R_)+' × '+h+' = '+n(V)+' cm³.']};},
+function(){var b=r.i(2,12),hb=r.i(2,10),H=r.i(2,20);var Ab=b*hb/2;return {q:'Um prisma tem base triangular (base '+b+' cm e altura '+hb+' cm) e altura '+H+' cm. Qual o seu volume?',a:n(Ab*H)+' cm³',s:['Área da base (triângulo): '+b+' × '+hb+' ÷ 2 = '+n(Ab)+' cm².','V = área da base × altura = '+n(Ab)+' × '+H+' = '+n(Ab*H)+' cm³.']};},
+function(){var mL=r.i(1,30)*100;return {q:'Um recipiente tem '+n(mL)+' cm³. Quantos litros cabem nele?',a:n(mL/1000)+' L',s:['1 cm³ = 1 mL e 1 L = 1.000 mL.',n(mL)+' mL ÷ 1.000 = '+n(mL/1000)+' L.']};}
+]);}});
+
+topic({id:'unidades-medida',nome:'Unidades de medida e conversões',ano:'6º ano',area:'Grandezas e medidas',
+tags:'unidades de medida conversão metro centímetro quilômetro grama quilo litro mililitro tempo horas minutos metro quadrado',
+teoria:'<p><b>Comprimento</b>: km – hm – dam – <b>m</b> – dm – cm – mm. Cada passo para a direita <b>× 10</b>; para a esquerda <b>÷ 10</b>.</p><p><b>Massa</b>: kg – hg – dag – <b>g</b> – dg – cg – mg (mesma regra). 1 t = 1.000 kg.</p><p><b>Capacidade</b>: kL – hL – daL – <b>L</b> – dL – cL – mL. 1 L = 1.000 mL.</p><p><b>Área</b>: cada passo vale <b>× 100</b> (1 m² = 10.000 cm²).</p><p><b>Tempo</b>: 1 h = 60 min; 1 min = 60 s; 1 dia = 24 h.</p><div class="ex"><b>Exemplo:</b> 3,5 km em metros: km → m são 3 passos para a direita → × 1000 → 3.500 m.</div>',
+gen:function(r,i){var C=[['km','m',1000],['m','cm',100],['m','mm',1000],['cm','mm',10],['km','cm',100000]],M=[['kg','g',1000],['g','mg',1000],['t','kg',1000]],L=[['L','mL',1000]];
+function conv(set,lbl){var u=r.p(set),big=r.f()<0.5;var x=big?r.i(1,999)/r.p([1,10,100]):r.i(1,99)*r.p([10,100,1000]);if(big){var res=rnd(x*u[2],4);return {q:'Converta '+n(x)+' '+u[0]+' em '+u[1]+'.',a:n(res)+' '+u[1],s:['De '+u[0]+' para '+u[1]+' a unidade fica menor, então o número fica maior: multiplique por '+n(u[2])+'.',n(x)+' × '+n(u[2])+' = '+n(res)+' '+u[1]+'.']};}
+ var res2=rnd(x/u[2],6);return {q:'Converta '+n(x)+' '+u[1]+' em '+u[0]+'.',a:n(res2,6)+' '+u[0],s:['De '+u[1]+' para '+u[0]+' a unidade fica maior, então o número fica menor: divida por '+n(u[2])+'.',n(x)+' ÷ '+n(u[2])+' = '+n(res2,6)+' '+u[0]+'.']};}
+return mix(i,[
+function(){return conv(C);},function(){return conv(M);},function(){return conv(L);},
+function(){var x=r.i(1,30);return {q:'Quantos cm² há em '+x+' m²?',a:n(x*10000)+' cm²',s:['1 m = 100 cm, então 1 m² = 100 × 100 = 10.000 cm².',x+' × 10.000 = '+n(x*10000)+' cm².']};},
+function(){var h=r.i(1,5),m=r.i(1,59);return {q:'Quantos minutos há em '+h+' h '+m+' min?',a:(h*60+m)+' min',s:[h+' h = '+h+' × 60 = '+(h*60)+' min.',(h*60)+' + '+m+' = '+(h*60+m)+' min.']};},
+function(){var t=r.i(61,400);return {q:'Escreva '+t+' minutos em horas e minutos.',a:Math.floor(t/60)+' h '+(t%60)+' min',s:[t+' ÷ 60 = '+Math.floor(t/60)+' e sobram '+(t%60)+'.','Então: '+Math.floor(t/60)+' h e '+(t%60)+' min.']};}
+]);}});
+
+topic({id:'plano-cartesiano',nome:'Plano cartesiano: quadrantes, distância e ponto médio',ano:'9º ano',area:'Geometria',
+tags:'plano cartesiano coordenadas par ordenado quadrante distância entre pontos ponto médio eixo x eixo y',
+teoria:'<ul><li>Um ponto é dado por um <b>par ordenado (x, y)</b>: primeiro anda no eixo horizontal (x), depois no vertical (y).</li><li><b>Quadrantes</b> (no sentido anti-horário a partir do canto superior direito): 1º (+, +); 2º (−, +); 3º (−, −); 4º (+, −). Pontos sobre os eixos não estão em quadrante.</li><li><b>Ponto médio</b> de A(x₁, y₁) e B(x₂, y₂): M = (<span class="fr"><span>x₁ + x₂</span><span>2</span></span>, <span class="fr"><span>y₁ + y₂</span><span>2</span></span>).</li><li><b>Distância</b> entre A e B (vem de Pitágoras): d = √[(x₂ − x₁)² + (y₂ − y₁)²].</li></ul><div class="ex"><b>Exemplo:</b> A(1, 2) e B(4, 6): d = √(3² + 4²) = √25 = 5.</div>',
+gen:function(r,i){return mix(i,[
+function(){var x=r.nz(-9,9),y=r.nz(-9,9);var q=x>0&&y>0?'1º':x<0&&y>0?'2º':x<0&&y<0?'3º':'4º';return {q:'Em que quadrante está o ponto ('+n(x)+', '+n(y)+')?',a:q+' quadrante',s:['x é '+(x>0?'positivo':'negativo')+' e y é '+(y>0?'positivo':'negativo')+'.','('+(x>0?'+':'−')+', '+(y>0?'+':'−')+') → '+q+' quadrante.']};},
+function(){var x1=r.i(-8,8),y1=r.i(-8,8),x2=r.i(-8,8),y2=r.i(-8,8);var mx=Q(x1+x2,2),my=Q(y1+y2,2);return {q:'Encontre o ponto médio entre A('+n(x1)+', '+n(y1)+') e B('+n(x2)+', '+n(y2)+').',a:'M('+FQ(mx)+', '+FQ(my)+')',s:['x do ponto médio: ('+n(x1)+' + '+p(x2)+') ÷ 2 = '+n(x1+x2)+' ÷ 2 = '+FQ(mx)+'.','y do ponto médio: ('+n(y1)+' + '+p(y2)+') ÷ 2 = '+n(y1+y2)+' ÷ 2 = '+FQ(my)+'.']};},
+function(){var t=r.p(TRIPLES.slice(0,3)),k=r.i(1,2),dx=t[0]*k*r.s(),dy=t[1]*k*r.s();if(r.f()<0.5){var tmp=dx;dx=dy;dy=tmp;}var x1=r.i(-6,6),y1=r.i(-6,6);var x2=x1+dx,y2=y1+dy;return {q:'Calcule a distância entre A('+n(x1)+', '+n(y1)+') e B('+n(x2)+', '+n(y2)+').',a:(t[2]*k)+'',s:['Diferença em x: '+n(x2)+' − '+p(x1)+' = '+n(dx)+'. Diferença em y: '+n(y2)+' − '+p(y1)+' = '+n(dy)+'.','d = √['+p(dx)+'² + '+p(dy)+'²] = √['+(dx*dx)+' + '+(dy*dy)+'] = '+raiz(dx*dx+dy*dy)+' = '+(t[2]*k)+'.']};},
+function(){var x=r.nz(-9,9),y=r.nz(-9,9),e=r.p(['eixo x','eixo y','origem']);var s=e==='eixo x'?[x,-y]:e==='eixo y'?[-x,y]:[-x,-y];return {q:'Qual é o simétrico do ponto ('+n(x)+', '+n(y)+') em relação '+(e==='origem'?'à origem':'ao '+e)+'?',a:'('+n(s[0])+', '+n(s[1])+')',s:[e==='eixo x'?'Reflexão no eixo x: o x fica, o y troca de sinal.':e==='eixo y'?'Reflexão no eixo y: o y fica, o x troca de sinal.':'Em relação à origem: os dois trocam de sinal.']};}
+]);}});
+
+topic({id:'media-moda-mediana',nome:'Estatística: média, moda e mediana',ano:'8º ano',area:'Estatística e probabilidade',
+tags:'estatística média aritmética moda mediana média ponderada amplitude',
+teoria:'<ul><li><b>Média aritmética</b>: soma todos os valores e divide pela quantidade.</li><li><b>Média ponderada</b>: multiplica cada valor pelo seu peso, soma tudo e divide pela soma dos pesos.</li><li><b>Moda</b>: o valor que mais aparece (pode não existir ou haver mais de uma).</li><li><b>Mediana</b>: coloque em <b>ordem crescente</b>; é o valor do meio. Se a quantidade for par, é a média dos dois do meio.</li><li><b>Amplitude</b>: maior valor − menor valor.</li></ul><div class="ex"><b>Exemplo:</b> 3, 7, 7, 8, 10: média = 35 ÷ 5 = 7; moda = 7; mediana = 7; amplitude = 7.</div>',
+gen:function(r,i){function data(k){var a=[];for(var t=0;t<k;t++)a.push(r.i(1,20));return a;}return mix(i,[
+function(){var k=r.i(4,7),d=data(k);var s=d.reduce(function(a,b){return a+b;},0);var adj=(k-s%k)%k;d[0]+=adj;s+=adj;return {q:'Calcule a média aritmética de: '+d.join(', ')+'.',a:n(s/k),s:['Some tudo: '+d.join(' + ')+' = '+s+'.','Divida pela quantidade ('+k+'): '+s+' ÷ '+k+' = '+n(s/k)+'.']};},
+function(){var k=r.p([5,7,9]),d=data(k);var o=d.slice().sort(function(a,b){return a-b;});return {q:'Encontre a mediana de: '+d.join(', ')+'.',a:n(o[(k-1)/2]),s:['Ordene: '+o.join(', ')+'.','São '+k+' valores; o do meio é o '+((k+1)/2)+'º: '+o[(k-1)/2]+'.']};},
+function(){var k=r.p([4,6,8]),d=data(k);var o=d.slice().sort(function(a,b){return a-b;});var m=(o[k/2-1]+o[k/2])/2;return {q:'Encontre a mediana de: '+d.join(', ')+'.',a:n(m),s:['Ordene: '+o.join(', ')+'.','Quantidade par ('+k+'): pegue os dois do meio, '+o[k/2-1]+' e '+o[k/2]+'.','Média deles: ('+o[k/2-1]+' + '+o[k/2]+') ÷ 2 = '+n(m)+'.']};},
+function(){var mo=r.i(1,15),d=[mo,mo,mo];while(d.length<7){var x=r.i(1,15);if(x!==mo&&d.filter(function(y){return y===x;}).length<2)d.push(x);}d=r.sh(d);return {q:'Qual é a moda de: '+d.join(', ')+'?',a:n(mo),s:['O '+mo+' aparece 3 vezes, mais que qualquer outro.']};},
+function(){var ns=[r.i(3,10),r.i(3,10),r.i(3,10)],ws=r.p([[1,2,3],[2,3,5],[1,1,2],[3,3,4]]);var s=ns[0]*ws[0]+ns[1]*ws[1]+ns[2]*ws[2],W=ws[0]+ws[1]+ws[2];return {q:'Um aluno tirou '+ns.join(', ')+' em provas com pesos '+ws.join(', ')+'. Qual a média ponderada?',a:n(rnd(s/W,2)),s:['Multiplique cada nota pelo peso: '+ns.map(function(x,k){return x+'×'+ws[k];}).join(' + ')+' = '+s+'.','Some os pesos: '+W+'.','Média: '+s+' ÷ '+W+' = '+n(rnd(s/W,2))+'.']};},
+function(){var k=r.i(5,8),d=data(k);var mx=Math.max.apply(null,d),mn=Math.min.apply(null,d);return {q:'Qual a amplitude dos dados: '+d.join(', ')+'?',a:n(mx-mn),s:['Maior valor: '+mx+'; menor: '+mn+'.','Amplitude: '+mx+' − '+mn+' = '+(mx-mn)+'.']};}
+]);}});
+
+topic({id:'probabilidade',nome:'Probabilidade',ano:'8º ano',area:'Estatística e probabilidade',
+tags:'probabilidade chance dado moeda urna evento espaço amostral',
+teoria:'<p><b>Probabilidade</b> de um evento:</p><p class="big">P = <span class="fr"><span>casos favoráveis</span><span>casos possíveis</span></span></p><ul><li>Vai de 0 (impossível) a 1 (certo). Em porcentagem: de 0% a 100%.</li><li><b>Espaço amostral</b>: todos os resultados possíveis. Dado: {1, 2, 3, 4, 5, 6}.</li><li>Eventos independentes (um não interfere no outro), "e": <b>multiplique</b> as probabilidades.</li><li>Probabilidade de <b>não</b> acontecer: 1 − P.</li></ul><div class="ex"><b>Exemplo:</b> tirar número par num dado: {2, 4, 6} → <span class="fr"><span>3</span><span>6</span></span> = <span class="fr"><span>1</span><span>2</span></span> = 50%.</div>',
+gen:function(r,i){function pct(q){var v=q.n/q.d*100;return Math.abs(v-rnd(v,1))<1e-9?' = '+n(rnd(v,1))+'%':'';}return mix(i,[
+function(){var evs=[['um número par',[2,4,6]],['um número ímpar',[1,3,5]],['um número primo',[2,3,5]],['um número maior que 4',[5,6]],['um número menor que 3',[1,2]],['um múltiplo de 3',[3,6]],['o número 6',[6]],['um número maior que 1',[2,3,4,5,6]]];var e=r.p(evs);var q=Q(e[1].length,6);return {q:'Ao lançar um dado comum, qual a probabilidade de sair '+e[0]+'?',a:FQ(q)+pct(q),s:['Casos possíveis: {1, 2, 3, 4, 5, 6} → 6.','Casos favoráveis: {'+e[1].join(', ')+'} → '+e[1].length+'.','P = '+F(e[1].length,6)+(q.d!==6?' = '+FQ(q):'')+pct(q)+'.']};},
+function(){var b=r.i(1,10),v=r.i(1,10),g=r.i(0,6);var T=b+v+g;var c=r.p(['azul','vermelha']);var cp=c==='azul'?'azuis':'vermelhas';var fav=c==='azul'?b:v;var q=Q(fav,T);return {q:'Numa urna há '+b+' bolas azuis, '+v+' vermelhas'+(g?' e '+g+' verdes':'')+'. Tirando uma bola ao acaso, qual a probabilidade de ser '+c+'?',a:FQ(q)+pct(q),s:['Total de bolas: '+b+' + '+v+(g?' + '+g:'')+' = '+T+'.','Bolas '+cp+': '+fav+'.','P = '+F(fav,T)+(q.d!==T?' = '+FQ(q):'')+pct(q)+'.']};},
+function(){var k=r.i(2,3);var q=Q(1,Math.pow(2,k));return {q:'Lançando '+k+' moedas, qual a probabilidade de saírem '+k+' caras?',a:FQ(q)+pct(q),s:['Cada moeda: P(cara) = '+F(1,2)+'.','As moedas são independentes: multiplique. '+Array(k).fill(F(1,2)).join(' × ')+' = '+FQ(q)+pct(q)+'.']};},
+function(){var s=r.i(2,12);var c=0;for(var a=1;a<=6;a++)for(var b=1;b<=6;b++)if(a+b===s)c++;var q=Q(c,36);return {q:'Lançando dois dados, qual a probabilidade de a soma ser '+s+'?',a:FQ(q),s:['Casos possíveis: 6 × 6 = 36.','Pares que somam '+s+': '+(function(){var L=[];for(var a=1;a<=6;a++)for(var b=1;b<=6;b++)if(a+b===s)L.push('('+a+','+b+')');return L.join(', ');})()+' → '+c+'.','P = '+F(c,36)+(q.d!==36?' = '+FQ(q):'')+'.']};},
+function(){var pp=r.p([10,20,25,30,40,60,70,75,80,90]);return {q:'A probabilidade de chover amanhã é de '+pp+'%. Qual a probabilidade de não chover?',a:(100-pp)+'%',s:['P(não acontecer) = 100% − P(acontecer).','100% − '+pp+'% = '+(100-pp)+'%.']};}
+]);}});
+
+topic({id:'contagem',nome:'Contagem: princípio multiplicativo',ano:'8º ano',area:'Estatística e probabilidade',
+tags:'contagem princípio fundamental da contagem combinações possibilidades anagramas senhas árvore de possibilidades',
+teoria:'<p><b>Princípio multiplicativo</b>: se uma escolha pode ser feita de <b>m</b> maneiras e outra, independente, de <b>n</b> maneiras, as duas juntas podem ser feitas de <b>m × n</b> maneiras.</p><ul><li>Desenhe “tracinhos” para cada etapa e escreva quantas opções há em cada uma; depois multiplique.</li><li><b>Sem repetição</b>: a cada etapa sobra uma opção a menos.</li><li><b>Anagramas</b> de palavra com letras diferentes: n × (n − 1) × … × 1 = n! (fatorial).</li></ul><div class="ex"><b>Exemplo:</b> 3 camisetas e 4 bermudas → 3 × 4 = 12 combinações de roupa.<br>Senhas de 3 algarismos distintos: 10 × 9 × 8 = 720.</div>',
+gen:function(r,i){var words=['AMOR','GATO','LIVRO','PRATO','MESA','CASA','BOLA','LUZ','CAFE','SOL','PERNA','NUVEM'];function fat(k){var f=1;for(var t=2;t<=k;t++)f*=t;return f;}return mix(i,[
+function(){var a=r.i(2,8),b=r.i(2,8),c=r.i(1,5);return {q:'Tenho '+a+' camisetas, '+b+' calças e '+c+' par(es) de tênis. De quantas maneiras diferentes posso me vestir?',a:n(a*b*c),s:['Cada peça é uma etapa independente.','Multiplique: '+a+' × '+b+' × '+c+' = '+(a*b*c)+'.']};},
+function(){var k=r.i(2,4),rep=r.f()<0.5;var t=1,parts=[];for(var j=0;j<k;j++){var o=rep?10:10-j;t*=o;parts.push(o);}return {q:'Quantas senhas de '+k+' algarismos podem ser formadas '+(rep?'(podendo repetir algarismos)':'com algarismos todos diferentes')+'?',a:n(t),s:['Há 10 algarismos (0 a 9).',rep?'Cada posição tem 10 opções.':'A cada posição sobra uma opção a menos: '+parts.join(', ')+'.',parts.join(' × ')+' = '+n(t)+'.']};},
+function(){var w=r.p(words);var L=w.length;return {q:'Quantos anagramas tem a palavra '+w+'?',a:n(fat(L)),s:['A palavra tem '+L+' letras, todas diferentes.','1ª posição: '+L+' opções, 2ª: '+(L-1)+', e assim por diante.',Array.from({length:L},function(_,t){return L-t;}).join(' × ')+' = '+n(fat(L))+'.']};},
+function(){var e=r.i(2,5),p_=r.i(2,6),s=r.i(2,4);return {q:'Um restaurante oferece '+e+' entradas, '+p_+' pratos principais e '+s+' sobremesas. Quantas refeições diferentes (entrada + prato + sobremesa) posso montar?',a:n(e*p_*s),s:['Uma escolha de cada: '+e+' × '+p_+' × '+s+' = '+(e*p_*s)+'.']};},
+function(){var k=r.i(4,12);return {q:'Numa reunião com '+k+' pessoas, cada uma aperta a mão de todas as outras uma única vez. Quantos apertos de mão acontecem?',a:n(k*(k-1)/2),s:['Cada pessoa aperta a mão de '+(k-1)+' outras: '+k+' × '+(k-1)+' = '+(k*(k-1))+'.','Mas assim cada aperto foi contado duas vezes (A com B e B com A): ÷ 2.',(k*(k-1))+' ÷ 2 = '+(k*(k-1)/2)+'.']};}
+]);}});
+
+</script>
+<script>
+(function(){
+var view=document.getElementById('view'),qInput=document.getElementById('q'),chips=document.getElementById('chips');
+var ANOS=['Todos','6º ano','7º ano','8º ano','9º ano'],anoSel='Todos';
+var AREAS=['Números','Álgebra','Geometria','Grandezas e medidas','Estatística e probabilidade'];
+var state={id:null,tab:'teoria',mode:'quiz',seed:0,idx:0,shown:{},seen:{}};
+function norm(s){return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/<[^>]+>/g,' ');}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function steps(s){if(!s)return [];if(Array.isArray(s))return s;return String(s).split(/(?<=\.)\s+(?=[A-ZÀ-Ú0-9(√−\[])/);}
+ANOS.forEach(function(a){var b=document.createElement('button');b.className='chip';b.textContent=a;b.setAttribute('aria-pressed',a===anoSel);b.onclick=function(){anoSel=a;[].forEach.call(chips.children,function(c){c.setAttribute('aria-pressed',c.textContent===a);});if(state.id){location.hash='';}else renderHome();};chips.appendChild(b);});
+qInput.addEventListener('input',function(){if(state.id){history.replaceState(null,'',location.pathname);state.id=null;}renderHome();});
+qInput.addEventListener('keydown',function(e){if(e.key==='Enter'){var f=filtered();if(f.length===1)location.hash=f[0].id;}});
+function filtered(){var q=norm(qInput.value.trim());var words=q.split(/\s+/).filter(Boolean);
+ return TOPICS.filter(function(t){if(anoSel!=='Todos'&&t.ano!==anoSel)return false;if(!words.length)return true;var hay=norm(t.nome+' '+t.tags+' '+t.area+' '+t.ano);return words.every(function(w){return hay.indexOf(w)>=0;});});}
+function renderHome(){
+ state.id=null;var f=filtered();
+ if(!f.length){view.innerHTML='<p class="empty">Nenhum assunto encontrado para “'+esc(qInput.value)+'”. Tente outra palavra (ex.: fração, equação, área).</p>';return;}
+ var html='';AREAS.forEach(function(a){var L=f.filter(function(t){return t.area===a;});if(!L.length)return;
+  html+='<section class="area"><h2>'+a+' <span style="font-weight:600">('+L.length+')</span></h2><div class="grid">'+L.map(function(t){return '<a class="tcard" href="#'+t.id+'"><span class="badge">'+t.ano+'</span><b>'+t.nome+'</b></a>';}).join('')+'</div></section>';});
+ view.innerHTML='<p style="margin:0;color:var(--muted);font-weight:600">'+f.length+' assunto(s)'+(qInput.value?' para “'+esc(qInput.value)+'”':'')+'. Toque em um para ver a teoria e os exercícios.</p>'+html;
+}
+var cache={};
+function getList(t,seed){var k=t.id+'|'+seed;if(!cache[k])cache[k]=lista(t,seed);return cache[k];}
+function renderTopic(){
+ var t=TOPICS.filter(function(x){return x.id===state.id;})[0];if(!t){location.hash='';return;}
+ var L=getList(t,state.seed);
+ var h='<a class="back noprint" href="#">← Todos os assuntos</a><div class="thead"><span class="badge">'+t.ano+'</span> <span class="badge" style="background:#E8ECF6">'+t.area+'</span><h1>'+t.nome+'</h1></div>';
+ h+='<div class="tabs" role="tablist"><button class="tab" role="tab" data-tab="teoria" aria-selected="'+(state.tab==='teoria')+'">1. Teoria</button><button class="tab" role="tab" data-tab="ex" aria-selected="'+(state.tab==='ex')+'">2. Exercícios (20)</button></div>';
+ if(state.tab==='teoria'){
+  h+='<div class="panel teoria">'+t.teoria+'</div><div class="toolbar"><span></span><button class="btn primary" data-go="ex">Ir para os exercícios →</button></div>';
+ }else{
+  h+='<div class="toolbar"><div class="seg" role="group" aria-label="Modo"><button data-mode="quiz" aria-pressed="'+(state.mode==='quiz')+'">Quiz</button><button data-mode="gab" aria-pressed="'+(state.mode==='gab')+'">Com gabarito</button></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="listinfo">Lista '+(state.seed+1)+'</span>'+(state.seed>0?'<button class="btn" data-seed="-1">← Anterior</button>':'')+'<button class="btn gold" data-seed="1">Nova lista ↻</button>'+(state.mode==='gab'?'<button class="btn" data-print="1">Imprimir</button>':'')+'</div></div>';
+  if(state.mode==='quiz'){
+   var i=state.idx,g=L[i],shown=!!state.shown[i];state.seen[i]=1;
+   h+='<div class="panel quiz"><div class="qnum">QUESTÃO '+(i+1)+' DE '+L.length+'</div><div class="progress"><i style="width:'+((i+1)/L.length*100)+'%"></i></div><div class="qtext">'+g.q+'</div>';
+   h+=shown?ansHTML(g):'<div style="margin-top:22px"><button class="btn primary" data-reveal="1">Mostrar resposta</button></div>';
+   h+='<div class="qnav"><button class="btn" data-nav="-1" '+(i===0?'disabled':'')+'>← Anterior</button><button class="btn '+(shown?'primary':'')+'" data-nav="1" '+(i===L.length-1?'disabled':'')+'>Próxima →</button></div>';
+   h+='<div class="dots" aria-label="Ir para a questão">'+L.map(function(_,k){return '<button data-jump="'+k+'" class="'+(k===i?'cur ':'')+(state.seen[k]?'seen':'')+'" aria-label="Questão '+(k+1)+'">'+(k+1)+'</button>';}).join('')+'</div><p class="hint">Atalhos: espaço mostra a resposta; setas ← → trocam de questão.</p></div>';
+  }else{
+   h+='<ol class="qlist">'+L.map(function(g,k){return '<li class="qitem"><div class="qnum">QUESTÃO '+(k+1)+'</div><div class="qtext">'+g.q+'</div>'+ansHTML(g)+'</li>';}).join('')+'</ol>';
+  }
+ }
+ view.innerHTML=h;
+}
+function ansHTML(g){var st=steps(g.s);return '<div class="answer"><div><span style="font-weight:800;color:var(--muted);font-size:14px;letter-spacing:.08em">RESPOSTA</span></div><div class="ans">'+g.a+'</div>'+(st.length?'<div style="margin-top:10px;font-weight:800">Passo a passo:</div><ol class="steps">'+st.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>':'')+'</div>';}
+view.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+ if(b.dataset.tab){state.tab=b.dataset.tab;renderTopic();}
+ else if(b.dataset.go){state.tab='ex';renderTopic();window.scrollTo(0,0);}
+ else if(b.dataset.mode){state.mode=b.dataset.mode;renderTopic();}
+ else if(b.dataset.seed){state.seed=Math.max(0,state.seed+ +b.dataset.seed);state.idx=0;state.shown={};state.seen={};renderTopic();}
+ else if(b.dataset.reveal){state.shown[state.idx]=1;renderTopic();}
+ else if(b.dataset.nav){go(+b.dataset.nav);}
+ else if(b.dataset.jump){state.idx=+b.dataset.jump;renderTopic();}
+ else if(b.dataset.print){try{window.print();}catch(err){}}
+});
+function go(d){var t=TOPICS.filter(function(x){return x.id===state.id;})[0];var L=getList(t,state.seed);var ni=state.idx+d;if(ni<0||ni>=L.length)return;state.idx=ni;renderTopic();}
+document.addEventListener('keydown',function(e){if(!state.id||state.tab!=='ex'||state.mode!=='quiz')return;if(e.target.tagName==='INPUT')return;
+ if(e.key==='ArrowRight'){go(1);}else if(e.key==='ArrowLeft'){go(-1);}else if(e.key===' '){e.preventDefault();state.shown[state.idx]=1;renderTopic();}});
+function route(){var id=location.hash.replace('#','');
+ if(id&&TOPICS.some(function(t){return t.id===id;})){if(state.id!==id){state={id:id,tab:'teoria',mode:state.mode||'quiz',seed:0,idx:0,shown:{},seen:{}};}renderTopic();window.scrollTo(0,0);}
+ else{state.id=null;renderHome();}}
+window.addEventListener('hashchange',route);route();
+})();
+</script>
+</body>
+</html>
