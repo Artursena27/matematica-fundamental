@@ -2183,12 +2183,12 @@ function doubtItem(d){
 A.zoom=function(el){ sheet('Foto','<img src="'+esc(el.getAttribute('src'))+'" alt="Foto ampliada" style="width:100%;border-radius:12px">'); };
 
 function vAssuntos(){
-  var q=ST.busca||'', anoSel=ST.anoSel||'Todos';
+  var meuAno=!isProf()&&ST.me.ano&&ANOS.indexOf(ST.me.ano)>=0?ST.me.ano:null; var q=ST.busca||'', anoSel=ST.anoSel||meuAno||'Todos';
   var words=norm(q).split(/\s+/).filter(Boolean);
-  var L=TOPICS.filter(function(t){ if(anoSel!=='Todos'&&t.ano!==anoSel) return false; var hay=norm(t.nome+' '+t.tags+' '+t.area+' '+t.ano); return words.every(function(w){return hay.indexOf(w)>=0;}); });
+  var L=TOPICS.slice().sort(function(x,y){ return (x.ano===meuAno?0:1)-(y.ano===meuAno?0:1); }).filter(function(t){ if(anoSel!=='Todos'&&t.ano!==anoSel&&!words.length) return false; var hay=norm(t.nome+' '+t.tags+' '+t.area+' '+t.ano); return words.every(function(w){return hay.indexOf(w)>=0;}); });
   var prof=isProf();
   var h='<div class="search">'+ic('search','#55627F',20)+'<input id="busca" type="search" placeholder="Pesquisar assunto: frações, MMC, Pitágoras…" value="'+esc(q)+'" aria-label="Pesquisar assunto" autocomplete="off"></div>'+
-    '<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por ano">'+['Todos'].concat(ANOS).map(function(a){return '<button class="chip'+(a===anoSel?' on':'')+'" data-a="anoSel" data-v="'+a+'">'+a+'</button>';}).join('')+'</div>';
+    '<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por ano">'+(meuAno?[meuAno]:[]).concat(['Todos'],ANOS.filter(function(a){return a!==meuAno;})).map(function(a){return '<button class="chip'+(a===anoSel?' on':'')+'" data-a="anoSel" data-v="'+a+'">'+(a===meuAno?'⭐ Meu ano ('+a+')':a)+'</button>';}).join('')+'</div>';
   h+='<div id="lista">'+topicGrid(L,ST.prog,!prof)+'</div>';
   page({title:prof?'Conteúdo':'Assuntos',sub:L.length+' assuntos',nav:prof?'conteudo':'assuntos',body:h});
   var inp=document.getElementById('busca'); inp.addEventListener('input',function(){ ST.busca=inp.value; var pos=inp.selectionStart; vAssuntos(); var n=document.getElementById('busca'); n.focus(); try{n.setSelectionRange(pos,pos);}catch(e){} });
