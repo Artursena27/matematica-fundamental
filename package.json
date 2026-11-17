@@ -1,0 +1,8 @@
+{
+  "name": "matematica-fundamental",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Matemática Academy — plataforma de reforço (6º ao 9º ano)",
+  "engines": { "node": ">=18" },
+  "dependencies": { "web-push": "^3.6.7" }
+}

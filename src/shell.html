@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0E1B3D">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mat Academy">
+<meta name="description" content="Teoria, exercícios e acompanhamento de matemática do 6º ao 9º ano.">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
 <title>Matemática Academy · Fundamental II</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap">
@@ -184,6 +191,55 @@ main.has-fab{padding-bottom:calc(160px + var(--safeb))}
 @keyframes sp{to{transform:rotate(360deg)}}
 .loading{padding:40px;text-align:center;color:var(--muted)}
 @media print{.top,.nav,.fab,.noprint{display:none!important}main{padding:0}}
+/* sequência */
+.streakchip{display:flex;align-items:center;gap:3px;background:rgba(255,255,255,.1);border:none;border-radius:999px;padding:5px 10px 5px 6px;color:#fff;font-weight:900;font-size:16px;min-height:38px}
+.streakchip.on{background:rgba(255,150,0,.22)}
+.streakchip.risk{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{background:rgba(255,80,40,.35)}}
+.bell{position:relative;background:none;border:none;width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.bell span{position:absolute;top:2px;right:2px;min-width:18px;height:18px;border-radius:9px;background:#E53935;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--navy)}
+.streakcard{display:block;text-decoration:none;background:linear-gradient(135deg,#FFF3DC,#FFE2B8);border:2px solid #FFC879;border-radius:22px;padding:14px;margin-top:12px}
+.streakcard.risk{background:linear-gradient(135deg,#FFE9E2,#FFD3C4);border-color:#FF9E80}
+.streakcard .small{display:block;color:#5B3B00}
+.flamebig{width:56px;height:56px;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.xpbar{position:relative;height:22px;background:#fff;border-radius:11px;overflow:hidden;margin-top:12px;border:1.5px solid #FFD599}
+.xpbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#FFB020,#FF7A00);border-radius:11px}
+.xpbar span{position:relative;display:block;text-align:center;font-size:12.5px;font-weight:900;line-height:19px;color:#4A2C00}
+.week{display:flex;justify-content:space-between;margin-top:12px;gap:4px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;font-size:12px;font-weight:800;color:#8A6A3A}
+.wd i{width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid #F1D3A3;display:flex;align-items:center;justify-content:center;font-style:normal;color:#fff;font-weight:900}
+.wd.ok i{background:#FF9600;border-color:#FF9600}
+.wd.hoje i{box-shadow:0 0 0 3px rgba(14,27,61,.25)}
+.streakhero{text-align:center;background:linear-gradient(180deg,#FFF3DC,#FFFFFF);border:2px solid #FFD599;border-radius:24px;padding:18px}
+.streakhero p{margin:6px 0 0;font-weight:700;color:#5B3B00}
+.bignum{font-size:64px;font-weight:900;line-height:1;color:#FF8A00;letter-spacing:-.04em}
+.flameanim svg{animation:flick 1.4s ease-in-out infinite;transform-origin:50% 90%}
+@keyframes flick{0%,100%{transform:scale(1) rotate(0)}30%{transform:scale(1.06) rotate(-2deg)}60%{transform:scale(.97) rotate(2deg)}}
+.celebra{background:#fff;border-radius:26px;padding:22px 18px;width:min(92vw,400px);text-align:center;animation:pop .35s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;max-width:300px}
+.cal b{font-size:11px;text-align:center;color:var(--muted)}
+.cal i{aspect-ratio:1;border-radius:8px;background:#E8ECF6}
+.cal i.meio{background:#FFE2B8}.cal i.ok{background:#FF9600}.cal i.hoje{outline:2px solid var(--navy)}
+/* instalar e avisos */
+.installcard{background:var(--navy);color:#fff;border-radius:20px;padding:14px;margin-bottom:12px}
+.installcard .small{display:block;color:#C9D3EC}
+.istep{display:flex;gap:12px;align-items:flex-start;margin:12px 0}
+.inum{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--navy);font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kbd{display:inline-flex;vertical-align:middle;background:#F1F3F8;border-radius:8px;padding:2px 4px}
+.arrowhint{text-align:center;font-size:30px;color:#007AFF;animation:bob 1s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(6px)}}
+.aviso.novo{border-color:var(--accent);background:#FFFBEF}
+.aviso .small{display:block}
+.dotnew{width:10px;height:10px;border-radius:50%;background:#E53935;flex-shrink:0;margin-top:6px}
+/* relatório */
+.report{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:16px;margin-top:12px}
+.reporthead{display:flex;gap:12px;align-items:center}
+.reprow{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}
+.reprow .grow{flex:1;min-width:0}
+.printonly{display:none}
+@media print{.report{border:none;padding:0}.printonly{display:block}.noprint,.toast{display:none!important}.sheet-bg{display:none}}
+
 </style>
 </head>
 <body>

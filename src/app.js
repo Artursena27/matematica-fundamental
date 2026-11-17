@@ -36,6 +36,10 @@ var ICON = {
  spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
  check:'<path d="m5 12 5 5 9-10"/>',
+ bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+ share:'<path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/>',
+ plusq:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/>',
+ report:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 13h2v4H9zM13 10h2v7h-2z"/>',
  wa:'<path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a3.5 3.5 0 0 1-1.8-1.8l.8-1-1-2z"/>'
 };
 function ic(n,c,w){ return '<svg viewBox="0 0 24 24" width="'+(w||24)+'" height="'+(w||24)+'" fill="none" stroke="'+(c||'currentColor')+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICON[n]+'</svg>'; }
@@ -54,13 +58,17 @@ var MEM = null;
 function mockInit(role){
   var now=new Date().toISOString(); var d=function(n){var x=hoje();x.setDate(x.getDate()+n);return isoDate(x);};
   MEM={ seq:100,
-    profiles:[{id:'p1',role:'professor',nome:'Artur Sena',username:null,ano:null},{id:'a1',role:'aluno',nome:'Maria Clara Souza',username:'mariaclara',ano:'8º ano'},{id:'a2',role:'aluno',nome:'João Pedro Lima',username:'joaopedro',ano:'7º ano'}],
+    profiles:[{id:'p1',role:'professor',nome:'Artur Sena',username:null,ano:null},{id:'a1',role:'aluno',nome:'Maria Clara Souza',username:'mariaclara',ano:'8º ano',meta_xp:20,diagnostico:(/diag=1/.test(location.search)?null:{pulado:true}),responsavel_whatsapp:'81999999999'},{id:'a2',role:'aluno',nome:'João Pedro Lima',username:'joaopedro',ano:'7º ano'}],
     progress:[{student_id:'a1',topic_id:'fracoes',teoria:true,acertos:{},pct:90,updated_at:now},{student_id:'a1',topic_id:'equacao-1-grau',teoria:true,acertos:{},pct:45,updated_at:now},{student_id:'a1',topic_id:'mmc',teoria:false,acertos:{},pct:15,updated_at:now},{student_id:'a1',topic_id:'pitagoras',teoria:true,acertos:{},pct:68,updated_at:now}],
     notes:[{id:1,student_id:'a1',topic_id:'equacao-1-grau',texto:'Não entendo quando o número negativo passa dividindo.',dificuldade:true,created_at:now}],
     plan_items:[{id:2,student_id:'a1',topic_id:'equacao-1-grau',titulo:'Terminar exercícios de equação',data:d(1),feito:false},{id:3,student_id:'a1',topic_id:'pitagoras',titulo:'Revisar Pitágoras para a prova',data:d(-1),feito:false},{id:4,student_id:'a1',topic_id:null,titulo:'Levar caderno na aula',data:null,feito:true}],
     exercises:[{id:5,topic_id:'fracoes',q:'Uma pizza foi dividida em 8 fatias e comi 3. Que fração comi?',a:'3/8',s:'São 8 partes iguais.\nComi 3 delas.',criado_por:'p1'}],
     assignments:[{id:6,student_id:'a1',titulo:'Lista de frações',topic_id:'fracoes',itens:getList('fracoes',0).slice(0,3),prazo:d(3),status:'enviada',respostas:null,correcao:null,nota:null,feedback:null,created_at:now},{id:7,student_id:'a1',titulo:'MMC — revisão',topic_id:'mmc',itens:getList('mmc',0).slice(0,2),prazo:d(-2),status:'entregue',respostas:['30','12'],correcao:null,nota:null,feedback:null,created_at:now,entregue_em:now}],
-    doubts:[{id:8,student_id:'a1',topic_id:'pitagoras',texto:'Na questão da escada, por que a escada é a hipotenusa?',imagem:null,status:'aberta',resposta:null,created_at:now}]
+    doubts:[{id:8,student_id:'a1',topic_id:'pitagoras',texto:'Na questão da escada, por que a escada é a hipotenusa?',imagem:null,status:'aberta',resposta:null,created_at:now}],
+    atividade:[1,2,3,4].map(function(k){return {student_id:'a1',dia:diaBR(-k),xp:25};}),
+    avisos:[{id:9,para:'a1',titulo:'Nova lista: Lista de frações',texto:'Prazo: em 3 dias',link:'#/lista/6',tipo:'lista',lido:false,created_at:now},{id:10,para:'p1',titulo:'Nova dúvida de Maria Clara',texto:'Na questão da escada…',link:'#/p-duvidas',tipo:'aluno',lido:false,created_at:now}],
+    push_subs:[],
+    horarios:[[1,'18:00',0],[1,'19:00',0],[1,'20:00',0],[2,'18:00',1],[2,'19:00',0],[2,'20:00',0],[3,'18:00',1],[3,'19:00',0],[4,'19:00',0],[5,'18:00',1],[6,'08:00',0],[6,'09:00',0]].map(function(h,k){return {id:200+k,dia:h[0],hora:h[1],ocupado:!!h[2],obs:h[2]?'Maria Clara':null};})
   };
   return role==='professor'?MEM.profiles[0]:MEM.profiles[1];
 }
@@ -122,8 +130,15 @@ function page(o){
   // o: {title, sub, back, nav, body, fab}
   var top='<header class="top">'+(o.back?'<button class="back" data-a="voltar" aria-label="Voltar">'+ic('back','#fff')+'</button>':'<span class="logo">∑</span>')+
     '<div class="tt"><b>'+o.title+'</b>'+(o.sub?'<small>'+o.sub+'</small>':'')+'</div>'+
-    '<button class="avatar" data-a="perfil" aria-label="Meu perfil">'+esc(iniciais(ST.me.nome))+'</button></header>';
+    topExtras()+'<button class="avatar" data-a="perfil" aria-label="Meu perfil">'+esc(iniciais(ST.me.nome))+'</button></header>';
   $app.innerHTML=top+'<main id="main"'+(o.fab?' class="has-fab"':'')+'>'+o.body+'</main>'+(o.fab||'')+navHTML(o.nav);
+  maybeCelebrate();
+}
+function topExtras(){
+  var h='';
+  if(!isProf()){ var s=streakInfo(); h+='<button class="streakchip'+(s.metHoje?' on':(s.emRisco?' risk':''))+'" data-a="irSeq" aria-label="Sequência de '+s.seq+' dias">'+flame(22,s.metHoje?'on':'off')+'<b>'+s.seq+'</b></button>'; }
+  var u=ST.unread||0; h+='<button class="bell" data-a="irAvisos" aria-label="Avisos'+(u?', '+u+' não lidos':'')+'">'+ic('bell','#fff',22)+(u?'<span>'+(u>9?'9+':u)+'</span>':'')+'</button>';
+  return h;
 }
 function loading(title,nav){ page({title:title,nav:nav,body:'<div class="loading">Carregando…</div>'}); }
 function sheet(title,body,footer){
@@ -172,15 +187,18 @@ FORMS.login=async function(f){ var b=f.querySelector('button'); b.disabled=true;
   await afterLogin(); };
 async function afterLogin(){
   if(!MOCK){ var u=(await ST.sb.auth.getUser()).data.user; var p=await DB.q('profiles',{eq:{id:u.id}}); if(!p.length){ await ST.sb.auth.signOut(); return screenLogin('Seu acesso ainda não foi liberado pelo professor.'); } ST.me=p[0]; }
-  if(!isProf()) ST.prog=await loadProg(ST.me.id);
+  if(!isProf()){ ST.prog=await loadProg(ST.me.id); ST.ativ=await loadAtiv(ST.me.id); }
   await refreshBadges();
+  if(!isProf() && ST.me.diagnostico==null){ if(location.hash==='#/diagnostico') render(); else location.hash='#/diagnostico'; return; }
   if(!location.hash || location.hash==='#/' ) location.hash = isProf()?'#/painel':'#/inicio'; else render();
+  setTimeout(installNudge,1200);
 }
 async function refreshBadges(){
   try{ var b={};
     if(isProf()){ b['p-listas']=(await DB.q('assignments',{eq:{status:'entregue'},select:'id'})).length||0; b['p-duvidas']=(await DB.q('doubts',{eq:{status:'aberta'},select:'id'})).length||0; }
     else { b['listas']=(await DB.q('assignments',{eq:{student_id:ST.me.id,status:'enviada'},select:'id'})).length||0; }
     ST.badges=b; }catch(e){ ST.badges={}; }
+  try{ ST.unread=(await DB.q('avisos',{eq:{para:ST.me.id,lido:false},select:'id'})).length; }catch(e){ ST.unread=0; }
 }
 A.sair=async function(){ if(!MOCK) await ST.sb.auth.signOut(); ST.me=null; ST.prog={}; location.hash=''; screenLogin(); };
 
@@ -194,7 +212,7 @@ async function vInicio(){
   var started=Object.values(ST.prog).sort(function(a,b){return a.updated_at<b.updated_at?1:-1;});
   var cont=started.filter(function(p){return p.pct<100 && TBY[p.topic_id];})[0];
   var pend=asg.filter(function(a){return a.status==='enviada';});
-  var h='<div class="hero"><h1>Olá, '+esc(primeiroNome(me.nome))+'! 👋</h1><p>'+esc(me.ano||'')+' · seu progresso no ano</p><div style="margin-top:12px;display:flex;align-items:center;gap:10px"><div style="flex:1">'+ruler(media,true)+'</div><b style="font-size:22px">'+media+'%</b></div></div>';
+  var h=installCard()+pushCard()+streakCard()+'<div class="hero" style="margin-top:12px"><h1>Olá, '+esc(primeiroNome(me.nome))+'! 👋</h1><p>'+esc(me.ano||'')+' · seu progresso no ano</p><div style="margin-top:12px;display:flex;align-items:center;gap:10px"><div style="flex:1">'+ruler(media,true)+'</div><b style="font-size:22px">'+media+'%</b></div></div>';
   if(cont){ var t=TBY[cont.topic_id]; h+='<h2>Continuar de onde parei</h2>'+topicCard(t,cont.pct); }
   h+='<h2>Listas para fazer</h2>'+(pend.length?'<div class="stack">'+pend.map(asgItem).join('')+'</div>':'<p class="muted">Nenhuma lista pendente. 🎉</p>');
   var atras=plan.filter(function(p){return p.data && new Date(p.data+'T12:00')<hoje();});
@@ -251,7 +269,7 @@ async function vAssunto(id,tab){
   else if(tab==='meus'){ renderMeusEx(id); }
 }
 A.tab=function(el){ ST.tab[el.dataset.id]=el.dataset.v; vAssunto(el.dataset.id,el.dataset.v); window.scrollTo(0,0); };
-A.lido=async function(el){ var id=el.dataset.id; var cur=ST.prog[id]&&ST.prog[id].teoria; await saveProg(id,{teoria:!cur}); toast(cur?'Desmarcado':'Boa! +20% neste assunto'); vAssunto(id,'teoria'); };
+A.lido=async function(el){ var id=el.dataset.id; var cur=ST.prog[id]&&ST.prog[id].teoria; await saveProg(id,{teoria:!cur}); if(!cur) await addXP(15); toast(cur?'Desmarcado':'Boa! +20% neste assunto'); vAssunto(id,'teoria'); };
 
 function quizState(id){ if(!ST.quiz[id]) ST.quiz[id]={seed:0,idx:0,mode:'quiz',shown:{}}; return ST.quiz[id]; }
 function fullList(id,seed){ return getList(id,seed).concat(seed===0?(ST.exProf[id]||[]):[]); }
@@ -289,7 +307,7 @@ function quizOpts(id,seed,idx,g){
 }
 A.escolhe=async function(el){ var id=el.dataset.id, s=quizState(id); var L=fullList(id,s.seed), g=L[s.idx]; var opts=quizOpts(id,s.seed,s.idx,g); var k=+el.dataset.v; var ok=opts[k]===g.a;
   s.pick=s.pick||{}; s.pick[s.idx]=k; s.shown[s.idx]=1;
-  if(!isProf()){ var ac=Object.assign({},(ST.prog[id]&&ST.prog[id].acertos)||{}); var kk=s.seed+':'+s.idx; if(ac[kk]===undefined){ ac[kk]=ok; await saveProg(id,{acertos:ac}); } }
+  if(!isProf()){ var ac=Object.assign({},(ST.prog[id]&&ST.prog[id].acertos)||{}); var kk=s.seed+':'+s.idx; if(ac[kk]===undefined){ ac[kk]=ok; await saveProg(id,{acertos:ac}); await addXP(ok?10:3); } }
   renderQuiz(id); updHdr(id); };
 function updHdr(id){ if(!ST.prog[id]) return; var hdr=document.querySelector('#main .row b'); if(hdr){ hdr.textContent=ST.prog[id].pct+'%'; hdr.style.color=pctColor(ST.prog[id].pct); var rr=document.querySelector('#main .big-ruler'); if(rr) rr.outerHTML=ruler(ST.prog[id].pct,true); } }
 function ansHTML(g){ var st=steps(g.s); return '<div class="answer"><div class="small muted" style="font-weight:800;letter-spacing:.08em">RESPOSTA</div><div class="ans">'+g.a+'</div>'+(st.length?'<div style="margin-top:8px;font-weight:800">Passo a passo:</div><ol class="steps">'+st.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>':'')+'</div>'; }
@@ -309,7 +327,7 @@ async function renderNotas(id){
   tb.innerHTML='<form class="card" data-form="nota" data-id="'+id+'"><label for="nt" style="margin-top:0">Escreva o que aprendeu ou o que está difícil</label><textarea id="nt" name="t" required placeholder="Ex.: Não entendi por que o sinal muda quando passa para o outro lado."></textarea><label class="row" style="font-weight:600;gap:10px;margin-top:10px"><input type="checkbox" name="d" style="width:22px;height:22px"> É uma dificuldade (o professor vai ver)</label><button class="btn primary block" style="margin-top:10px">Salvar anotação</button></form><h2>Minhas anotações</h2>'+(notes.length?'<div class="stack">'+notes.map(noteItem).join('')+'</div>':'<p class="muted">Nenhuma anotação ainda.</p>');
 }
 function noteItem(n){ var t=n.topic_id&&TBY[n.topic_id]; return '<div class="item"><div class="grow">'+(n._aluno?'<b>'+esc(n._aluno)+'</b>':'')+'<span class="small muted">'+(t?t.nome+' · ':'')+fmtData(n.created_at)+(n.dificuldade?' · <span class="badge bad">dificuldade</span>':'')+'</span><p style="margin:6px 0 0">'+nl2br(n.texto)+'</p></div>'+(!isProf()?'<button class="btn sm ghost" data-a="delNota" data-id="'+n.id+'" data-t="'+(n.topic_id||'')+'" aria-label="Apagar anotação">✕</button>':'')+'</div>'; }
-FORMS.nota=async function(f){ try{ await DB.ins('notes',{student_id:ST.me.id,topic_id:f.dataset.id,texto:f.t.value.trim(),dificuldade:f.d.checked}); toast('Anotação salva'); renderNotas(f.dataset.id); }catch(e){ toast(erroMsg(e)); } };
+FORMS.nota=async function(f){ try{ await DB.ins('notes',{student_id:ST.me.id,topic_id:f.dataset.id,texto:f.t.value.trim(),dificuldade:f.d.checked}); toast('Anotação salva (+5 XP)'); addXP(5); renderNotas(f.dataset.id); }catch(e){ toast(erroMsg(e)); } };
 A.delNota=async function(el){ if(!confirmar('Apagar esta anotação?')) return; await DB.del('notes',{id:+el.dataset.id||el.dataset.id}); if(el.dataset.t&&/#\/assunto\//.test(location.hash)) renderNotas(el.dataset.t); else render(); };
 function confirmar(m){ try{ return window.confirm(m); }catch(e){ return true; } }
 
@@ -341,7 +359,7 @@ A.novaDuvida=function(el){
 };
 CHANGE.duvFoto=async function(inp){ if(!inp.files[0]) return; ST.duvImg=await compress(inp.files[0]); var p=document.getElementById('fotoPrev'); p.src=ST.duvImg; p.classList.remove('hidden'); document.getElementById('fotoLbl').textContent='Trocar foto'; };
 FORMS.duvida=async function(f){ var b=document.querySelector('[form="fd"]'); b.disabled=true;
-  try{ await DB.ins('doubts',{student_id:ST.me.id,topic_id:f.t.value||null,texto:f.x.value.trim(),imagem:ST.duvImg||null}); ST.duvImg=null; closeSheet(); toast('Dúvida enviada! O professor vai responder aqui.'); if(/#\/duvidas/.test(location.hash)) render(); }
+  try{ await DB.ins('doubts',{student_id:ST.me.id,topic_id:f.t.value||null,texto:f.x.value.trim(),imagem:ST.duvImg||null}); ST.duvImg=null; closeSheet(); toast('Dúvida enviada! O professor vai responder aqui.'); server('push',{titulo:'❓ Nova dúvida de '+primeiroNome(ST.me.nome),texto:f.x.value.trim().slice(0,120),link:'#/p-duvidas',tipo:'aluno'}).catch(function(){}); if(/#\/duvidas/.test(location.hash)) render(); }
   catch(e){ toast(erroMsg(e)); b.disabled=false; } };
 A.duvWa=function(){ var f=document.getElementById('fd'); var t=f.t.value&&TBY[f.t.value]; var msg='Olá, professor! Aqui é '+ST.me.nome+'. Tenho uma dúvida'+(t?' em '+t.nome:'')+':\n'+(f.x.value||''); if(ST.duvImg) msg+='\n(vou mandar a foto em seguida)'; window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank'); };
 async function vDuvidas(){
@@ -403,7 +421,7 @@ async function vLista(id){
 }
 FORMS.entregar=async function(f){ var id=+f.dataset.id; var n=f.querySelectorAll('textarea').length; var resp=[]; for(var k=0;k<n;k++) resp.push(f['r'+k].value.trim());
   var vazias=resp.filter(function(x){return !x;}).length; if(vazias&&!confirmar(vazias+' questão(ões) em branco. Entregar mesmo assim?')) return;
-  try{ await DB.upd('assignments',{id:id},{respostas:resp,status:'entregue',entregue_em:new Date().toISOString()}); try{ localStorage.removeItem('rasc-'+id); }catch(e){} toast('Lista entregue!'); await refreshBadges(); vLista(id); }catch(e){ toast(erroMsg(e)); } };
+  try{ await DB.upd('assignments',{id:id},{respostas:resp,status:'entregue',entregue_em:new Date().toISOString()}); try{ localStorage.removeItem('rasc-'+id); }catch(e){} toast('Lista entregue! +25 XP'); await addXP(25); await refreshBadges(); vLista(id); }catch(e){ toast(erroMsg(e)); } };
 
 /* ----- Perfil do aluno ----- */
 async function vPerfil(){
@@ -414,6 +432,7 @@ async function vPerfil(){
   h+='<div class="stats" style="margin-top:12px"><div class="stat"><b>'+prog.length+'</b><span>assuntos iniciados</span></div><div class="stat"><b>'+conc+'</b><span>concluídos (≥ 90%)</span></div><div class="stat"><b>'+media+'%</b><span>média nos iniciados</span></div><div class="stat"><b>'+notes.length+'</b><span>anotações</span></div></div>';
   h+='<h2>Meu andamento</h2>'+(prog.length?'<div class="grid g3">'+prog.sort(function(a,b){return b.pct-a.pct;}).map(function(p){return topicCard(TBY[p.topic_id],p.pct);}).join('')+'</div>':'<p class="muted">Comece um assunto na aba Assuntos.</p>');
   h+='<h2>Minhas anotações</h2>'+(notes.length?'<div class="stack">'+notes.map(noteItem).join('')+'</div>':'<p class="muted">Nenhuma anotação.</p>');
+  h+='<h2>Configurações</h2><div class="stack"><a class="btn ghost block" href="#/sequencia">'+flame(20,'on')+' Minha sequência e meta diária</a><a class="btn ghost block" href="#/diagnostico">Refazer teste de nivelamento</a>'+pushBtn()+'</div>'+installCard();
   h+='<button class="btn danger block" style="margin-top:24px" data-a="sair">Sair da conta</button>';
   page({title:'Meu perfil',back:true,nav:'',body:h});
 }
@@ -429,7 +448,7 @@ async function vPainel(){
   var nt=await DB.q('notes',{eq:{dificuldade:true},order:['created_at',false],limit:10});
   asg.forEach(function(a){a._aluno=nomeAluno(a.student_id);}); dv.forEach(function(d){d._aluno=nomeAluno(d.student_id);}); nt.forEach(function(n){n._aluno=nomeAluno(n.student_id);});
   var h='<div class="hero"><h1>Olá, professor '+esc(primeiroNome(ST.me.nome))+'!</h1><p>Resumo da sua turma</p></div><div class="stats" style="margin-top:12px"><a class="stat" href="#/alunos" style="text-decoration:none"><b>'+al.length+'</b><span>alunos</span></a><a class="stat" href="#/p-listas" style="text-decoration:none"><b>'+asg.length+'</b><span>listas para corrigir</span></a><a class="stat" href="#/p-duvidas" style="text-decoration:none"><b>'+dv.length+'</b><span>dúvidas abertas</span></a><div class="stat"><b>'+nt.length+'</b><span>dificuldades recentes</span></div></div>';
-  h+='<div class="grid" style="margin-top:12px"><button class="btn primary" data-a="novoAluno">+ Cadastrar aluno</button><a class="btn gold" href="#/nova-lista">+ Mandar lista</a></div>';
+  h+='<div class="grid" style="margin-top:12px"><button class="btn primary" data-a="novoAluno">+ Cadastrar aluno</button><a class="btn gold" href="#/nova-lista">+ Mandar lista</a><a class="btn ghost" href="#/agenda-prof">'+ic('cal')+' Minha agenda</a><button class="btn ghost" data-a="novoAviso">'+ic('bell')+' Enviar aviso</button></div>'+installCard();
   h+='<h2>Listas para corrigir</h2>'+(asg.length?'<div class="stack">'+asg.slice(0,5).map(asgItem).join('')+'</div>':'<p class="muted">Nenhuma entrega pendente.</p>');
   h+='<h2>Dúvidas abertas</h2>'+(dv.length?'<div class="stack">'+dv.slice(0,3).map(doubtItem).join('')+'</div>':'<p class="muted">Nenhuma dúvida aberta.</p>');
   h+='<h2>O que os alunos acham difícil</h2>'+(nt.length?'<div class="stack">'+nt.map(noteItem).join('')+'</div>':'<p class="muted">Nenhuma anotação de dificuldade.</p>');
@@ -437,8 +456,8 @@ async function vPainel(){
 }
 async function vAlunos(){
   loading('Alunos','alunos'); var al=await getAlunos(true); var pr=await DB.q('progress',{select:'student_id,pct'});
-  var med={}; pr.forEach(function(p){ (med[p.student_id]=med[p.student_id]||[]).push(p.pct); });
-  var h='<button class="btn primary block" data-a="novoAluno">+ Cadastrar aluno</button>'+(al.length?'<div class="stack" style="margin-top:12px">'+al.map(function(a){ var m=med[a.id]||[]; var v=m.length?Math.round(m.reduce(function(s,x){return s+x;},0)/m.length):0; return '<a class="item" style="text-decoration:none" href="#/aluno/'+a.id+'"><span class="avatar">'+esc(iniciais(a.nome))+'</span><div class="grow"><b>'+esc(a.nome)+'</b><span class="small muted">@'+esc(a.username)+' · '+esc(a.ano||'')+' · '+m.length+' assunto(s)</span><div style="margin-top:6px">'+ruler(v)+'</div></div><b style="color:'+pctColor(v)+'">'+v+'%</b></a>'; }).join('')+'</div>':'<p class="empty">Nenhum aluno ainda. Cadastre o primeiro!</p>');
+  var med={}; pr.forEach(function(p){ (med[p.student_id]=med[p.student_id]||[]).push(p.pct); }); var at={}; try{ (await DB.q('atividade',{select:'student_id,dia,xp'})).forEach(function(r){ (at[r.student_id]=at[r.student_id]||{})[r.dia]=r.xp; }); }catch(e){}
+  var h='<button class="btn primary block" data-a="novoAluno">+ Cadastrar aluno</button>'+(al.length?'<div class="stack" style="margin-top:12px">'+al.map(function(a){ var m=med[a.id]||[]; var v=m.length?Math.round(m.reduce(function(s,x){return s+x;},0)/m.length):0; return '<a class="item" style="text-decoration:none" href="#/aluno/'+a.id+'"><span class="avatar">'+esc(iniciais(a.nome))+'</span><div class="grow"><b>'+esc(a.nome)+'</b><span class="small muted">@'+esc(a.username)+' · '+esc(a.ano||'')+' · '+m.length+' assunto(s) · 🔥 '+streakInfo(at[a.id]||{},a.meta_xp||20).seq+'</span><div style="margin-top:6px">'+ruler(v)+'</div></div><b style="color:'+pctColor(v)+'">'+v+'%</b></a>'; }).join('')+'</div>':'<p class="empty">Nenhum aluno ainda. Cadastre o primeiro!</p>');
   page({title:'Alunos',sub:al.length+' cadastrados',nav:'alunos',body:h});
 }
 A.novoAluno=function(){ sheet('Cadastrar aluno','<form id="fa" data-form="aluno"><label for="an" style="margin-top:0">Nome completo</label><input id="an" name="n" required><label for="aa">Ano</label><select id="aa" name="a">'+ANOS.map(function(a){return '<option>'+a+'</option>';}).join('')+'</select><label for="au">Usuário (para o login)</label><input id="au" name="u" required autocapitalize="none" autocorrect="off" placeholder="ex.: mariaclara" pattern="[a-z0-9._\\-]{3,30}"><p class="small muted" style="margin:4px 0 0">Só letras minúsculas sem acento, números, ponto ou hífen.</p><label for="as">Senha inicial (mínimo 6)</label><input id="as" name="s" required minlength="6" value="'+Math.random().toString(36).slice(2,8)+'"><div id="amsg"></div></form>','<button class="btn primary block" form="fa">Cadastrar</button>');
@@ -458,14 +477,15 @@ async function vAluno(id,tab){
   var media=ps.length?Math.round(ps.reduce(function(s,p){return s+p.pct;},0)/ps.length):0;
   var h='<div class="card row"><span class="avatar" style="width:52px;height:52px">'+esc(iniciais(a.nome))+'</span><div class="grow"><b style="font-size:18px">'+esc(a.nome)+'</b><span class="small muted">@'+esc(a.username)+' · '+esc(a.ano||'')+'</span><div style="margin-top:6px">'+ruler(media)+'</div></div><b style="color:'+pctColor(media)+'">'+media+'%</b></div>';
   var tabs=[['prog','Progresso'],['notas','Anotações'],['plano','Plano'],['listas','Listas'],['conta','Conta']];
+  h+='<div class="grid" style="margin-top:10px"><a class="btn gold" href="#/relatorio/'+id+'">'+ic('report')+' Relatório para os pais</a><button class="btn ghost" data-a="novoAviso" data-id="'+id+'">'+ic('bell')+' Mandar aviso</button></div>';
   h+='<div class="chips" style="margin-top:12px">'+tabs.map(function(x){return '<button class="chip'+(tab===x[0]?' on':'')+'" data-a="alTab" data-id="'+id+'" data-v="'+x[0]+'">'+x[1]+'</button>';}).join('')+'</div><div id="alBody" style="margin-top:6px"></div>';
   page({title:esc(a.nome),sub:esc(a.ano||''),back:true,nav:'alunos',body:h});
   var b=document.getElementById('alBody'), x='';
-  if(tab==='prog'){ x='<p class="small muted">'+ps.length+' assunto(s) iniciados.</p>'+(ps.length?'<div class="grid g3">'+ps.sort(function(p,q){return q.pct-p.pct;}).map(function(p){return topicCard(TBY[p.topic_id],p.pct,'#/assunto/'+p.topic_id);}).join('')+'</div>':'<p class="empty">Ainda não começou nenhum assunto.</p>')+'<h2>Assuntos do '+esc(a.ano||'ano')+' ainda não iniciados</h2><div class="stack">'+TOPICS.filter(function(t){return t.ano===a.ano&&!prog[t.id];}).map(function(t){return '<div class="item"><div class="grow"><b>'+t.nome+'</b></div><span class="badge bad">0%</span></div>';}).join('')+'</div>'; }
+  if(tab==='prog'){ x=diagResumo(a)+'<p class="small muted">'+ps.length+' assunto(s) iniciados.</p>'+(ps.length?'<div class="grid g3">'+ps.sort(function(p,q){return q.pct-p.pct;}).map(function(p){return topicCard(TBY[p.topic_id],p.pct,'#/assunto/'+p.topic_id);}).join('')+'</div>':'<p class="empty">Ainda não começou nenhum assunto.</p>')+'<h2>Assuntos do '+esc(a.ano||'ano')+' ainda não iniciados</h2><div class="stack">'+TOPICS.filter(function(t){return t.ano===a.ano&&!prog[t.id];}).map(function(t){return '<div class="item"><div class="grow"><b>'+t.nome+'</b></div><span class="badge bad">0%</span></div>';}).join('')+'</div>'; }
   else if(tab==='notas'){ var nn=await DB.q('notes',{eq:{student_id:id},order:['created_at',false]}); x=nn.length?'<div class="stack">'+nn.map(noteItem).join('')+'</div>':'<p class="empty">Nenhuma anotação.</p>'; }
   else if(tab==='plano'){ x=await vPlano(id,true); }
   else if(tab==='listas'){ var ls=await DB.q('assignments',{eq:{student_id:id},order:['created_at',false]}); ls.forEach(function(l){l._aluno=a.nome;}); x='<a class="btn gold block" href="#/nova-lista/'+id+'">+ Mandar lista para '+esc(primeiroNome(a.nome))+'</a>'+(ls.length?'<div class="stack" style="margin-top:12px">'+ls.map(asgItem).join('')+'</div>':'<p class="empty">Nenhuma lista enviada.</p>'); }
-  else if(tab==='conta'){ x='<form class="card" data-form="senha" data-id="'+id+'"><label for="ns" style="margin-top:0">Nova senha para @'+esc(a.username)+'</label><input id="ns" name="s" minlength="6" required><button class="btn primary block" style="margin-top:10px">Trocar senha</button></form><button class="btn danger block" style="margin-top:16px" data-a="removerAluno" data-id="'+id+'">Remover aluno</button>'; }
+  else if(tab==='conta'){ x='<form class="card" data-form="resp" data-id="'+id+'" style="margin-bottom:12px"><label for="rw" style="margin-top:0">WhatsApp do responsável</label><input id="rw" name="w" inputmode="tel" placeholder="(81) 9 9999-9999" value="'+esc(a.responsavel_whatsapp||'')+'"><button class="btn primary block" style="margin-top:10px">Salvar</button></form><form class="card" data-form="senha" data-id="'+id+'"><label for="ns" style="margin-top:0">Nova senha para @'+esc(a.username)+'</label><input id="ns" name="s" minlength="6" required><button class="btn primary block" style="margin-top:10px">Trocar senha</button></form><button class="btn danger block" style="margin-top:16px" data-a="removerAluno" data-id="'+id+'">Remover aluno</button>'; }
   b.innerHTML=x;
 }
 A.alTab=function(el){ ST.tab['al'+el.dataset.id]=el.dataset.v; vAluno(el.dataset.id,el.dataset.v); };
@@ -511,7 +531,7 @@ A.nlEnviar=async function(el){ var nl=ST.nl; var al=Object.keys(nl.alunos);
     .concat(nl.extra.map(function(e){return {q:e.q,a:e.a,s:e.s.split('\n').filter(Boolean),prof:true};}));
   if(!al.length) return toast('Escolha pelo menos um aluno.'); if(!itens.length) return toast('Escolha pelo menos uma questão.'); if(!(nl.titulo||'').trim()) return toast('Dê um título para a lista.');
   el.disabled=true;
-  try{ await DB.ins('assignments',al.map(function(id){return {student_id:id,titulo:nl.titulo.trim(),topic_id:nl.topic||null,itens:itens,prazo:nl.prazo||null,status:'enviada'};})); toast('Lista enviada para '+al.length+' aluno(s)!'); ST.nl={reset:true}; location.hash='#/p-listas'; }
+  try{ await DB.ins('assignments',al.map(function(id){return {student_id:id,titulo:nl.titulo.trim(),topic_id:nl.topic||null,itens:itens,prazo:nl.prazo||null,status:'enviada'};})); toast('Lista enviada para '+al.length+' aluno(s)!'); pushPara(al,'📝 Nova lista: '+nl.titulo.trim(),nl.prazo?'Prazo: '+fmtData(nl.prazo):'Responda quando puder.','#/listas'); ST.nl={reset:true}; location.hash='#/p-listas'; }
   catch(e){ toast(erroMsg(e)); el.disabled=false; } };
 async function vCorrigir(id,soVer){
   loading('Correção','p-listas'); await getAlunos(); var a=(await DB.q('assignments',{eq:{id:+id}}))[0]; if(!a){ location.hash='#/p-listas'; return; }
@@ -526,7 +546,7 @@ async function vCorrigir(id,soVer){
 A.corMarca=function(el){ var k=+el.dataset.k, v=el.dataset.v==='1'; var c=ST.cor.cor; c[k]=c[k]||{}; c[k].ok=v; var row=el.parentNode; row.children[0].className='btn'+(v?' on-ok':''); row.children[1].className='btn'+(!v?' on-bad':'');
   var feitas=c.filter(function(x){return x&&x.ok!=null;}).length; if(feitas===ST.cor.n){ var ac=c.filter(function(x){return x.ok;}).length; document.getElementById('cn').value=Math.round(ac/ST.cor.n*20)/2; } };
 A.corSalvar=async function(el){ var c=ST.cor; if(c.cor.some(function(x){return !x||x.ok==null;})&&!confirmar('Há questões sem marcar certo/errado. Salvar mesmo assim?')) return; el.disabled=true;
-  var nota=document.getElementById('cn').value; try{ await DB.upd('assignments',{id:c.id},{correcao:c.cor,nota:nota===''?null:+nota,feedback:document.getElementById('cf').value.trim()||null,status:'corrigida',corrigida_em:new Date().toISOString()}); toast('Correção salva!'); await refreshBadges(); location.hash='#/p-listas'; }catch(e){ toast(erroMsg(e)); el.disabled=false; } };
+  var nota=document.getElementById('cn').value; try{ await DB.upd('assignments',{id:c.id},{correcao:c.cor,nota:nota===''?null:+nota,feedback:document.getElementById('cf').value.trim()||null,status:'corrigida',corrigida_em:new Date().toISOString()}); toast('Correção salva!'); var ca=(await DB.q('assignments',{eq:{id:c.id},select:'student_id,titulo'}))[0]; if(ca) pushPara([ca.student_id],'✅ Lista corrigida: '+ca.titulo,nota===''?'Veja a correção.':'Nota: '+String(nota).replace('.',','),'#/lista/'+c.id); await refreshBadges(); location.hash='#/p-listas'; }catch(e){ toast(erroMsg(e)); el.disabled=false; } };
 A.delLista=async function(el){ if(!confirmar('Cancelar e apagar esta lista?')) return; await DB.del('assignments',{id:+el.dataset.id}); toast('Lista apagada'); location.hash='#/p-listas'; };
 async function vPDuvidas(){
   loading('Dúvidas','p-duvidas'); await getAlunos(); var f=ST.dvf||'aberta'; var L=await DB.q('doubts',{eq:{status:f},order:['created_at',f==='aberta']}); L.forEach(function(d){d._aluno=nomeAluno(d.student_id);});
@@ -534,30 +554,237 @@ async function vPDuvidas(){
   page({title:'Dúvidas dos alunos',nav:'p-duvidas',body:h});
 }
 A.dvf=function(el){ ST.dvf=el.dataset.v; vPDuvidas(); };
-FORMS.responder=async function(f){ try{ await DB.upd('doubts',{id:+f.dataset.id},{resposta:f.r.value.trim(),status:'respondida',respondida_em:new Date().toISOString()}); toast('Resposta enviada'); await refreshBadges(); render(); }catch(e){ toast(erroMsg(e)); } };
+FORMS.responder=async function(f){ try{ var dr=await DB.upd('doubts',{id:+f.dataset.id},{resposta:f.r.value.trim(),status:'respondida',respondida_em:new Date().toISOString()}); toast('Resposta enviada'); if(dr&&dr[0]) pushPara([dr[0].student_id],'💬 O professor respondeu sua dúvida',f.r.value.trim().slice(0,120),'#/duvidas'); await refreshBadges(); render(); }catch(e){ toast(erroMsg(e)); } };
 async function renderMeusEx(id){
   var tb=document.getElementById('tabBody'); var L=await DB.q('exercises',{eq:{topic_id:id},order:['created_at',false]});
   tb.innerHTML='<form class="card" data-form="exAdd" data-id="'+id+'"><label for="eq" style="margin-top:0">Enunciado</label><textarea id="eq" name="q" required></textarea><label for="ea">Resposta</label><input id="ea" name="a" required><label for="es">Passo a passo (um passo por linha)</label><textarea id="es" name="s"></textarea><button class="btn primary block" style="margin-top:10px">Adicionar exercício</button><p class="small muted" style="margin-bottom:0">Seus exercícios aparecem para todos os alunos no fim da Lista 1 deste assunto e podem ser mandados em listas.</p></form><h2>Meus exercícios ('+L.length+')</h2>'+(L.length?'<div class="stack">'+L.map(function(e){return '<div class="item"><div class="grow">'+nl2br(e.q)+'<div class="small muted">Resposta: '+esc(e.a)+'</div></div><button class="btn sm ghost" data-a="exDel" data-id="'+e.id+'" data-t="'+id+'">✕</button></div>';}).join('')+'</div>':'<p class="muted">Nenhum ainda.</p>');
 }
 FORMS.exAdd=async function(f){ try{ await DB.ins('exercises',{topic_id:f.dataset.id,q:f.q.value.trim(),a:f.a.value.trim(),s:f.s.value.trim()||null,criado_por:ST.me.id}); delete ST.exProf[f.dataset.id]; toast('Exercício adicionado'); renderMeusEx(f.dataset.id); }catch(e){ toast(erroMsg(e)); } };
 A.exDel=async function(el){ if(!confirmar('Apagar este exercício?')) return; await DB.del('exercises',{id:+el.dataset.id}); delete ST.exProf[el.dataset.t]; renderMeusEx(el.dataset.t); };
-function vMeuPerfil(){ page({title:'Minha conta',back:true,nav:'',body:'<div class="card row"><span class="avatar" style="width:56px;height:56px">'+esc(iniciais(ST.me.nome))+'</span><div class="grow"><b style="font-size:18px">'+esc(ST.me.nome)+'</b><span class="muted small">Professor</span></div></div><p class="small muted">Para os alunos entrarem: '+esc(location.origin)+'</p><button class="btn danger block" style="margin-top:16px" data-a="sair">Sair da conta</button>'}); }
+function vMeuPerfil(){ page({title:'Minha conta',back:true,nav:'',body:installCard()+'<div class="stack" style="margin:12px 0">'+pushBtn()+'<a class="btn ghost block" href="#/agenda-prof">'+ic('cal')+' Minha agenda</a></div><div class="card row"><span class="avatar" style="width:56px;height:56px">'+esc(iniciais(ST.me.nome))+'</span><div class="grow"><b style="font-size:18px">'+esc(ST.me.nome)+'</b><span class="muted small">Professor</span></div></div><p class="small muted">Para os alunos entrarem: '+esc(location.origin)+'</p><button class="btn danger block" style="margin-top:16px" data-a="sair">Sair da conta</button>'}); }
+
+/* ================= SEQUÊNCIA (estilo Duolingo) ================= */
+function diaBR(off){ var d=new Date(Date.now()-3*3600*1000+(off||0)*86400000); return d.toISOString().slice(0,10); }
+function diaSemana(iso){ return new Date(iso+'T12:00:00Z').getUTCDay(); }
+async function loadAtiv(uid){ var m={}; try{ (await DB.q('atividade',{eq:{student_id:uid},order:['dia',false],limit:400})).forEach(function(r){ m[r.dia]=r.xp; }); }catch(e){} return m; }
+function streakInfo(ativ,meta){
+  ativ=ativ||ST.ativ||{}; meta=meta||(ST.me&&ST.me.meta_xp)||20;
+  var hoje=diaBR(0), xpHoje=ativ[hoje]||0, met=xpHoje>=meta, seq=0;
+  for(var k=met?0:1;k<400;k++){ if((ativ[diaBR(-k)]||0)>=meta) seq++; else break; }
+  var rec=0,cur=0; Object.keys(ativ).sort().forEach(function(d,i,arr){ if(ativ[d]>=meta){ var prev=i>0?arr[i-1]:null; var dd=new Date(d+'T12:00Z'), pp=prev?new Date(prev+'T12:00Z'):null; cur=(pp&&(dd-pp)===86400000&&ativ[prev]>=meta)?cur+1:1; rec=Math.max(rec,cur);} });
+  return {seq:seq,metHoje:met,xpHoje:xpHoje,meta:meta,emRisco:!met&&seq>0,recorde:Math.max(rec,seq)};
+}
+function flame(sz,st){ var on=st!=='off'; return '<svg viewBox="0 0 24 24" width="'+sz+'" height="'+sz+'" aria-hidden="true"><path d="M12 2c1 3.5 5.5 6 5.5 11.2A5.6 5.6 0 0 1 12 19a5.6 5.6 0 0 1-5.5-5.8c0-2.6 1.4-4.4 2.6-5.4.1 1.7.9 3 2 3.6C11 9 10.6 5.4 12 2z" fill="'+(on?'#FF9600':'#C4CBDB')+'"/><path d="M12 11.5c.6 1.6 2.6 2.6 2.6 4.6a2.6 2.6 0 0 1-5.2 0c0-1.3.8-2.2 1.5-2.7.2.8.6 1.3 1.1 1.5-.2-1.2-.3-2.3 0-3.4z" fill="'+(on?'#FFD23F':'#E3E7F0')+'"/></svg>'; }
+async function addXP(n){
+  if(isProf()||!n) return; var d=diaBR(0), meta=ST.me.meta_xp||20; var antes=ST.ativ[d]||0, depois=antes+n; ST.ativ[d]=depois;
+  try{ await DB.ups('atividade',{student_id:ST.me.id,dia:d,xp:depois,updated_at:new Date().toISOString()},'student_id,dia'); }catch(e){}
+  if(antes<meta&&depois>=meta) ST.celebrar=true;
+  var chip=document.querySelector('.streakchip'); if(chip){ var t=document.createElement('div'); t.innerHTML=topExtras(); chip.replaceWith(t.firstChild); }
+  maybeCelebrate();
+}
+function semanaHTML(ativ,meta){
+  var nomes=['D','S','T','Q','Q','S','S'], h='<div class="week">';
+  for(var k=6;k>=0;k--){ var d=diaBR(-k), ok=(ativ[d]||0)>=meta, hoje=k===0; h+='<div class="wd'+(ok?' ok':'')+(hoje?' hoje':'')+'"><span>'+nomes[diaSemana(d)]+'</span><i>'+(ok?'✓':'')+'</i></div>'; }
+  return h+'</div>';
+}
+function streakCard(){
+  if(isProf()) return ''; var s=streakInfo(), pct=Math.min(100,Math.round(s.xpHoje/s.meta*100));
+  var msg=s.metHoje?'Meta de hoje cumprida! Volte amanhã para manter a chama. 🔥':(s.emRisco?'Sua sequência de '+s.seq+' dia'+(s.seq>1?'s':'')+' acaba à meia-noite! Faltam '+(s.meta-s.xpHoje)+' XP.':'Faça '+s.meta+' XP hoje para começar uma sequência.');
+  return '<a class="streakcard'+(s.emRisco?' risk':'')+'" href="#/sequencia"><div class="row"><div class="flamebig">'+flame(48,s.metHoje||s.seq?'on':'off')+'</div><div class="grow"><b style="font-size:22px">'+s.seq+' dia'+(s.seq===1?'':'s')+' seguido'+(s.seq===1?'':'s')+'</b><span class="small">'+msg+'</span></div></div><div class="xpbar"><i style="width:'+pct+'%"></i><span>'+s.xpHoje+' / '+s.meta+' XP hoje</span></div>'+semanaHTML(ST.ativ,s.meta)+'</a>';
+}
+function maybeCelebrate(){
+  if(!ST.celebrar||document.getElementById('celebra')) return; ST.celebrar=false; var s=streakInfo();
+  var bg=document.createElement('div'); bg.className='sheet-bg'; bg.id='celebra'; bg.style.alignItems='center';
+  bg.innerHTML='<div class="celebra" role="dialog" aria-label="Sequência aumentou"><div class="flameanim">'+flame(120,'on')+'</div><div class="bignum">'+s.seq+'</div><b style="font-size:22px">dia'+(s.seq===1?'':'s')+' de sequência!</b><p class="muted">'+(s.seq===1?'Começou uma nova sequência. Volte amanhã!':'Você manteve a chama acesa. Continue amanhã!')+'</p>'+semanaHTML(ST.ativ,s.meta)+'<button class="btn gold block" style="margin-top:14px" data-a="fecharCelebra">Continuar</button></div>';
+  document.body.appendChild(bg); try{ if(navigator.vibrate) navigator.vibrate([60,40,60]); }catch(e){}
+}
+A.fecharCelebra=function(){ var c=document.getElementById('celebra'); if(c) c.remove(); };
+A.irSeq=function(){ location.hash='#/sequencia'; };
+function vSequencia(){
+  var s=streakInfo(), ativ=ST.ativ||{};
+  var h='<div class="streakhero"><div class="flameanim">'+flame(110,s.seq||s.metHoje?'on':'off')+'</div><div class="bignum">'+s.seq+'</div><b>dia'+(s.seq===1?'':'s')+' de sequência</b><p>'+(s.metHoje?'Meta de hoje cumprida! ✅':(s.emRisco?'⚠️ Faça '+(s.meta-s.xpHoje)+' XP até meia-noite para não perder!':'Faça '+s.meta+' XP hoje para acender a chama.'))+'</p></div>';
+  h+='<div class="xpbar" style="margin-top:12px"><i style="width:'+Math.min(100,Math.round(s.xpHoje/s.meta*100))+'%"></i><span>'+s.xpHoje+' / '+s.meta+' XP hoje</span></div>'+semanaHTML(ativ,s.meta);
+  h+='<div class="stats" style="margin-top:14px"><div class="stat"><b>'+s.recorde+'</b><span>recorde de dias</span></div><div class="stat"><b>'+Object.keys(ativ).filter(function(d){return ativ[d]>=s.meta;}).length+'</b><span>dias com meta batida</span></div></div>';
+  h+='<h2>Últimas 5 semanas</h2><div class="cal">'; var ini=-(28+diaSemana(diaBR(0))); h+=['D','S','T','Q','Q','S','S'].map(function(x){return '<b>'+x+'</b>';}).join(''); for(var k=ini;k<=0;k++){ var d=diaBR(k), x=ativ[d]||0; h+='<i title="'+fmtData(d)+': '+x+' XP" class="'+(x>=s.meta?'ok':(x>0?'meio':''))+(k===0?' hoje':'')+'"></i>'; } h+='</div><p class="small muted">Laranja = meta batida · claro = estudou um pouco</p>';
+  h+='<h2>Meta diária</h2><div class="grid g3">'+[[10,'Leve','~5 min'],[20,'Normal','~10 min'],[40,'Puxado','~20 min']].map(function(m){return '<button class="btn '+(s.meta===m[0]?'gold':'ghost')+'" data-a="meta" data-v="'+m[0]+'">'+m[1]+' · '+m[0]+' XP<br><span class="small" style="font-weight:600">'+m[2]+'</span></button>';}).join('')+'</div>';
+  h+='<h2>Como ganhar XP</h2><div class="card"><ul style="margin:0;padding-left:20px"><li>Acertar uma questão: <b>+10 XP</b> (errar ainda vale +3)</li><li>Marcar a teoria como estudada: <b>+15 XP</b></li><li>Entregar uma lista: <b>+25 XP</b></li><li>Fazer uma anotação: <b>+5 XP</b></li><li>Teste de nivelamento: <b>+20 XP</b></li></ul></div>'+pushCard(true);
+  page({title:'Minha sequência',back:true,nav:'',body:h});
+}
+A.meta=async function(el){ var m=+el.dataset.v; try{ if(!MOCK){ var r=await ST.sb.rpc('salvar_meta',{m:m}); if(r.error) throw r.error; } ST.me.meta_xp=m; toast('Meta diária: '+m+' XP'); vSequencia(); }catch(e){ toast(erroMsg(e)); } };
+
+/* ================= AVISOS ================= */
+A.irAvisos=function(){ location.hash='#/avisos'; };
+var AVICON={lista:'📝',correcao:'✅',duvida:'💬',sequencia:'🔥',prazo:'⏰',recado:'📣',aluno:'❓',info:'🔔'};
+async function vAvisos(){
+  loading('Avisos',''); var L=await DB.q('avisos',{eq:{para:ST.me.id},order:['created_at',false],limit:60});
+  var h=(isProf()?'<button class="btn gold block" data-a="novoAviso">'+ic('bell')+' Enviar aviso para alunos</button>':'')+pushCard(true);
+  h+=L.length?'<div class="stack" style="margin-top:12px">'+L.map(function(v){ return '<a class="item aviso'+(v.lido?'':' novo')+'" href="'+esc(v.link||'#/')+'" style="text-decoration:none"><span style="font-size:24px">'+(AVICON[v.tipo]||'🔔')+'</span><div class="grow"><b>'+esc(v.titulo)+'</b>'+(v.texto?'<span class="small muted">'+esc(v.texto)+'</span>':'')+'<span class="small muted">'+fmtData(v.created_at)+'</span></div>'+(v.lido?'':'<span class="dotnew" aria-label="não lido"></span>')+'</a>'; }).join('')+'</div>':'<p class="empty">Nenhum aviso por enquanto.</p>';
+  page({title:'Avisos',back:true,nav:'',body:h});
+  var nao=L.filter(function(v){return !v.lido;}); if(nao.length){ try{ await DB.upd('avisos',{para:ST.me.id,lido:false},{lido:true}); ST.unread=0; var b=document.querySelector('.bell span'); if(b) b.remove(); }catch(e){} }
+}
+A.novoAviso=async function(el){ var al=await getAlunos(); var pre=el&&el.dataset&&el.dataset.id;
+  sheet('Enviar aviso','<form id="fav" data-form="aviso"><label for="vp" style="margin-top:0">Para</label><select id="vp" name="p"><option value="todos">Todos os alunos</option>'+al.map(function(a){return '<option value="'+a.id+'"'+(a.id===pre?' selected':'')+'>'+esc(a.nome)+'</option>';}).join('')+'</select><label for="vt">Título</label><input id="vt" name="t" required maxlength="80" placeholder="Ex.: Aula de sábado remarcada"><label for="vx">Mensagem</label><textarea id="vx" name="x" maxlength="200"></textarea><p class="small muted">Aparece no sino 🔔 do aluno e chega como notificação no celular de quem ativou os lembretes.</p></form>','<button class="btn primary block" form="fav">Enviar aviso</button>'); };
+FORMS.aviso=async function(f){ var b=document.querySelector('[form="fav"]'); b.disabled=true; var todos=f.p.value==='todos';
+  try{ if(MOCK){ toast('Aviso enviado (demonstração)'); closeSheet(); return; } var r=await server('push',{todos:todos,para:todos?[]:[f.p.value],titulo:f.t.value.trim(),texto:f.x.value.trim(),link:'#/avisos',tipo:'recado',salvarAviso:true}); closeSheet(); toast('Aviso enviado'+(r.enviados?' · '+r.enviados+' notificação(ões)':'')); }catch(e){ toast(erroMsg(e)); b.disabled=false; } };
+function pushPara(ids,titulo,texto,link){ if(MOCK||!ids||!ids.length) return; server('push',{para:ids,titulo:titulo,texto:texto,link:link}).catch(function(){}); }
+
+/* ================= NOTIFICAÇÕES E INSTALAÇÃO ================= */
+function isStandalone(){ try{ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true; }catch(e){ return false; } }
+function isIOS(){ var u=navigator.userAgent||''; return /iphone|ipad|ipod/i.test(u) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1); }
+function isInApp(){ return /Instagram|FBAN|FBAV|Line\/|WhatsApp|TikTok/i.test(navigator.userAgent||''); }
+function isIOSnotSafari(){ var u=navigator.userAgent||''; return isIOS() && (/CriOS|FxiOS|EdgiOS|OPiOS/i.test(u) || isInApp()); }
+function pushOK(){ return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; }
+window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); ST.bip=e; });
+window.addEventListener('appinstalled',function(){ ST.bip=null; toast('App instalado! 🎉'); });
+function installCard(){
+  if(isStandalone()||MOCK&&/instalado=1/.test(location.search)) return '';
+  return '<div class="installcard"><div class="row"><img src="/icons/icon-192.png" alt="" width="52" height="52" style="border-radius:14px"><div class="grow"><b>Instale o app no celular</b><span class="small">Abre direto pelo ícone ∑, em tela cheia, e recebe os lembretes da sequência 🔥</span></div></div><button class="btn gold block" style="margin-top:10px" data-a="instalar">📲 Instalar agora</button></div>';
+}
+function installNudge(){ if(isStandalone()) return; var k='inst-nudge', last=0; try{ last=+localStorage.getItem(k)||0; }catch(e){} if(Date.now()-last<2*86400000) return; try{ localStorage.setItem(k,Date.now()); }catch(e){} A.instalar(); }
+A.instalar=async function(){
+  if(ST.bip){ ST.bip.prompt(); try{ await ST.bip.userChoice; }catch(e){} ST.bip=null; return; }
+  var step=function(n,html){ return '<div class="istep"><span class="inum">'+n+'</span><div>'+html+'</div></div>'; };
+  var body;
+  if(isIOS()){
+    if(isIOSnotSafari()) body='<div class="err" style="margin-top:0">No iPhone o app só pode ser instalado pelo <b>Safari</b>.</div>'+step(1,'Toque em <b>⋯</b> ou no menu deste navegador e escolha <b>“Abrir no Safari”</b>.<br><span class="small muted">Ou copie o endereço e cole no Safari.</span>')+'<button class="btn block" style="margin-top:8px" data-a="copiarLink">Copiar endereço</button>'+step(2,'No Safari, toque em Instalar de novo e siga os passos.');
+    else body='<p style="margin-top:0">Leva 10 segundos e deixa o app na tela de início do iPhone, com notificações dos lembretes. 📲</p>'+
+      step(1,'Toque no botão <b>Compartilhar</b> '+'<span class="kbd">'+ic('share','#007AFF',20)+'</span> na barra do Safari (embaixo no iPhone, em cima no iPad).')+
+      step(2,'Role a lista para baixo e toque em <b>“Adicionar à Tela de Início”</b> <span class="kbd">'+ic('plusq','#1C1C1E',20)+'</span>.')+
+      step(3,'Toque em <b>“Adicionar”</b>, no canto de cima.')+
+      step(4,'Feche o Safari e abra o app pelo ícone <img src="/icons/icon-192.png" alt="" width="22" height="22" style="vertical-align:middle;border-radius:6px"> na tela de início. Lá dentro, ative os <b>lembretes</b>.')+
+      '<div class="arrowhint" aria-hidden="true">⬇</div><p class="small muted">Precisa do iOS 16.4 ou mais novo para receber notificações.</p>';
+  } else {
+    body='<p style="margin-top:0">Deixe o app na tela inicial do celular, abrindo em tela cheia e com notificações. 📲</p>'+
+      step(1,'Toque no menu <b>⋮</b> do Chrome (canto de cima).')+step(2,'Toque em <b>“Instalar app”</b> ou <b>“Adicionar à tela inicial”</b>.')+step(3,'Confirme em <b>Instalar</b> e abra pelo ícone ∑.');
+  }
+  sheet('📲 Instalar o app',body,'<button class="btn ghost block" data-a="fecharSheet">Agora não</button>');
+};
+A.copiarLink=async function(){ try{ await navigator.clipboard.writeText(location.origin); toast('Endereço copiado! Cole no Safari.'); }catch(e){ toast(location.origin); } };
+function pushStatus(){ if(!pushOK()) return isIOS()&&!isStandalone()?'instalar':'sem'; return Notification.permission; }
+function pushCard(force){
+  var st=pushStatus(); if(st==='granted'||st==='sem') return '';
+  if(st==='instalar') return force?'<div class="card" style="margin-top:12px"><b>🔔 Lembretes no iPhone</b><p class="small" style="margin:6px 0 10px">Para receber o aviso antes de perder a sequência, instale o app na tela de início primeiro.</p><button class="btn gold block" data-a="instalar">Ver como instalar</button></div>':'';
+  if(st==='denied') return force?'<div class="card" style="margin-top:12px"><b>🔕 Notificações bloqueadas</b><p class="small" style="margin:6px 0 0">Libere nas configurações do celular: Ajustes → Notificações → Mat Academy.</p></div>':'';
+  return '<div class="card pushcard" style="margin-top:12px"><b>🔔 Ative os lembretes</b><p class="small" style="margin:6px 0 10px">Avisamos antes de você perder a sequência, quando chegar lista nova e quando o professor responder.</p><button class="btn primary block" data-a="ativarPush">Ativar notificações</button></div>';
+}
+function pushBtn(){ var st=pushStatus(); if(st==='granted') return '<div class="okmsg" style="margin:0">🔔 Notificações ativadas neste aparelho</div>'; if(st==='sem') return ''; return '<button class="btn ghost block" data-a="'+(st==='instalar'?'instalar':'ativarPush')+'">🔔 Ativar notificações</button>'; }
+function b64u(s){ var p='='.repeat((4-s.length%4)%4), b=(s+p).replace(/-/g,'+').replace(/_/g,'/'), raw=atob(b), out=new Uint8Array(raw.length); for(var i=0;i<raw.length;i++) out[i]=raw.charCodeAt(i); return out; }
+A.ativarPush=async function(el){
+  if(!pushOK()) return A.instalar(); if(el) el.disabled=true;
+  try{ var perm=await Notification.requestPermission(); if(perm!=='granted'){ toast('Notificações não foram permitidas.'); render(); return; }
+    var reg=await navigator.serviceWorker.ready; var k=await fetch('/api/push').then(function(r){return r.json();});
+    var sub=await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(k.publicKey)});
+    await DB.ups('push_subs',{user_id:ST.me.id,endpoint:sub.endpoint,sub:sub.toJSON()},'endpoint');
+    toast('Lembretes ativados! 🔔'); render(); }
+  catch(e){ toast('Não consegui ativar: '+erroMsg(e)); if(el) el.disabled=false; } };
+
+/* ================= TESTE DE NIVELAMENTO ================= */
+function diagTopics(ano){ var i=ANOS.indexOf(ano); if(i<0) i=0; var anos=[ANOS[i]]; if(i>0) anos.unshift(ANOS[i-1]); var ts=TOPICS.filter(function(t){return anos.indexOf(t.ano)>=0;}); if(ts.length<=14) return ts; var out=[]; for(var k=0;k<14;k++) out.push(ts[Math.floor(k*ts.length/14)]); return out; }
+function vDiag(){
+  var d=ST.diag;
+  if(!d||d.fim===undefined&&!d.qs){ ST.diag=d={inicio:true}; }
+  if(d.inicio){
+    var n=diagTopics(ST.me.ano).length;
+    page({title:'Teste de nivelamento',nav:'',body:'<div class="hero" style="text-align:center"><div style="font-size:52px">🎯</div><h1>Vamos ver o que você já sabe?</h1><p>'+n+' perguntas rápidas de múltipla escolha · uns 10 minutos</p></div><div class="card" style="margin-top:12px"><ul style="margin:0;padding-left:20px"><li>Não vale nota. Se não souber, toque em <b>“Não sei”</b>.</li><li>No final você vê o que já domina e o que precisa reforçar.</li><li>O professor usa o resultado para montar seu plano.</li></ul></div><button class="btn gold block" style="margin-top:14px" data-a="diagIni">Começar o teste</button><button class="btn ghost block" style="margin-top:10px" data-a="diagPular">Pular por agora</button><p class="small muted" style="text-align:center">Dá para fazer depois em Perfil → Refazer teste de nivelamento.</p>'}); return;
+  }
+  if(d.fim){ return diagFim(); }
+  var q=d.qs[d.i], tot=d.qs.length, resp=d.res[q.t.id];
+  var h='<div class="row" style="justify-content:space-between"><span class="qnum">PERGUNTA '+(d.i+1)+' DE '+tot+'</span><button class="btn sm ghost" data-a="diagPular">Pular teste</button></div><div class="progress"><i style="width:'+((d.i+1)/tot*100)+'%"></i></div><span class="badge gray">'+q.t.ano+' · '+q.t.nome+'</span><div class="qtext" style="margin-top:10px">'+q.g.q+'</div>';
+  h+='<div class="stack" style="margin-top:14px">'+q.opts.map(function(o,k){ var cls='btn ghost block opt'; if(resp!==undefined){ if(o===q.g.a) cls='btn block opt on-ok'; else if(d.pick===k) cls='btn block opt on-bad'; } return '<button class="'+cls+'" style="justify-content:flex-start;text-align:left" data-a="diagResp" data-v="'+k+'"'+(resp!==undefined?' disabled':'')+'><b style="margin-right:6px">'+'ABCD'[k]+')</b> <span>'+o+'</span></button>'; }).join('')+'<button class="btn ghost block" data-a="diagResp" data-v="-1"'+(resp!==undefined?' disabled':'')+'>🤷 Não sei</button></div>';
+  if(resp!==undefined) h+='<div class="'+(resp?'okmsg':'err')+'">'+(resp?'Acertou! ✅':'Tudo bem, isso vai para o seu plano de reforço.')+'</div><button class="btn primary block" style="margin-top:12px" data-a="diagProx">'+(d.i===tot-1?'Ver resultado':'Próxima →')+'</button>';
+  page({title:'Teste de nivelamento',nav:'',body:h});
+}
+A.diagIni=function(){ var ts=diagTopics(ST.me.ano); ST.diag={i:0,res:{},qs:ts.map(function(t){ var g=getList(t.id,7)[0]; return {t:t,g:g,opts:quizOpts(t.id,7,0,g)}; })}; vDiag(); };
+A.diagResp=function(el){ var d=ST.diag, q=d.qs[d.i], k=+el.dataset.v; d.pick=k; d.res[q.t.id]=k>=0&&q.opts[k]===q.g.a; vDiag(); };
+A.diagProx=function(){ var d=ST.diag; d.pick=null; if(d.i<d.qs.length-1){ d.i++; vDiag(); window.scrollTo(0,0); } else { d.fim=true; diagSalvar(); } };
+A.diagPular=async function(){ if(ST.diag&&ST.diag.qs&&!confirmar('Sair do teste? Você pode fazer depois pelo seu perfil.')) return; await salvarDiag({pulado:true,em:new Date().toISOString()}); ST.diag=null; location.hash='#/inicio'; setTimeout(installNudge,800); };
+async function salvarDiag(obj){ ST.me.diagnostico=obj; if(MOCK) return; try{ var r=await ST.sb.rpc('salvar_diagnostico',{d:obj}); if(r.error) throw r.error; }catch(e){ toast('Não salvou o teste: '+erroMsg(e)); } }
+async function diagSalvar(){ var d=ST.diag, ac=0; for(var id in d.res){ if(d.res[id]){ ac++; var p=Object.assign({},(ST.prog[id]&&ST.prog[id].acertos)||{}); p['diag']=true; await saveProg(id,{acertos:p}); } }
+  d.nota=Math.round(ac/d.qs.length*100); await salvarDiag({em:new Date().toISOString(),nota:d.nota,resultados:d.res}); await addXP(20); diagFim(); }
+function diagFim(){ var d=ST.diag, ok=[], ruim=[]; d.qs.forEach(function(q){ (d.res[q.t.id]?ok:ruim).push(q.t); });
+  var h='<div class="hero" style="text-align:center"><div style="font-size:48px">'+(d.nota>=70?'🏆':d.nota>=40?'💪':'🌱')+'</div><h1>'+d.nota+'% de acerto</h1><p>'+ok.length+' de '+d.qs.length+' assuntos já dominados</p></div>';
+  h+='<h2>✅ Você já sabe</h2>'+(ok.length?'<div class="stack">'+ok.map(function(t){return '<div class="item"><div class="grow"><b>'+t.nome+'</b><span class="small muted">'+t.ano+'</span></div><span class="badge ok">ok</span></div>';}).join('')+'</div>':'<p class="muted">Ainda nenhum — é para isso que estamos aqui! 💪</p>');
+  h+='<h2>📌 Precisa reforçar</h2>'+(ruim.length?'<div class="stack">'+ruim.map(function(t){return '<a class="item" style="text-decoration:none" href="#/assunto/'+t.id+'"><div class="grow"><b>'+t.nome+'</b><span class="small muted">'+t.ano+'</span></div><span class="badge bad">reforçar</span></a>';}).join('')+'</div><button class="btn gold block" style="margin-top:12px" data-a="diagPlano">Criar meu plano com esses assuntos</button>':'<p class="muted">Nada! Mandou muito bem. 🎉</p>');
+  h+='<a class="btn primary block" style="margin-top:12px" href="#/inicio">Ir para o início</a>';
+  page({title:'Resultado do nivelamento',nav:'',body:h}); }
+A.diagPlano=async function(el){ var d=ST.diag; var ruim=d.qs.filter(function(q){return !d.res[q.t.id];}); el.disabled=true;
+  var rows=ruim.map(function(q,k){ var x=hoje(); x.setDate(x.getDate()+k*2); return {student_id:ST.me.id,topic_id:q.t.id,titulo:'Reforçar: '+q.t.nome,data:isoDate(x),feito:false,criado_por:ST.me.id}; });
+  try{ await DB.ins('plan_items',rows); toast(rows.length+' tarefas no seu plano'); ST.diag=null; location.hash='#/plano'; }catch(e){ toast(erroMsg(e)); el.disabled=false; } };
+function diagResumo(a){ var g=a.diagnostico; if(!g) return '<div class="card" style="margin-bottom:10px"><b>Nivelamento:</b> <span class="muted">ainda não fez</span></div>'; if(g.pulado) return '<div class="card" style="margin-bottom:10px"><b>Nivelamento:</b> <span class="muted">pulou o teste</span></div>';
+  var r=g.resultados||{}, ok=[], ruim=[]; Object.keys(r).forEach(function(id){ if(TBY[id]) (r[id]?ok:ruim).push(TBY[id].nome); });
+  return '<div class="card" style="margin-bottom:10px"><b>Nivelamento: '+(g.nota||0)+'% de acerto</b> <span class="small muted">('+fmtData(g.em)+')</span>'+(ruim.length?'<p class="small" style="margin:6px 0 0"><b>Reforçar:</b> '+ruim.join(', ')+'</p>':'')+(ok.length?'<p class="small muted" style="margin:4px 0 0"><b>Já sabe:</b> '+ok.join(', ')+'</p>':'')+'</div>'; }
+
+/* ================= RELATÓRIO PARA OS PAIS ================= */
+async function vRelatorio(id){
+  await getAlunos(); var a=(ALUNOS||[]).filter(function(x){return x.id===id;})[0]; if(!a){ location.hash='#/alunos'; return; }
+  loading('Relatório',''); var per=ST.relPer||30; var desde=diaBR(-(per-1));
+  var prog=await loadProg(id), ativ=await loadAtiv(id), asg=await DB.q('assignments',{eq:{student_id:id},order:['created_at',false]}), notes=await DB.q('notes',{eq:{student_id:id,dificuldade:true},order:['created_at',false]});
+  var s=streakInfo(ativ,a.meta_xp||20); var diasEst=Object.keys(ativ).filter(function(d){return d>=desde&&ativ[d]>0;}).length; var xpPer=Object.keys(ativ).filter(function(d){return d>=desde;}).reduce(function(t,d){return t+ativ[d];},0);
+  var ps=Object.values(prog).filter(function(p){return TBY[p.topic_id];}).sort(function(x,y){return y.pct-x.pct;});
+  var corr=asg.filter(function(l){return l.status==='corrigida'&&(l.corrigida_em||'').slice(0,10)>=desde;}); var media=corr.filter(function(l){return l.nota!=null;}); var med=media.length?Math.round(media.reduce(function(t,l){return t+ +l.nota;},0)/media.length*10)/10:null;
+  var pend=asg.filter(function(l){return l.status==='enviada';});
+  var nts=notes.filter(function(n){return (n.created_at||'').slice(0,10)>=desde;});
+  var com=''; try{ com=localStorage.getItem('rel-com-'+id)||''; }catch(e){}
+  var hoje_=fmtData(diaBR(0)), de=fmtData(desde);
+  var h='<div class="noprint row wrap" style="justify-content:space-between"><div class="seg">'+[[7,'7 dias'],[30,'30 dias'],[90,'3 meses']].map(function(p){return '<button class="'+(per===p[0]?'on':'')+'" data-a="relPer" data-v="'+p[0]+'" data-id="'+id+'">'+p[1]+'</button>';}).join('')+'</div></div>';
+  h+='<div class="report" id="report"><div class="reporthead"><div class="logo" style="width:44px;height:44px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:24px;color:var(--navy)">∑</div><div><b style="font-size:19px">Relatório de Matemática</b><div class="small muted">'+esc(a.nome)+' · '+esc(a.ano||'')+' · '+de+' a '+hoje_+'</div></div></div>';
+  h+='<div class="stats" style="margin-top:12px"><div class="stat"><b>'+diasEst+'</b><span>dias estudando</span></div><div class="stat"><b>🔥 '+s.seq+'</b><span>sequência atual (recorde '+s.recorde+')</span></div><div class="stat"><b>'+xpPer+'</b><span>XP no período</span></div><div class="stat"><b>'+(med==null?'—':String(med).replace('.',','))+'</b><span>média nas listas ('+corr.length+')</span></div></div>';
+  if(a.diagnostico&&a.diagnostico.nota!=null) h+='<p class="small" style="margin:10px 0 0"><b>Nivelamento inicial:</b> '+a.diagnostico.nota+'% de acerto ('+fmtData(a.diagnostico.em)+').</p>';
+  h+='<h3>Andamento por assunto</h3>'+(ps.length?'<div class="stack">'+ps.map(function(p){var t=TBY[p.topic_id];return '<div class="reprow"><div class="grow"><b>'+t.nome+'</b><div style="margin-top:4px">'+ruler(p.pct)+'</div></div><b style="color:'+pctColor(p.pct)+';min-width:44px;text-align:right">'+p.pct+'%</b></div>';}).join('')+'</div>':'<p class="muted">Ainda não começou nenhum assunto.</p>');
+  h+='<h3>Listas</h3>'+(corr.length?'<div class="stack">'+corr.map(function(l){return '<div class="reprow"><div class="grow">'+esc(l.titulo)+'</div><b>'+(l.nota==null?'—':String(l.nota).replace('.',','))+'</b></div>';}).join('')+'</div>':'<p class="muted small">Nenhuma lista corrigida no período.</p>')+(pend.length?'<p class="small" style="color:var(--bad);font-weight:700">'+pend.length+' lista(s) ainda não entregue(s).</p>':'');
+  h+='<h3>Dificuldades que o aluno anotou</h3>'+(nts.length?'<ul>'+nts.map(function(n){return '<li>'+(n.topic_id&&TBY[n.topic_id]?'<b>'+TBY[n.topic_id].nome+':</b> ':'')+esc(n.texto)+'</li>';}).join('')+'</ul>':'<p class="muted small">Nenhuma anotada no período.</p>');
+  h+='<h3>Comentário do professor</h3><textarea id="relcom" class="noprint" placeholder="Ex.: Maria evoluiu muito em frações; vamos focar em equações nas próximas aulas.">'+esc(com)+'</textarea><div class="printonly" id="relcomp">'+nl2br(com)+'</div><p class="small muted" style="margin-top:14px">Professor '+esc(ST.me.nome)+' · Aulas particulares de Matemática</p></div>';
+  h+='<div class="noprint stack" style="margin-top:14px"><label for="relw" style="margin:0">WhatsApp do responsável</label><input id="relw" inputmode="tel" placeholder="(81) 9 9999-9999" value="'+esc(a.responsavel_whatsapp||'')+'"><button class="btn wa block" data-a="relWa" data-id="'+id+'">'+ic('wa','#fff',20)+' Enviar resumo no WhatsApp</button><button class="btn primary block" data-a="imprimir">Imprimir / salvar em PDF</button></div>';
+  page({title:'Relatório · '+esc(primeiroNome(a.nome)),back:true,nav:'alunos',body:h});
+  var ta=document.getElementById('relcom'); ta.addEventListener('input',function(){ try{ localStorage.setItem('rel-com-'+id,ta.value); }catch(e){} document.getElementById('relcomp').innerHTML=nl2br(ta.value); });
+  ST.rel={a:a,s:s,diasEst:diasEst,ps:ps,corr:corr,med:med,pend:pend,nts:nts,de:de,ate:hoje_};
+}
+A.relPer=function(el){ ST.relPer=+el.dataset.v; vRelatorio(el.dataset.id); };
+function waNum(v){ var d=String(v||'').replace(/\D/g,''); if(!d) return ''; if(d.length<=11) d='55'+d; return d; }
+A.relWa=async function(el){ var r=ST.rel, a=r.a, w=document.getElementById('relw').value.trim(), com=document.getElementById('relcom').value.trim();
+  if(w!==(a.responsavel_whatsapp||'')){ try{ await DB.upd('profiles',{id:a.id},{responsavel_whatsapp:w||null}); a.responsavel_whatsapp=w; }catch(e){} }
+  var t='📊 *Relatório de Matemática*\n'+a.nome+' — '+(a.ano||'')+'\nPeríodo: '+r.de+' a '+r.ate+'\n\n✅ Dias estudando: '+r.diasEst+'\n🔥 Sequência atual: '+r.s.seq+' dia(s) (recorde '+r.s.recorde+')\n';
+  if(r.corr.length) t+='📝 Listas corrigidas: '+r.corr.length+(r.med!=null?' · média '+String(r.med).replace('.',','):'')+'\n';
+  if(r.pend.length) t+='⏳ Listas pendentes: '+r.pend.length+'\n';
+  if(r.ps.length) t+='\n📚 *Assuntos*\n'+r.ps.slice(0,8).map(function(p){return '• '+TBY[p.topic_id].nome+': '+p.pct+'%';}).join('\n')+'\n';
+  if(r.nts.length) t+='\n⚠️ *Dificuldades anotadas*\n'+r.nts.slice(0,4).map(function(n){return '• '+(n.topic_id&&TBY[n.topic_id]?TBY[n.topic_id].nome+': ':'')+n.texto;}).join('\n')+'\n';
+  if(com) t+='\n💬 *Comentário do professor*\n'+com+'\n';
+  t+='\n— Prof. '+ST.me.nome;
+  window.open('https://wa.me/'+waNum(w)+'?text='+encodeURIComponent(t),'_blank'); };
+FORMS.resp=async function(f){ try{ await DB.upd('profiles',{id:f.dataset.id},{responsavel_whatsapp:f.w.value.trim()||null}); await getAlunos(true); toast('Salvo'); }catch(e){ toast(erroMsg(e)); } };
+
+/* ================= AGENDA DO PROFESSOR ================= */
+var DIAS=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+async function vAgendaProf(){
+  loading('Agenda',''); var L=await DB.q('horarios',{order:['hora',true]}); var por={}; L.forEach(function(x){ (por[x.dia]=por[x.dia]||[]).push(x); });
+  var livres=L.filter(function(x){return !x.ocupado;}).length;
+  var h='<div class="card"><b>'+livres+' horário(s) livre(s)</b> de '+L.length+'. <span class="small muted">Os alunos e pais veem isso na agenda pública (o nome no campo de observação fica só para você).</span><div class="grid" style="margin-top:10px"><a class="btn ghost" href="https://agenda-aulas-neon.vercel.app" target="_blank" rel="noopener">Ver agenda pública ↗</a><button class="btn primary" data-a="novoHorario">+ Novo horário</button></div></div>';
+  [1,2,3,4,5,6,0].forEach(function(d){ var hs=por[d]; if(!hs) return; h+='<h2>'+DIAS[d]+'</h2><div class="stack">'+hs.map(function(x){ return '<div class="item" style="align-items:center"><b style="min-width:58px;font-size:18px">'+esc(x.hora)+'</b><div class="grow"><button class="btn sm '+(x.ocupado?'danger':'gold')+'" data-a="toggleHora" data-id="'+x.id+'" data-v="'+(x.ocupado?1:0)+'">'+(x.ocupado?'Ocupado':'Livre')+'</button><input class="obs" data-obs="'+x.id+'" placeholder="Obs. (ex.: nome do aluno)" value="'+esc(x.obs||'')+'" style="margin-top:6px;padding:8px 10px"></div><button class="btn sm ghost" data-a="delHora" data-id="'+x.id+'" aria-label="Apagar horário">✕</button></div>'; }).join('')+'</div>'; });
+  page({title:'Minha agenda',back:true,nav:'painel',body:h});
+  $app.querySelectorAll('[data-obs]').forEach(function(i){ i.addEventListener('change',async function(){ try{ await DB.upd('horarios',{id:+i.dataset.obs},{obs:i.value.trim()||null}); toast('Salvo'); }catch(e){ toast(erroMsg(e)); } }); });
+}
+A.toggleHora=async function(el){ var oc=el.dataset.v!=='1'; try{ await DB.upd('horarios',{id:+el.dataset.id},{ocupado:oc}); vAgendaProf(); }catch(e){ toast(erroMsg(e)); } };
+A.delHora=async function(el){ if(!confirmar('Apagar este horário?')) return; await DB.del('horarios',{id:+el.dataset.id}); vAgendaProf(); };
+A.novoHorario=function(){ sheet('Novo horário','<form id="fh" data-form="horario"><label for="hd" style="margin-top:0">Dia</label><select id="hd" name="d">'+[1,2,3,4,5,6,0].map(function(d){return '<option value="'+d+'">'+DIAS[d]+'</option>';}).join('')+'</select><label for="hh">Hora de início (aula de 1 h)</label><input id="hh" name="h" type="time" required value="18:00"><label class="row" style="font-weight:600;gap:10px;margin-top:12px"><input type="checkbox" name="o" style="width:22px;height:22px"> Já está ocupado</label></form>','<button class="btn primary block" form="fh">Adicionar</button>'); };
+FORMS.horario=async function(f){ try{ await DB.ins('horarios',{dia:+f.d.value,hora:f.h.value,ocupado:f.o.checked}); closeSheet(); vAgendaProf(); }catch(e){ toast(erroMsg(e)); } };
 
 /* ================= ROTEADOR ================= */
 async function render(){
   if(!ST.me) return; if(!ST.keepSheet) closeSheet(); ST.keepSheet=false;
-  var p=location.hash.replace(/^#\/?/,'').split('/'); var r=p[0]||(isProf()?'painel':'inicio');
+  var p=location.hash.replace(/^#\/?/,'').split('/'); var r=p[0]||(isProf()?'painel':'inicio'); if(r!=='diagnostico') ST.diag=null;
   try{
     if(isProf()){
       if(r==='painel') return await vPainel(); if(r==='alunos') return await vAlunos(); if(r==='aluno') return await vAluno(p[1],p[2]);
       if(r==='p-listas') return await vPListas(); if(r==='nova-lista'){ if(!ST.nl||ST.nl.reset||p[1]) ST.nl=null; return await vNovaLista(p[1]); }
       if(r==='corrigir'||r==='ver-lista') return await vCorrigir(p[1]); if(r==='p-duvidas') return await vPDuvidas();
       if(r==='conteudo'||r==='assuntos') return vAssuntos(); if(r==='assunto') return await vAssunto(p[1],p[2]); if(r==='meu-perfil') return vMeuPerfil();
+      if(r==='avisos') return await vAvisos(); if(r==='relatorio') return await vRelatorio(p[1]); if(r==='agenda-prof') return await vAgendaProf();
       location.hash='#/painel'; return;
     }
     if(r==='inicio') return await vInicio(); if(r==='assuntos') return vAssuntos(); if(r==='assunto') return await vAssunto(p[1],p[2]);
     if(r==='plano') return await vPlano(); if(r==='listas') return await vListas(); if(r==='lista') return await vLista(p[1]);
     if(r==='duvidas') return await vDuvidas(); if(r==='perfil') return await vPerfil();
+    if(r==='sequencia') return vSequencia(); if(r==='avisos') return await vAvisos(); if(r==='diagnostico') return vDiag();
     location.hash='#/inicio';
   }catch(e){ console.error(e); page({title:'Ops',nav:'',body:'<div class="err">'+esc(erroMsg(e))+'</div><button class="btn block" style="margin-top:12px" data-a="recarregar">Tentar de novo</button>'}); }
 }
@@ -572,6 +799,7 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeSheet
 
 /* ---------- início ---------- */
 async function boot(){
+  try{ if('serviceWorker' in navigator && !MOCK) navigator.serviceWorker.register('/sw.js'); }catch(e){}
   if(MOCK){ ST.cfg={dominio:'alunos.matematica.app'}; ST.me=mockInit(MOCK[1]); return afterLogin(); }
   try{ ST.cfg=await fetch('/api/config').then(function(r){return r.json();}); }catch(e){ return screenMsg('Sem conexão','<p>Não consegui falar com o servidor. Verifique a internet e recarregue a página.</p>'); }
   if(ST.cfg.faltando&&ST.cfg.faltando.length) return screenConfig(ST.cfg.faltando);
