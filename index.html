@@ -112,6 +112,11 @@ sup{font-size:.7em}
 .answer .ans{font-size:20px;font-weight:900;color:var(--ok);overflow-x:auto}
 .steps{margin:8px 0 0;padding-left:22px}
 .steps li{margin:6px 0}
+.opt{min-height:52px;font-weight:600;border-width:2px}
+.opt .fr{vertical-align:middle}
+.btn.on-ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.on-bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.opt:disabled{opacity:1}
 .selfcheck{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .selfcheck .btn.on-ok{background:var(--ok);border-color:var(--ok);color:#fff}
 .selfcheck .btn.on-bad{background:var(--bad);border-color:var(--bad);color:#fff}
@@ -684,7 +689,7 @@ function(){var a=r.p([1,1,1,2,-1,3]),r1=r.i(-9,9),r2=r.i(-9,9);var b=-a*(r1+r2),
  st.push('√Δ = '+sq+'.');st.push('x = ('+n(-b)+' ± '+sq+') ÷ '+p(2*a)+'.');st.push('x₁ = ('+n(-b)+' + '+sq+') ÷ '+p(2*a)+' = '+n((-b+sq)/(2*a))+'; x₂ = ('+n(-b)+' − '+sq+') ÷ '+p(2*a)+' = '+n((-b-sq)/(2*a))+'.');
  return {q:'Resolva: '+quad(a,b,c)+' = 0',a:'x = '+n(hi)+' ou x = '+n(lo),s:st};},
 function(){var b=r.nz(-4,4),c;do{c=r.i(1,15);}while(b*b-4*c>=0);var D=b*b-4*c;return {q:'Resolva em ℝ: '+quad(1,b,c)+' = 0',a:'Não tem raízes reais (Δ = '+n(D)+')',s:['a = 1, b = '+n(b)+', c = '+c+'.','Δ = '+p(b)+'² − 4·1·'+c+' = '+(b*b)+' − '+(4*c)+' = '+n(D)+'.','Δ negativo: não existe raiz quadrada real de número negativo. Não há solução real.']};},
-function(){var r1=r.i(-9,9),r2=r.i(-9,9);if(r1===r2)r2++;var S=r1+r2,P=r1*r2;return {q:'Usando soma e produto, encontre as raízes de '+quad(1,-S,P)+' = 0.',a:'x = '+n(Math.max(r1,r2))+' e x = '+n(Math.min(r1,r2)),s:['Com a = 1: soma das raízes = −b = '+n(S)+'; produto = c = '+n(P)+'.','Quais dois números somam '+n(S)+' e multiplicam '+n(P)+'? '+n(r1)+' e '+n(r2)+'.']};},
+function(){var r1=r.i(-9,9),r2=r.i(-9,9);if(r1===r2)r2++;var S=r1+r2,P=r1*r2;return {q:'Usando soma e produto, encontre as raízes de '+quad(1,-S,P)+' = 0.',a:'x = '+n(Math.max(r1,r2))+' ou x = '+n(Math.min(r1,r2)),s:['Com a = 1: soma das raízes = −b = '+n(S)+'; produto = c = '+n(P)+'.','Quais dois números somam '+n(S)+' e multiplicam '+n(P)+'? '+n(r1)+' e '+n(r2)+'.']};},
 function(){var a=r.p([1,2]),r1=r.i(-6,6),r2=r.i(-6,6);var b=-a*(r1+r2),c=a*r1*r2;var D=b*b-4*a*c;return {q:'Calcule o Δ de '+quad(a,b,c)+' = 0 e diga quantas raízes reais a equação tem.',a:'Δ = '+D+'; '+(D>0?'duas raízes reais diferentes':'uma raiz real (dupla)'),s:['a = '+a+', b = '+n(b)+', c = '+n(c)+'.','Δ = '+p(b)+'² − 4·'+a+'·'+p(c)+' = '+D+'.',D>0?'Δ &gt; 0 → duas raízes.':'Δ = 0 → raízes iguais.']};}
 ]);}});
 
@@ -2222,27 +2227,46 @@ function renderQuiz(id){
   if(s.mode==='quiz'){
     var g=L[s.idx], key=s.seed+':'+s.idx, shown=!!s.shown[s.idx], st=ac[key];
     h+='<div class="card" style="margin-top:12px"><div class="row" style="justify-content:space-between"><span class="qnum">QUESTÃO '+(s.idx+1)+' DE '+L.length+'</span>'+(g.prof?'<span class="badge">do professor</span>':'')+'</div><div class="progress"><i style="width:'+((s.idx+1)/L.length*100)+'%"></i></div><div class="qtext">'+g.q+'</div>';
-    if(shown){ h+=ansHTML(g); if(!prof) h+='<p class="small muted" style="margin:12px 0 0;font-weight:700">Você acertou?</p><div class="selfcheck"><button class="btn'+(st===true?' on-ok':'')+'" data-a="marca" data-id="'+id+'" data-v="1">✓ Acertei</button><button class="btn'+(st===false?' on-bad':'')+'" data-a="marca" data-id="'+id+'" data-v="0">✗ Errei</button></div>'; }
-    else h+='<button class="btn primary block" style="margin-top:16px" data-a="revela" data-id="'+id+'">Mostrar resposta</button>';
+    var opts=quizOpts(id,s.seed,s.idx,g); var esc_=s.pick&&s.pick[s.idx];
+    h+='<div class="stack" style="margin-top:14px" role="group" aria-label="Alternativas">'+opts.map(function(o,k){ var cls='btn ghost block opt'; if(shown){ if(o===g.a) cls='btn block opt on-ok'; else if(esc_===k) cls='btn block opt on-bad'; } return '<button class="'+cls+'" style="justify-content:flex-start;text-align:left" data-a="escolhe" data-id="'+id+'" data-v="'+k+'"'+(shown?' disabled':'')+'><b style="margin-right:6px">'+'ABCD'[k]+')</b> <span>'+o+'</span></button>'; }).join('')+'</div>';
+    if(shown){ h+='<div class="'+(st===false?'err':'okmsg')+'" style="margin-top:12px">'+(st===false?'Não foi dessa vez. Veja a resolução:':'Acertou! 🎉')+'</div>'+ansHTML(g); }
+    else h+='<button class="btn sm ghost" style="margin-top:10px" data-a="revela" data-id="'+id+'">Não sei — ver a resolução</button>';
     h+='<div class="qnav"><button class="btn ghost" data-a="qnav" data-id="'+id+'" data-v="-1" '+(s.idx===0?'disabled':'')+'>← Anterior</button><button class="btn '+(shown?'primary':'ghost')+'" data-a="qnav" data-id="'+id+'" data-v="1" '+(s.idx===L.length-1?'disabled':'')+'>Próxima →</button></div>';
     h+='<div class="dots" aria-label="Ir para a questão">'+L.map(function(_,k){ var v=ac[s.seed+':'+k]; return '<button data-a="qjump" data-id="'+id+'" data-v="'+k+'" class="'+(k===s.idx?'cur ':'')+(v===true?'ok':v===false?'bad':'')+'" aria-label="Questão '+(k+1)+'">'+(k+1)+'</button>'; }).join('')+'</div>';
-    if(!prof) h+='<p class="small muted" style="margin-top:10px">Cada acerto marcado vale 4% do assunto (até 20 acertos). A teoria vale 20%.</p>';
+    if(!prof) h+='<p class="small muted" style="margin-top:10px">Escolha uma alternativa. Cada acerto vale 4% do assunto (até 20 acertos); a teoria vale 20%. Vale a primeira tentativa.</p>';
     h+='</div>';
   } else {
     h+='<div class="stack" style="margin-top:12px">'+L.map(function(g,k){ return '<div class="card"><div class="row" style="justify-content:space-between"><span class="qnum">QUESTÃO '+(k+1)+'</span>'+(g.prof?'<span class="badge">do professor</span>':'')+'</div><div class="qtext" style="font-size:17px;margin-top:6px">'+g.q+'</div>'+ansHTML(g)+'</div>'; }).join('')+'</div><button class="btn block noprint" style="margin-top:12px" data-a="imprimir">Imprimir lista</button>';
   }
   document.getElementById('tabBody').innerHTML=h;
 }
+function quizOpts(id,seed,idx,g){
+  var key=id+'|'+seed+'|'+idx; ST.opts=ST.opts||{}; if(ST.opts[key]) return ST.opts[key];
+  var corr=g.a, sc=strip(corr);
+  if(/^(Sim|Não)$/.test(sc)) return ST.opts[key]=['Sim','Não'];
+  var pool=[]; [0,1,2,3].forEach(function(d){ getList(id,seed+d*37).forEach(function(x){ pool.push(x.a); }); });
+  var seen={}; seen[sc]=1; var first=sc.split(/\s/)[0], last=sc.split(/\s/).pop(), hasFr=/class="fr"/.test(corr), isNum=/^[−\d.,]+$/.test(sc);
+  var cand=[]; pool.forEach(function(p){ var t=strip(p); if(seen[t]) return; seen[t]=1; var s=0; if(t.split(/\s/)[0]===first) s+=2; if(t.split(/\s/).pop()===last) s+=2; if(/class="fr"/.test(p)===hasFr) s+=1; if(/^[−\d.,]+$/.test(t)===isNum) s+=2; if(Math.abs(t.length-sc.length)<=4) s+=1; cand.push([s,p]); });
+  var r=R(hashStr(key)); cand=r.sh(cand).sort(function(x,y){return y[0]-x[0];});
+  var out=[corr].concat(cand.slice(0,3).map(function(c){return c[1];}));
+  if(out.length<4 && isNum){ var v=parseFloat(sc.replace(/\./g,'').replace(',','.').replace('−','-')); [1,-1,2,10].forEach(function(dv){ if(out.length<4){ var w=n(v+dv); if(out.map(strip).indexOf(w)<0) out.push(w);} }); }
+  return ST.opts[key]=r.sh(out);
+}
+A.escolhe=async function(el){ var id=el.dataset.id, s=quizState(id); var L=fullList(id,s.seed), g=L[s.idx]; var opts=quizOpts(id,s.seed,s.idx,g); var k=+el.dataset.v; var ok=opts[k]===g.a;
+  s.pick=s.pick||{}; s.pick[s.idx]=k; s.shown[s.idx]=1;
+  if(!isProf()){ var ac=Object.assign({},(ST.prog[id]&&ST.prog[id].acertos)||{}); var kk=s.seed+':'+s.idx; if(ac[kk]===undefined){ ac[kk]=ok; await saveProg(id,{acertos:ac}); } }
+  renderQuiz(id); updHdr(id); };
+function updHdr(id){ if(!ST.prog[id]) return; var hdr=document.querySelector('#main .row b'); if(hdr){ hdr.textContent=ST.prog[id].pct+'%'; hdr.style.color=pctColor(ST.prog[id].pct); var rr=document.querySelector('#main .big-ruler'); if(rr) rr.outerHTML=ruler(ST.prog[id].pct,true); } }
 function ansHTML(g){ var st=steps(g.s); return '<div class="answer"><div class="small muted" style="font-weight:800;letter-spacing:.08em">RESPOSTA</div><div class="ans">'+g.a+'</div>'+(st.length?'<div style="margin-top:8px;font-weight:800">Passo a passo:</div><ol class="steps">'+st.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>':'')+'</div>'; }
 A.qmode=function(el){ quizState(el.dataset.id).mode=el.dataset.v; renderQuiz(el.dataset.id); };
-A.seed=function(el){ var s=quizState(el.dataset.id); s.seed=Math.max(0,s.seed+ +el.dataset.v); s.idx=0; s.shown={}; renderQuiz(el.dataset.id); };
-A.revela=function(el){ var s=quizState(el.dataset.id); s.shown[s.idx]=1; renderQuiz(el.dataset.id); };
+A.seed=function(el){ var s=quizState(el.dataset.id); s.seed=Math.max(0,s.seed+ +el.dataset.v); s.idx=0; s.shown={}; s.pick={}; renderQuiz(el.dataset.id); };
+A.revela=async function(el){ var id=el.dataset.id, s=quizState(id); s.shown[s.idx]=1; if(!isProf()){ var ac=Object.assign({},(ST.prog[id]&&ST.prog[id].acertos)||{}); var kk=s.seed+':'+s.idx; if(ac[kk]===undefined){ ac[kk]=false; await saveProg(id,{acertos:ac}); } } renderQuiz(id); updHdr(id); };
 A.qnav=function(el){ var s=quizState(el.dataset.id); var L=fullList(el.dataset.id,s.seed); s.idx=Math.max(0,Math.min(L.length-1,s.idx+ +el.dataset.v)); renderQuiz(el.dataset.id); };
 A.qjump=function(el){ quizState(el.dataset.id).idx=+el.dataset.v; renderQuiz(el.dataset.id); };
 A.imprimir=function(){ try{ window.print(); }catch(e){} };
 A.marca=async function(el){ var id=el.dataset.id, s=quizState(id); var ac=Object.assign({},(ST.prog[id]&&ST.prog[id].acertos)||{}); ac[s.seed+':'+s.idx]=el.dataset.v==='1'; await saveProg(id,{acertos:ac});
   var L=fullList(id,s.seed); if(el.dataset.v==='1') toast('Boa! '+ST.prog[id].pct+'% concluído'); if(s.idx<L.length-1){ s.idx++; } renderQuiz(id); var hdr=document.querySelector('#main .row b'); if(hdr){ hdr.textContent=ST.prog[id].pct+'%'; hdr.style.color=pctColor(ST.prog[id].pct); var r=document.querySelector('#main .big-ruler'); if(r) r.outerHTML=ruler(ST.prog[id].pct,true); } };
-document.addEventListener('keydown',function(e){ var m=/^#\/assunto\/([^/]+)/.exec(location.hash); if(!m||document.getElementById('sheet')||/INPUT|TEXTAREA/.test(e.target.tagName)) return; var s=ST.quiz[m[1]]; if(!s||s.mode!=='quiz'||ST.tab[m[1]]!=='ex') return; if(e.key==='ArrowRight') A.qnav({dataset:{id:m[1],v:'1'}}); else if(e.key==='ArrowLeft') A.qnav({dataset:{id:m[1],v:'-1'}}); else if(e.key===' '){ e.preventDefault(); A.revela({dataset:{id:m[1]}}); } });
+document.addEventListener('keydown',function(e){ var m=/^#\/assunto\/([^/]+)/.exec(location.hash); if(!m||document.getElementById('sheet')||/INPUT|TEXTAREA/.test(e.target.tagName)) return; var s=ST.quiz[m[1]]; if(!s||s.mode!=='quiz'||ST.tab[m[1]]!=='ex') return; if(e.key==='ArrowRight') A.qnav({dataset:{id:m[1],v:'1'}}); else if(e.key==='ArrowLeft') A.qnav({dataset:{id:m[1],v:'-1'}}); else if(e.key===' '){ e.preventDefault(); A.revela({dataset:{id:m[1]}}); } else if(/^[1-4abcd]$/i.test(e.key)){ var k='1234'.indexOf(e.key)>=0?'1234'.indexOf(e.key):'abcd'.indexOf(e.key.toLowerCase()); var b=document.querySelector('[data-a="escolhe"][data-v="'+k+'"]'); if(b&&!b.disabled) b.click(); } });
 
 async function renderNotas(id){
   var tb=document.getElementById('tabBody'); tb.innerHTML='<div class="loading">Carregando…</div>';
