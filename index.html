@@ -93,6 +93,22 @@ h3{font-size:17px;margin:22px 0 8px;font-weight:800}
 .tabs button{flex:1;border:none;background:none;padding:10px 6px;border-radius:11px;font-weight:800;color:var(--muted);font-size:14px;min-height:42px}
 .tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .teoria{font-size:16.5px}
+.ideia,.reconhecer,.indice,.teste{border-radius:14px;padding:12px 14px;margin:0 0 12px}
+.ideia{background:#FFF4D1;border-left:5px solid #F5B700}
+.reconhecer{background:#E9F7EF;border-left:5px solid #1E8E3E}
+.reconhecer ul{margin:4px 0 0}
+.indice{background:#F4F6FB}
+.indice summary{cursor:pointer;margin:0}
+.chips-i{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.indice a{background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13.5px;color:inherit;text-decoration:none}
+.ideia-tit{font-weight:800;font-size:15px;margin-bottom:4px}
+.ideia p{margin:0}
+.teste{background:#EEF2FD;margin-top:22px}
+.tq{background:#fff;border-radius:12px;padding:10px 12px;margin:8px 0}
+.tq summary{cursor:pointer;color:#1F6FEB;font-weight:700;margin-top:6px;min-height:32px;display:flex;align-items:center}
+.tq ol{margin:6px 0;padding-left:20px}
+.teoria h3[id]{scroll-margin-top:80px}
+
 .teoria h3{margin-top:26px;padding-top:4px;border-top:2px dashed var(--line)}
 .teoria h3:first-child{border-top:none;margin-top:4px}
 .teoria ul,.teoria ol{padding-left:22px}
@@ -978,6 +994,68 @@ function(){var w=r.p(words);var L=w.length;return {q:'Quantos anagramas tem a pa
 function(){var e=r.i(2,5),p_=r.i(2,6),s=r.i(2,4);return {q:'Um restaurante oferece '+e+' entradas, '+p_+' pratos principais e '+s+' sobremesas. Quantas refeições diferentes (entrada + prato + sobremesa) posso montar?',a:n(e*p_*s),s:['Uma escolha de cada: '+e+' × '+p_+' × '+s+' = '+(e*p_*s)+'.']};},
 function(){var k=r.i(4,12);return {q:'Numa reunião com '+k+' pessoas, cada uma aperta a mão de todas as outras uma única vez. Quantos apertos de mão acontecem?',a:n(k*(k-1)/2),s:['Cada pessoa aperta a mão de '+(k-1)+' outras: '+k+' × '+(k-1)+' = '+(k*(k-1))+'.','Mas assim cada aperto foi contado duas vezes (A com B e B com A): ÷ 2.',(k*(k-1))+' ÷ 2 = '+(k*(k-1)/2)+'.']};}
 ]);}});
+
+/* ===== Geometria extra: elementos notáveis do triângulo, semelhança de triângulos e Tales focado ===== */
+topic({id:'elementos-notaveis',nome:'Elementos notáveis do triângulo (altura, mediana, bissetriz, mediatriz e pontos notáveis)',ano:'8º ano',area:'Geometria',
+tags:'elementos notáveis triângulo altura mediana bissetriz mediatriz baricentro incentro circuncentro ortocentro cevianas pontos notáveis medidas e formas',
+teoria:'',
+gen:function(r,i){return mix(i,[
+function(){var g=r.i(2,12),med=3*g;var ag=2*g;var tipo=r.i(0,2);
+  if(tipo===0) return {q:'No triângulo ABC, AM é uma mediana e G é o baricentro. Se AM mede '+med+' cm, quanto mede AG?',a:ag+' cm',s:['O baricentro divide cada mediana em 3 partes iguais: 2 partes ficam do lado do vértice e 1 parte do lado do ponto médio.','Cada parte: '+med+' ÷ 3 = '+g+' cm.','AG = 2 partes = 2 × '+g+' = '+ag+' cm.']};
+  if(tipo===1) return {q:'G é o baricentro do triângulo ABC e AM é uma mediana. Se GM mede '+g+' cm, quanto mede AG?',a:ag+' cm',s:['GM é o pedaço pequeno (1 parte) e AG é o pedaço grande (2 partes).','AG = 2 × GM = 2 × '+g+' = '+ag+' cm.']};
+  return {q:'G é o baricentro do triângulo ABC e AM é uma mediana. Se AG mede '+ag+' cm, quanto mede a mediana AM inteira?',a:med+' cm',s:['AG é o pedaço grande: vale 2 partes. Então 1 parte = '+ag+' ÷ 2 = '+g+' cm.','A mediana inteira tem 3 partes: 3 × '+g+' = '+med+' cm.']};},
+function(){var L=[['Altura','sai de um vértice e chega no lado oposto (ou no seu prolongamento) formando ângulo de 90°'],['Mediana','liga um vértice ao ponto médio do lado oposto'],['Bissetriz','sai de um vértice e divide o ângulo desse vértice em dois ângulos iguais'],['Mediatriz','é a reta perpendicular a um lado passando pelo seu ponto médio']];var k=r.i(0,3);return {q:'Num triângulo, qual é o nome do segmento (ou reta) que '+L[k][1]+'?',a:L[k][0],s:['Lembre das palavras: altura → 90°; mediana → ponto <b>médio</b>; bissetriz → <b>bi</b>-seccionar (cortar em 2) o ângulo; mediatriz → perpendicular no meio do lado.','Resposta: <b>'+L[k][0].toLowerCase()+'</b>.']};},
+function(){var P=[['Baricentro','das três medianas','é o centro de gravidade (equilíbrio) do triângulo'],['Incentro','das três bissetrizes','é o centro da circunferência inscrita (de dentro)'],['Circuncentro','das três mediatrizes','é o centro da circunferência circunscrita (que passa pelos vértices)'],['Ortocentro','das três alturas','não tem circunferência associada']];var k=r.i(0,3);var dir=r.i(0,1);
+  if(dir===0) return {q:'Como se chama o ponto de encontro '+P[k][1]+' de um triângulo?',a:P[k][0],s:['Associe: Medianas → Baricentro; Bissetrizes → Incentro; Mediatrizes → Circuncentro; Alturas → Ortocentro.','Macete <b>MB · BI · MC · AO</b>.','O ponto de encontro '+P[k][1]+' é o <b>'+P[k][0].toLowerCase()+'</b>, que '+P[k][2]+'.']};
+  return {q:'O '+P[k][0].toLowerCase()+' de um triângulo é o ponto de encontro de quais segmentos?',a:'Das '+P[k][1].replace('das ',''),s:['Macete <b>MB · BI · MC · AO</b>: Medianas–Baricentro, Bissetrizes–Incentro, Mediatrizes–Circuncentro, Alturas–Ortocentro.','Logo, o '+P[k][0].toLowerCase()+' é o encontro '+P[k][1]+'.']};},
+function(){var a=r.i(10,40)*2;return {q:'No triângulo ABC, o ângulo Â vale '+a+'°. Traçamos a bissetriz AD desse ângulo. Quanto mede o ângulo BAD?',a:(a/2)+'°',s:['A bissetriz divide o ângulo em <b>duas metades iguais</b>.','BAD = '+a+'° ÷ 2 = '+(a/2)+'°.']};},
+function(){var B=r.i(30,75);return {q:'No triângulo ABC, o ângulo B mede '+B+'°. AH é a altura relativa ao lado BC. Quanto mede o ângulo BAH?',a:(90-B)+'°',s:['A altura forma ângulo de 90° com o lado: AHB = 90°.','No triângulo ABH os ângulos somam 180°: BAH + '+B+'° + 90° = 180°.','BAH = 180° − 90° − '+B+'° = '+(90-B)+'°.']};},
+function(){var h=r.i(3,15)*2;return {q:'Num triângulo retângulo, a hipotenusa mede '+h+' cm. Quanto mede a mediana relativa à hipotenusa?',a:(h/2)+' cm',s:['No triângulo retângulo, o ponto médio da hipotenusa fica à <b>mesma distância</b> dos três vértices (é o circuncentro).','Por isso a mediana relativa à hipotenusa é <b>metade da hipotenusa</b>.',h+' ÷ 2 = '+(h/2)+' cm.']};},
+function(){var T=[['acutângulo','dentro do triângulo'],['retângulo','no vértice do ângulo reto'],['obtusângulo','fora do triângulo']];var k=r.i(0,2);return {q:'Num triângulo '+T[k][0]+', onde fica o ortocentro (encontro das alturas)?',a:T[k][1].charAt(0).toUpperCase()+T[k][1].slice(1),s:['Acutângulo (todos os ângulos agudos): as alturas se cruzam <b>dentro</b>.','Retângulo: os dois catetos já são alturas, então elas se cruzam <b>no vértice do ângulo reto</b>.','Obtusângulo: duas alturas caem fora, nos prolongamentos dos lados, e o encontro fica <b>fora</b>.','Resposta: '+T[k][1]+'.']};},
+function(){var a=r.i(10,40)*2;var bic=90+a/2;return {q:'I é o incentro do triângulo ABC e o ângulo Â mede '+a+'°. Quanto mede o ângulo BIC?',a:bic+'°',s:['B + C = 180° − '+a+'° = '+(180-a)+'°.','As bissetrizes pegam metade de B e metade de C: (B + C) ÷ 2 = '+((180-a)/2)+'°.','No triângulo BIC: BIC = 180° − '+((180-a)/2)+'° = '+bic+'°.','Atalho: BIC = 90° + Â ÷ 2 = 90° + '+(a/2)+'° = '+bic+'°.']};},
+function(){var d=r.i(4,25);var tipo=r.i(0,1);
+  if(tipo===0) return {q:'O ponto P está sobre a mediatriz do segmento AB. Se PA = '+d+' cm, quanto mede PB?',a:d+' cm',s:['Todo ponto da mediatriz fica à <b>mesma distância</b> das duas pontas do segmento.','PB = PA = '+d+' cm.']};
+  return {q:'O é o circuncentro do triângulo ABC e OA = '+d+' cm. Quanto medem OB e OC?',a:'OB = OC = '+d+' cm',s:['O circuncentro é o encontro das mediatrizes, então fica à mesma distância dos três vértices.','OA = OB = OC = '+d+' cm (é o raio da circunferência que passa pelos vértices).']};},
+function(){var k=r.i(1,6);var base=6*k,lat=5*k,h=4*k;return {q:'Um triângulo isósceles tem base de '+base+' cm e lados iguais de '+lat+' cm. A altura relativa à base também é mediana. Em quanto ela divide a base e quanto mede essa altura?',a:'Base em '+(base/2)+' cm e '+(base/2)+' cm; altura '+h+' cm',s:['No isósceles, a altura relativa à base é também mediana e bissetriz: ela cai no <b>meio</b> da base.','Metades: '+base+' ÷ 2 = '+(base/2)+' cm.','Formou um triângulo retângulo com hipotenusa '+lat+' e cateto '+(base/2)+'. Pitágoras: h² = '+lat+'² − '+(base/2)+'² = '+(lat*lat)+' − '+(base*base/4)+' = '+(h*h)+'.','h = '+raiz(h*h)+' = '+h+' cm.']};},
+function(){var g=r.i(2,10);var h=3*g;return {q:'Num triângulo equilátero, a altura mede '+h+' cm. Qual a distância do baricentro até um vértice?',a:(2*g)+' cm',s:['No equilátero, altura, mediana, bissetriz e mediatriz são <b>o mesmo segmento</b>, e os 4 pontos notáveis coincidem.','Então a altura também é mediana e o baricentro a divide em 2 partes (vértice) e 1 parte (base).','1 parte = '+h+' ÷ 3 = '+g+' cm; distância ao vértice = 2 × '+g+' = '+(2*g)+' cm.']};},
+function(){var m=r.i(3,15);return {q:'No triângulo ABC, AM é a mediana relativa ao lado BC e BM mede '+m+' cm. Quanto mede o lado BC?',a:(2*m)+' cm',s:['A mediana chega no <b>ponto médio</b> M de BC, então BM = MC.','BC = BM + MC = '+m+' + '+m+' = '+(2*m)+' cm.']};}
+]);}});
+
+topic({id:'semelhanca-triangulos',nome:'Semelhança de triângulos',ano:'9º ano',area:'Geometria',
+tags:'semelhança de triângulos semelhantes razão de semelhança casos AA LAL LLL proporcionais sombra paralela ampulheta escala medidas e formas',
+teoria:'',
+gen:function(r,i){return mix(i,[
+function(){var a=r.i(2,9),b=r.i(2,9),k=r.p([2,3,4,1.5,2.5]);var c=a*k,x=b*k;return {q:'Os triângulos ABC e DEF são semelhantes (A↔D, B↔E, C↔F). AB = '+n(a)+' cm, BC = '+n(b)+' cm e DE = '+n(c)+' cm. Quanto mede EF?',a:n(x)+' cm',s:['Lados correspondentes são proporcionais: '+F('DE','AB')+' = '+F('EF','BC')+'.','Monte: '+F(n(c),n(a))+' = '+F('x',n(b))+'.','Multiplique cruzado: '+n(a)+' · x = '+n(c)+' × '+n(b)+' = '+n(c*b)+'.','x = '+n(c*b)+' ÷ '+n(a)+' = '+n(x)+' cm.']};},
+function(){var a=r.i(2,12),k=r.p([2,3,4,5]);var dir=r.i(0,1);return {q:'Dois triângulos são semelhantes. Um lado do menor mede '+a+' cm e o lado correspondente do maior mede '+(a*k)+' cm. Qual a razão de semelhança do maior para o menor?',a:'k = '+k,s:['Razão de semelhança = lado do maior ÷ lado correspondente do menor.','k = '+(a*k)+' ÷ '+a+' = '+k+'.','Ou seja, o maior é uma <b>ampliação '+k+' vezes</b> do menor.']};},
+function(){var hp=r.p([1.5,1.6,1.8,2]),sp=r.p([2,2.5,3,4]),k=r.i(3,12);var sP=sp*k,hP=hp*k;return {q:'Uma pessoa de '+n(hp)+' m de altura projeta uma sombra de '+n(sp)+' m. No mesmo instante, uma árvore projeta uma sombra de '+n(sP)+' m. Qual a altura da árvore?',a:n(hP)+' m',s:['Os raios de sol chegam paralelos, então os dois triângulos (objeto + sombra) têm os mesmos ângulos: são semelhantes.','Altura está para sombra assim como altura está para sombra: '+F('h',n(sP))+' = '+F(n(hp),n(sp))+'.','Multiplique cruzado: '+n(sp)+' · h = '+n(hp)+' × '+n(sP)+' = '+n(hp*sP)+'.','h = '+n(hp*sP)+' ÷ '+n(sp)+' = '+n(hP)+' m.']};},
+function(){var ad=r.i(2,8),db=r.i(2,8);var ab=ad+db;var de=ad*r.i(1,3);var bc=de*ab/ad;return {q:'No triângulo ABC, o segmento DE é paralelo a BC, com D em AB e E em AC. AD = '+ad+' cm, DB = '+db+' cm e DE = '+n(de)+' cm. Quanto mede BC?',a:n(bc)+' cm',s:['Como DE ∥ BC, o triângulo pequeno ADE é semelhante ao grande ABC (mesmos ângulos).','Cuidado: compare AD com o lado <b>inteiro</b> AB = '+ad+' + '+db+' = '+ab+' cm (e não com DB).','Proporção: '+F('DE','BC')+' = '+F('AD','AB')+' → '+F(n(de),'x')+' = '+F(ad,ab)+'.',ad+' · x = '+n(de)+' × '+ab+' = '+n(de*ab)+' → x = '+n(bc)+' cm.']};},
+function(){var a=r.i(2,8),k=r.p([2,3,1.5,2.5]),b=r.i(2,9);return {q:'Os segmentos AB e CD são paralelos e as retas AC e BD se cruzam no ponto E (formando uma "ampulheta"). AB = '+a+' cm, CD = '+n(a*k)+' cm e AE = '+b+' cm. Quanto mede CE?',a:n(b*k)+' cm',s:['Os ângulos em E são opostos pelo vértice (iguais) e AB ∥ CD dá ângulos alternos iguais: os triângulos ABE e CDE são semelhantes.','Corresponde: AB ↔ CD e AE ↔ CE.','Razão: '+n(a*k)+' ÷ '+a+' = '+n(k)+'.','CE = '+b+' × '+n(k)+' = '+n(b*k)+' cm.']};},
+function(){var k=r.p([2,3,4,1.5]),p=r.i(8,30);return {q:'Dois triângulos são semelhantes com razão de semelhança '+n(k)+' (o maior em relação ao menor). O perímetro do menor é '+p+' cm. Qual o perímetro do maior?',a:n(p*k)+' cm',s:['Todos os lados ficam multiplicados por '+n(k)+', então o perímetro (soma dos lados) também.','Perímetro maior = '+p+' × '+n(k)+' = '+n(p*k)+' cm.']};},
+function(){var k=r.i(2,5),A=r.i(3,20);var dir=r.i(0,1);
+  if(dir===0) return {q:'Dois triângulos são semelhantes com razão de semelhança '+k+'. Se a área do menor é '+A+' cm², qual a área do maior?',a:(A*k*k)+' cm²',s:['Área é comprimento × comprimento, então ela fica multiplicada por k × k = k².','k² = '+k+'² = '+(k*k)+'.','Área maior = '+A+' × '+(k*k)+' = '+(A*k*k)+' cm².']};
+  return {q:'Dois triângulos semelhantes têm áreas '+A+' cm² e '+(A*k*k)+' cm². Qual é a razão de semelhança entre os lados?',a:'k = '+k,s:['A razão entre as áreas é k²: '+(A*k*k)+' ÷ '+A+' = '+(k*k)+'.','k² = '+(k*k)+' → k = '+raiz(k*k)+' = '+k+'.']};},
+function(){var T=[[3,4,5],[2,3,4],[4,5,6],[5,12,13],[3,5,7],[2,4,5]];var t=r.p(T),k=r.i(2,4);var sim=r.i(0,1);var u=t.map(function(x){return x*k;});if(!sim){u=u.slice();u[2]+=1;}
+  return {q:'Os triângulos de lados '+t.join(', ')+' e '+u.join(', ')+' são semelhantes?',a:sim?'Sim, razão '+k:'Não',s:['Critério LLL: são semelhantes se os <b>três</b> lados forem proporcionais (mesma razão). Compare do menor com o menor, médio com médio, maior com maior.','Razões: '+u[0]+' ÷ '+t[0]+' = '+n(u[0]/t[0])+'; '+u[1]+' ÷ '+t[1]+' = '+n(u[1]/t[1])+'; '+u[2]+' ÷ '+t[2]+' = '+n(u[2]/t[2],2)+'.',sim?'As três razões são iguais a '+k+': <b>são semelhantes</b>.':'As razões não são todas iguais: <b>não são semelhantes</b>.']};},
+function(){var a=r.i(30,80),b=r.i(30,80);if(a+b>=170)b=170-a-r.i(5,20);var c=180-a-b;return {q:'O triângulo ABC tem ângulos Â = '+a+'° e B = '+b+'°. O triângulo DEF, semelhante a ABC (A↔D, B↔E, C↔F), tem quanto no ângulo F?',a:c+'°',s:['Triângulos semelhantes têm os <b>mesmos ângulos</b> (só o tamanho muda).','C = 180° − '+a+'° − '+b+'° = '+c+'°.','Como C corresponde a F: F = '+c+'°.']};},
+function(){var e=r.p([50,100,200,25]),cm=r.i(2,15);return {q:'Uma maquete foi feita na escala 1 : '+e+'. Uma parede mede '+cm+' cm na maquete. Quanto ela mede na realidade?',a:n(cm*e/100)+' m',s:['Escala 1 : '+e+' quer dizer: cada 1 cm da maquete vale '+e+' cm na realidade (é uma semelhança de razão '+e+').',cm+' × '+e+' = '+(cm*e)+' cm.','Em metros: '+(cm*e)+' ÷ 100 = '+n(cm*e/100)+' m.']};},
+function(){var k=r.i(2,4),b=r.i(3,9),h=r.i(2,8);return {q:'Num triângulo, uma reta paralela à base forma um triângulo menor no topo com base '+b+' cm e altura '+h+' cm. A base do triângulo grande mede '+(b*k)+' cm. Qual a altura do triângulo grande?',a:(h*k)+' cm',s:['Reta paralela à base → triângulo menor semelhante ao maior.','Razão das bases: '+(b*k)+' ÷ '+b+' = '+k+'.','Altura também multiplica por '+k+': '+h+' × '+k+' = '+(h*k)+' cm.']};}
+]);}});
+
+(function(){
+  function mover(id,depois){var i=TOPICS.findIndex(function(t){return t.id===id;});var t=TOPICS.splice(i,1)[0];var j=TOPICS.findIndex(function(t){return t.id===depois;});TOPICS.splice(j+1,0,t);}
+  mover('elementos-notaveis','triangulos');
+  mover('semelhanca-triangulos','tales-semelhanca');
+  var T=TOPICS.find(function(t){return t.id==='tales-semelhanca';});
+  T.nome='Teorema de Tales';
+  T.tags='teorema de tales feixe de retas paralelas transversais segmentos proporcionais tales no triângulo';
+  T.gen=function(r,i){return mix(i,[
+    function(){var a=r.i(2,10),b=r.i(2,10),k=r.p([2,3,1.5,2.5]);var c=a*k,x=b*k;return {q:'Três retas paralelas cortam duas transversais. Na primeira, os segmentos medem '+a+' cm e '+b+' cm; na segunda, os segmentos correspondentes medem '+n(c)+' cm e x. Quanto vale x?',a:'x = '+n(x)+' cm',s:['Tales: segmentos correspondentes são proporcionais.','Monte a proporção na mesma ordem: '+F(a,b)+' = '+F(n(c),'x')+'.','Multiplique cruzado: '+a+' · x = '+b+' × '+n(c)+' = '+n(b*c)+'.','x = '+n(b*c)+' ÷ '+a+' = '+n(x)+' cm.']};},
+    function(){var X=r.i(2,8);var A=r.i(2,5),B=A+r.i(1,3);var K=X*(B-A)/A;if(K!==Math.round(K)){A=2;B=3;X=2*r.i(1,4);K=X/2;}return {q:'Um feixe de paralelas corta duas transversais. Na primeira, os segmentos medem '+A+' e '+B+'; na segunda, medem x e x + '+n(K)+'. Quanto vale x?',a:'x = '+n(X),s:['Proporção: '+F(A,B)+' = '+F('x','x + '+n(K))+'.','Multiplique cruzado: '+A+'(x + '+n(K)+') = '+B+'x.',A+'x + '+n(A*K)+' = '+B+'x → '+n(A*K)+' = '+(B-A)+'x.','x = '+n(A*K)+' ÷ '+(B-A)+' = '+n(X)+'.']};},
+    function(){var p=r.i(2,6),q=r.i(2,6),k=r.i(2,4);var tot=(p+q)*k;return {q:'Três retas paralelas determinam, numa transversal, segmentos de '+p+' cm e '+q+' cm. Na outra transversal, o segmento total entre a primeira e a terceira paralela mede '+tot+' cm. Quanto mede cada parte?',a:(p*k)+' cm e '+(q*k)+' cm',s:['Total na 1ª transversal: '+p+' + '+q+' = '+(p+q)+' cm.','Razão entre as transversais: '+tot+' ÷ '+(p+q)+' = '+k+'.','Partes: '+p+' × '+k+' = '+(p*k)+' cm e '+q+' × '+k+' = '+(q*k)+' cm.']};},
+    function(){var ad=r.i(2,8),db=r.i(2,8),k=r.p([1,2,1.5]);var ae=ad*k,ec=db*k;return {q:'No triângulo ABC, a reta DE é paralela a BC (D em AB, E em AC). AD = '+ad+', DB = '+db+' e AE = '+n(ae)+'. Quanto mede EC?',a:'EC = '+n(ec),s:['Uma paralela a um lado divide os outros dois lados na mesma proporção (Tales no triângulo).',F('AD','DB')+' = '+F('AE','EC')+' → '+F(ad,db)+' = '+F(n(ae),'x')+'.',ad+' · x = '+db+' × '+n(ae)+' = '+n(db*ae)+' → x = '+n(ec)+'.']};},
+    function(){var a=r.i(2,8)*10,b=r.i(2,8)*10,k=r.p([12,15,20,25]);var tot=a+b;var xa=a*k/10,xb=b*k/10;return {q:'Dois terrenos vizinhos têm frentes para a Rua 1 de '+a+' m e '+b+' m. As divisas laterais são paralelas. Na Rua 2, a frente total dos dois juntos mede '+(xa+xb)+' m. Quanto mede a frente de cada terreno na Rua 2?',a:xa+' m e '+xb+' m',s:['Divisas paralelas cortando duas ruas: é Tales.','Razão: '+(xa+xb)+' ÷ '+tot+' = '+n(k/10)+'.','Frentes: '+a+' × '+n(k/10)+' = '+xa+' m e '+b+' × '+n(k/10)+' = '+xb+' m.']};}
+  ]);};
+})();
 
 /* ===== TEORIA APROFUNDADA — NÚMEROS (6º ano) =====
    Atalho: {a/b} vira fração empilhada. */
@@ -2017,6 +2095,263 @@ TEORIA['contagem']=`
 <h3>Caso 7 — Quando a ordem não importa (grupos)</h3><div class="ex">Escolher 2 alunos de 5 para uma comissão: 5 × 4 = 20 pares ordenados, mas “Ana e Bia” = “Bia e Ana” → ÷ 2 = <b>10</b>.<br>Apertos de mão entre 6 pessoas: {6 × 5/2} = <b>15</b>.</div>
 <p class="tip">Pergunta-chave: <b>trocar a ordem muda o resultado?</b> Senha, fila, pódio → muda (não divide). Grupo, comissão, aperto de mão → não muda (divide).</p>`;
 
+/* ===== TEORIA — elementos notáveis, semelhança e Tales (versão bem didática) ===== */
+var SVG_CEV='<svg viewBox="0 0 280 310" width="320" height="354" role="img" aria-label="Quatro triângulos mostrando altura, mediana, bissetriz e mediatriz">'
++'<g font-size="12" fill="#0E1B3D">'
+/* altura */
++'<polygon points="35,22 8,120 125,120" fill="#FFF6DA" stroke="#0E1B3D" stroke-width="2"/><line x1="35" y1="22" x2="35" y2="120" stroke="#C0392B" stroke-width="2.5"/><rect x="35" y="110" width="10" height="10" fill="none" stroke="#C0392B"/><text x="30" y="16">A</text><text x="0" y="136">B</text><text x="122" y="136">C</text><text x="38" y="136" fill="#C0392B">H</text><text x="62" y="148" text-anchor="middle" font-weight="700">ALTURA (90°)</text>'
+/* mediana */
++'<g transform="translate(145,0)"><polygon points="35,22 8,120 125,120" fill="#FFF6DA" stroke="#0E1B3D" stroke-width="2"/><line x1="35" y1="22" x2="66.5" y2="120" stroke="#1F6FEB" stroke-width="2.5"/><line x1="36" y1="115" x2="36" y2="125" stroke="#1F6FEB" stroke-width="2"/><line x1="96" y1="115" x2="96" y2="125" stroke="#1F6FEB" stroke-width="2"/><text x="30" y="16">A</text><text x="0" y="136">B</text><text x="122" y="136">C</text><text x="62" y="136" fill="#1F6FEB">M</text><text x="62" y="148" text-anchor="middle" font-weight="700">MEDIANA (meio)</text></g>'
+/* bissetriz */
++'<g transform="translate(0,160)"><polygon points="35,22 8,120 125,120" fill="#FFF6DA" stroke="#0E1B3D" stroke-width="2"/><line x1="35" y1="22" x2="57.4" y2="120" stroke="#1E8E3E" stroke-width="2.5"/><path d="M29.5,41 Q36,44 39.5,40.5" fill="none" stroke="#1E8E3E" stroke-width="2"/><path d="M39.5,40.5 Q44,40 46,37" fill="none" stroke="#1E8E3E" stroke-width="2"/><text x="30" y="16">A</text><text x="0" y="136">B</text><text x="122" y="136">C</text><text x="53" y="136" fill="#1E8E3E">D</text><text x="62" y="148" text-anchor="middle" font-weight="700">BISSETRIZ (½ ângulo)</text></g>'
+/* mediatriz */
++'<g transform="translate(145,160)"><polygon points="35,22 8,120 125,120" fill="#FFF6DA" stroke="#0E1B3D" stroke-width="2"/><line x1="66.5" y1="8" x2="66.5" y2="130" stroke="#8E44AD" stroke-width="2.5" stroke-dasharray="6 4"/><rect x="66.5" y="110" width="10" height="10" fill="none" stroke="#8E44AD"/><line x1="36" y1="115" x2="36" y2="125" stroke="#8E44AD" stroke-width="2"/><line x1="96" y1="115" x2="96" y2="125" stroke="#8E44AD" stroke-width="2"/><text x="30" y="16">A</text><text x="0" y="136">B</text><text x="122" y="136">C</text><text x="62" y="148" text-anchor="middle" font-weight="700">MEDIATRIZ (meio+90°)</text></g>'
++'</g></svg>';
+
+var SVG_BAR='<svg viewBox="0 0 230 165" width="230" height="165" role="img" aria-label="Triângulo com as três medianas encontrando-se no baricentro G, que divide cada mediana em 2 partes e 1 parte"><g font-size="12" fill="#0E1B3D">'
++'<polygon points="80,12 10,130 170,130" fill="#FFF6DA" stroke="#0E1B3D" stroke-width="2"/>'
++'<line x1="80" y1="12" x2="90" y2="130" stroke="#1F6FEB" stroke-width="2"/><line x1="10" y1="130" x2="125" y2="71" stroke="#1F6FEB" stroke-width="2"/><line x1="170" y1="130" x2="45" y2="71" stroke="#1F6FEB" stroke-width="2"/>'
++'<circle cx="86.7" cy="90.7" r="4" fill="#C0392B"/><text x="92" y="98" fill="#C0392B" font-weight="700">G</text>'
++'<text x="74" y="10">A</text><text x="0" y="144">B</text><text x="168" y="144">C</text><text x="86" y="144">M</text>'
++'<text x="122" y="30" fill="#1F6FEB">AG = 2 partes</text><text x="62" y="160" fill="#1F6FEB">GM = 1 parte</text>'
++'</g></svg>';
+
+var SVG_SEM='<svg viewBox="0 0 230 120" width="230" height="120" role="img" aria-label="Dois triângulos semelhantes: o pequeno com lados 4 e 6 e o grande com lados x e 9"><g font-size="13" fill="#0E1B3D">'
++'<polygon points="10,100 70,100 30,60" fill="#FFF6DA" stroke="#0E1B3D" stroke-width="2"/>'
++'<polygon points="110,100 200,100 140,40" fill="#E8F0FE" stroke="#0E1B3D" stroke-width="2"/>'
++'<text x="40" y="116" text-anchor="middle">6</text><text x="12" y="80">4</text>'
++'<text x="155" y="116" text-anchor="middle">9</text><text x="112" y="70">x</text>'
++'<text x="14" y="96" font-size="10" fill="#C0392B">α</text><text x="58" y="96" font-size="10" fill="#1E8E3E">β</text>'
++'<text x="116" y="96" font-size="10" fill="#C0392B">α</text><text x="186" y="96" font-size="10" fill="#1E8E3E">β</text>'
++'</g></svg>';
+
+var SVG_ENC='<svg viewBox="0 0 190 140" width="190" height="140" role="img" aria-label="Triângulo ABC com o segmento DE paralelo à base BC formando um triângulo menor ADE no topo"><g font-size="12" fill="#0E1B3D">'
++'<polygon points="95,10 15,128 175,128" fill="#FFF6DA" stroke="#0E1B3D" stroke-width="2"/>'
++'<polygon points="95,10 63,57 127,57" fill="#E8F0FE" stroke="#0E1B3D" stroke-width="1"/>'
++'<line x1="63" y1="57" x2="127" y2="57" stroke="#C0392B" stroke-width="2.5"/>'
++'<text x="90" y="8">A</text><text x="4" y="138">B</text><text x="174" y="138">C</text><text x="50" y="58">D</text><text x="131" y="58">E</text><text x="140" y="94" fill="#C0392B">DE ∥ BC</text>'
++'</g></svg>';
+
+var SVG_AMP='<svg viewBox="0 0 180 140" width="180" height="140" role="img" aria-label="Ampulheta: segmentos AB e CD paralelos, com as diagonais AD e BC cruzando no ponto E"><g font-size="12" fill="#0E1B3D">'
++'<line x1="20" y1="20" x2="80" y2="20" stroke="#C0392B" stroke-width="2.5"/><line x1="40" y1="125" x2="160" y2="125" stroke="#C0392B" stroke-width="2.5"/>'
++'<line x1="20" y1="20" x2="160" y2="125" stroke="#0E1B3D" stroke-width="2"/><line x1="80" y1="20" x2="40" y2="125" stroke="#0E1B3D" stroke-width="2"/>'
++'<text x="10" y="16">A</text><text x="80" y="16">B</text><text x="30" y="138">D</text><text x="158" y="138">C</text><text x="72" y="64">E</text>'
++'</g></svg>';
+
+var SVG_TALES='<svg viewBox="0 0 240 140" width="240" height="140" role="img" aria-label="Três retas paralelas cortadas por duas transversais, formando os segmentos a, b na primeira e c, d na segunda"><g font-size="13" fill="#0E1B3D">'
++'<line x1="5" y1="25" x2="235" y2="25" stroke="#C0392B" stroke-width="2"/><line x1="5" y1="65" x2="235" y2="65" stroke="#C0392B" stroke-width="2"/><line x1="5" y1="120" x2="235" y2="120" stroke="#C0392B" stroke-width="2"/>'
++'<line x1="40" y1="8" x2="80" y2="135" stroke="#0E1B3D" stroke-width="2"/><line x1="150" y1="8" x2="215" y2="135" stroke="#0E1B3D" stroke-width="2"/>'
++'<text x="60" y="50">a</text><text x="74" y="98">b</text><text x="186" y="50">c</text><text x="206" y="98">d</text><text x="226" y="20" fill="#C0392B" font-size="11">r</text><text x="226" y="60" fill="#C0392B" font-size="11">s</text><text x="226" y="115" fill="#C0392B" font-size="11">t</text>'
++'</g></svg>';
+
+TEORIA['elementos-notaveis']=`
+<h3>Primeiro: o que é um “elemento notável”?</h3>
+<p>São <b>linhas especiais</b> que a gente traça dentro de um triângulo. Cada uma tem uma “missão” diferente. Quando traçamos as três linhas do mesmo tipo (uma de cada vértice ou de cada lado), elas se encontram num <b>ponto especial</b>: são os <b>pontos notáveis</b>.</p>
+<p>São <b>4 linhas</b> e <b>4 pontos</b>. Olhe a figura com calma, uma de cada vez:</p>
+${SVG_CEV}
+<h3>As 4 linhas, uma de cada vez</h3>
+<table class="t"><tr><th>Linha</th><th>De onde sai → até onde vai</th><th>Missão (o que ela garante)</th></tr>
+<tr><td><b>Altura</b></td><td>de um vértice → até o lado oposto</td><td>chega fazendo <b>90°</b> (é a “distância em pé” do vértice ao lado)</td></tr>
+<tr><td><b>Mediana</b></td><td>de um vértice → até o <b>ponto médio</b> do lado oposto</td><td>divide o lado oposto em <b>duas metades iguais</b></td></tr>
+<tr><td><b>Bissetriz</b></td><td>de um vértice → até o lado oposto</td><td>divide o <b>ângulo</b> do vértice em <b>dois ângulos iguais</b></td></tr>
+<tr><td><b>Mediatriz</b></td><td>não sai de vértice! É uma reta que passa no meio de um lado</td><td>corta o lado no <b>meio</b> e fazendo <b>90°</b></td></tr></table>
+<p class="tip"><b>Truque das palavras:</b> me<b>DIA</b>na → <b>meio</b> do lado · <b>BI</b>ssetriz → <b>bi</b> = dois, corta o ângulo em 2 · <b>ALTURA</b> → é como medir a altura de uma pessoa: régua em pé, 90° com o chão · <b>MEDIATRIZ</b> → <b>meio</b> + 90° (junta a mediana com a altura, mas não precisa passar por vértice).</p>
+<h3>Os 4 pontos notáveis</h3>
+<table class="t"><tr><th>Encontro das…</th><th>Ponto</th><th>Para que serve</th></tr>
+<tr><td>3 <b>M</b>edianas</td><td><b>B</b>aricentro (G)</td><td>centro de <b>equilíbrio</b>: um triângulo de papelão fica equilibrado na ponta do lápis nesse ponto</td></tr>
+<tr><td>3 <b>B</b>issetrizes</td><td><b>I</b>ncentro (I)</td><td>centro da circunferência <b>inscrita</b> (desenhada <b>dentro</b>, encostando nos 3 lados)</td></tr>
+<tr><td>3 <b>M</b>ediatrizes</td><td><b>C</b>ircuncentro (O)</td><td>centro da circunferência <b>circunscrita</b> (passa pelos 3 <b>vértices</b>); fica à mesma distância dos 3 vértices</td></tr>
+<tr><td>3 <b>A</b>lturas</td><td><b>O</b>rtocentro (H)</td><td>“orto” quer dizer reto (90°)</td></tr></table>
+<p class="tip"><b>Macete para decorar:</b> <span class="big" style="font-size:18px">MB · BI · MC · AO</span><br>Medianas–Baricentro, Bissetrizes–Incentro, Mediatrizes–Circuncentro, Alturas–Ortocentro.</p>
+<h3>Caso 1 — O baricentro divide a mediana em 2 + 1</h3>
+${SVG_BAR}
+<p>Esta é a propriedade que mais cai. O baricentro corta cada mediana em <b>3 partes iguais</b>: <b>2 partes</b> ficam do lado do <b>vértice</b> e <b>1 parte</b> do lado do <b>ponto médio</b>.</p>
+<div class="ex"><b>Exemplo A (tenho a mediana inteira):</b> AM = 18 cm. Quanto mede AG e GM?<ol><li>Mediana inteira = 3 partes → 1 parte = 18 ÷ 3 = 6 cm.</li><li>AG (lado do vértice) = 2 partes = <b>12 cm</b>.</li><li>GM (lado do ponto médio) = 1 parte = <b>6 cm</b>. Confere: 12 + 6 = 18 ✓</li></ol>
+<b>Exemplo B (tenho o pedaço pequeno):</b> GM = 5 cm → AG = 2 × 5 = <b>10 cm</b> e AM = 3 × 5 = <b>15 cm</b>.<br>
+<b>Exemplo C (tenho o pedaço grande):</b> AG = 14 cm → 1 parte = 14 ÷ 2 = 7 → AM = 3 × 7 = <b>21 cm</b>.</div>
+<p class="tip">Pense sempre em <b>“partes”</b>: descubra quanto vale 1 parte e o resto sai fácil.</p>
+<h3>Caso 2 — Mediana e ponto médio</h3>
+<div class="ex">AM é mediana relativa a BC e BM = 7 cm. Como M é o <b>meio</b>, MC também é 7 cm → BC = 7 + 7 = <b>14 cm</b>.</div>
+<h3>Caso 3 — Bissetriz: metade do ângulo</h3>
+<div class="ex"><b>Exemplo A:</b> Â = 70° e AD é bissetriz → BAD = DAC = 70 ÷ 2 = <b>35°</b>.<br>
+<b>Exemplo B (mais completo):</b> Â = 80°, B = 60°. AD é bissetriz. Quanto mede o ângulo ADB?<ol><li>Bissetriz: BAD = 80 ÷ 2 = 40°.</li><li>No triângulo ABD: ADB + 40° + 60° = 180°.</li><li>ADB = <b>80°</b>.</li></ol></div>
+<h3>Caso 4 — Altura: aparece um ângulo de 90°</h3>
+<div class="ex">B = 50° e AH é altura relativa a BC. Quanto mede BAH?<ol><li>A altura faz 90° com BC: AHB = 90°.</li><li>No triângulo ABH: BAH + 50° + 90° = 180°.</li><li>BAH = <b>40°</b>.</li></ol>
+<i>Repare:</i> sempre que aparecer altura, procure o <b>triângulo retângulo pequeno</b> que ela formou.</div>
+<h3>Caso 5 — Mediatriz e circuncentro: mesma distância</h3>
+<p>Qualquer ponto da mediatriz de AB está à <b>mesma distância de A e de B</b>. Por isso o circuncentro (encontro das 3 mediatrizes) está à mesma distância dos <b>3 vértices</b>.</p>
+<div class="ex">P está na mediatriz de AB e PA = 9 cm → <b>PB = 9 cm</b>.<br>O é o circuncentro e OA = 6 cm → <b>OB = OC = 6 cm</b> (é o raio do círculo que passa pelos vértices).</div>
+<h3>Caso 6 — Incentro: o atalho do ângulo BIC</h3>
+<div class="ex">I é o incentro e Â = 60°. Quanto mede BIC?<ol><li>B + C = 180° − 60° = 120°.</li><li>As bissetrizes pegam a metade: (B + C) ÷ 2 = 60°.</li><li>No triângulo BIC: BIC = 180° − 60° = <b>120°</b>.</li></ol>
+<b>Atalho:</b> BIC = 90° + Â ÷ 2 = 90° + 30° = 120° ✓</div>
+<h3>Caso 7 — Onde fica cada ponto? (depende do tipo de triângulo)</h3>
+<table class="t"><tr><th></th><th>Acutângulo</th><th>Retângulo</th><th>Obtusângulo</th></tr>
+<tr><td>Baricentro</td><td>dentro</td><td>dentro</td><td>dentro</td></tr>
+<tr><td>Incentro</td><td>dentro</td><td>dentro</td><td>dentro</td></tr>
+<tr><td>Circuncentro</td><td>dentro</td><td><b>no meio da hipotenusa</b></td><td>fora</td></tr>
+<tr><td>Ortocentro</td><td>dentro</td><td><b>no vértice do ângulo reto</b></td><td>fora</td></tr></table>
+<p class="tip">Baricentro e incentro estão <b>sempre dentro</b>. Os “rebeldes” que podem sair são o circuncentro e o ortocentro.</p>
+<h3>Caso 8 — Triângulo retângulo: mediana da hipotenusa = metade dela</h3>
+<div class="ex">A hipotenusa mede 10 cm. Como o circuncentro é o meio da hipotenusa e fica à mesma distância dos 3 vértices, a mediana que sai do ângulo reto mede <b>10 ÷ 2 = 5 cm</b>.</div>
+<h3>Caso 9 — Isósceles e equilátero: as linhas se juntam</h3>
+<ul><li><b>Isósceles:</b> a linha que sai do vértice de cima até a base é, <b>ao mesmo tempo</b>, altura, mediana e bissetriz. Então ela cai no meio da base e faz 90°.</li><li><b>Equilátero:</b> isso vale para os 3 lados. As 4 linhas coincidem e os <b>4 pontos são o mesmo ponto</b> (o centro do triângulo).</li></ul>
+<div class="ex"><b>Exemplo:</b> isósceles com base 12 cm e lados iguais de 10 cm. Quanto mede a altura da base?<ol><li>A altura cai no meio da base: 12 ÷ 2 = 6 cm de cada lado.</li><li>Formou um triângulo retângulo: hipotenusa 10 e cateto 6.</li><li>h² = 10² − 6² = 100 − 36 = 64 → h = <b>8 cm</b>.</li></ol>
+<b>Equilátero com altura 12 cm:</b> o baricentro está nessa altura (que também é mediana) → distância até o vértice = 2 partes de 12 ÷ 3 = <b>8 cm</b>; até a base = <b>4 cm</b>.</div>
+<h3>Erros comuns</h3><ul><li>Achar que a mediana faz 90° (quem faz 90° é a altura; a mediana só vai no meio).</li><li>Achar que a bissetriz cai no meio do lado (ela divide o <b>ângulo</b>, não o lado).</li><li>No baricentro, colocar o pedaço grande do lado do ponto médio. O grande (2 partes) fica <b>sempre do lado do vértice</b>.</li><li>Trocar incentro (bissetrizes, círculo de dentro) com circuncentro (mediatrizes, círculo que passa pelos vértices).</li></ul>
+<p class="tip"><b>Resumo:</b> altura → 90° · mediana → meio do lado · bissetriz → metade do ângulo · mediatriz → meio + 90° · <b>MB · BI · MC · AO</b> · baricentro: 2 partes para o vértice, 1 para o lado.</p>`;
+
+TEORIA['semelhanca-triangulos']=`
+<h3>A ideia: “mesma forma, tamanho diferente”</h3>
+<p>Pense numa foto no celular. Quando você dá zoom, a imagem fica <b>maior</b>, mas não fica <b>torta</b>: tudo cresce na mesma proporção. Dois triângulos assim, um sendo o “zoom” do outro, são <b>semelhantes</b> (símbolo <b>~</b>).</p>
+${SVG_SEM}
+<p>Na figura, o grande é o pequeno ampliado. O que acontece:</p>
+<ul><li>Os <b>ângulos são iguais</b> (α continua α, β continua β). O zoom não muda ângulo.</li><li>Os <b>lados são proporcionais</b>: todos ficam multiplicados pelo mesmo número. Aqui: 9 ÷ 6 = 1,5. Então x = 4 × 1,5 = <b>6</b>.</li></ul>
+<p>Esse número que multiplica todos os lados é a <b>razão de semelhança</b>, chamada <b>k</b>.</p>
+<h3>Passo 0 — Saber quem corresponde a quem</h3>
+<p>O erro número 1 é comparar lados errados. <b>Lados correspondentes</b> são os que ficam <b>de frente para ângulos iguais</b>.</p>
+<div class="ex"><b>Como fazer:</b><ol><li>Marque os ângulos iguais com a mesma cor ou símbolo.</li><li>O lado em frente ao ângulo α no pequeno corresponde ao lado em frente ao ângulo α no grande.</li><li>Se o enunciado escreve ABC ~ DEF, a <b>ordem das letras</b> já diz: A↔D, B↔E, C↔F, e então AB↔DE, BC↔EF, AC↔DF.</li></ol></div>
+<p class="tip">Atalho quando não tem figura: o <b>menor</b> lado corresponde ao <b>menor</b>, o médio ao médio e o maior ao maior.</p>
+<h3>Os 3 casos (como provar que são semelhantes)</h3>
+<table class="t"><tr><th>Caso</th><th>O que basta saber</th><th>Exemplo</th></tr>
+<tr><td><b>AA</b> (ângulo-ângulo)</td><td><b>2 ângulos iguais</b> (o 3º fica igual automaticamente, pois a soma é 180°)</td><td>um tem 40° e 60°; o outro também → semelhantes</td></tr>
+<tr><td><b>LAL</b></td><td>2 lados proporcionais e o <b>ângulo entre eles</b> igual</td><td>lados 3 e 5 com 50° entre eles; outro com 6 e 10 e 50° entre eles (razão 2)</td></tr>
+<tr><td><b>LLL</b></td><td>os <b>3 lados</b> proporcionais (mesma razão)</td><td>3, 4, 5 e 6, 8, 10 → todas as razões dão 2</td></tr></table>
+<p class="tip">Na prática, <b>AA é o que mais aparece</b>: retas paralelas, ângulo reto em comum, ângulos opostos pelo vértice… tudo isso dá ângulos iguais de graça.</p>
+<h3>A receita para achar um lado</h3>
+<ol><li>Descubra que os triângulos são semelhantes (normalmente por AA).</li><li>Combine quem corresponde a quem.</li><li>Monte a proporção: {lado do grande/lado do pequeno} = {outro lado do grande/outro lado do pequeno}.</li><li>Multiplique cruzado e resolva.</li></ol>
+<h3>Caso 1 — Triângulos já separados</h3>
+<div class="ex">ABC ~ DEF com AB = 4, BC = 6, DE = 10. Quanto mede EF?<ol><li>Corresponde: AB↔DE e BC↔EF.</li><li>{DE/AB} = {EF/BC} → {10/4} = {x/6}.</li><li>4x = 60 → x = <b>15</b>.</li></ol>
+<b>Outro jeito (pela razão k):</b> k = 10 ÷ 4 = 2,5 → EF = 6 × 2,5 = 15 ✓</div>
+<h3>Caso 2 — Sombra (o clássico das provas)</h3>
+<div class="ex">Uma pessoa de 1,8 m faz sombra de 2 m. No mesmo instante, um prédio faz sombra de 30 m. Qual a altura do prédio?<ol><li>Por que são semelhantes? O sol bate com a <b>mesma inclinação</b> nos dois (raios paralelos) e os dois estão em pé (90°): AA.</li><li>Altura com altura, sombra com sombra: {h/30} = {1,8/2}.</li><li>2h = 54 → h = <b>27 m</b>.</li></ol></div>
+<h3>Caso 3 — Triângulo dentro de triângulo (reta paralela a um lado)</h3>
+${SVG_ENC}
+<p>Se DE é paralelo a BC, o triângulo pequeno ADE é semelhante ao grande ABC (o ângulo A é comum e as paralelas dão ângulos iguais).</p>
+<div class="ex">AD = 3, DB = 6, DE = 4. Quanto mede BC?<ol><li><b>Atenção:</b> o lado do grande é o lado <b>inteiro</b> AB = 3 + 6 = 9 (e não só DB!).</li><li>{BC/DE} = {AB/AD} → {x/4} = {9/3}.</li><li>3x = 36 → x = <b>12</b>.</li></ol></div>
+<h3>Caso 4 — Ampulheta (triângulos “de cabeça para baixo”)</h3>
+${SVG_AMP}
+<p>AB ∥ DC e as linhas se cruzam em E. Os ângulos em E são <b>opostos pelo vértice</b> (iguais) e as paralelas dão outro par igual: AA.</p>
+<div class="ex">AB = 4, DC = 10 e AE = 6. Quanto mede EC?<ol><li>Corresponde: AB↔CD, AE↔CE (cada lado do pequeno com o lado “espelhado” do grande).</li><li>k = 10 ÷ 4 = 2,5.</li><li>EC = 6 × 2,5 = <b>15</b>.</li></ol></div>
+<h3>Caso 5 — Ângulos de triângulos semelhantes</h3>
+<div class="ex">ABC ~ DEF, Â = 50° e B = 70°. Quanto mede F?<ol><li>C = 180° − 50° − 70° = 60°.</li><li>C corresponde a F → F = <b>60°</b>. (Zoom não muda ângulo!)</li></ol></div>
+<h3>Caso 6 — São semelhantes ou não? (LLL)</h3>
+<div class="ex"><b>Triângulos 4, 6, 8 e 6, 9, 12:</b> 6÷4 = 1,5; 9÷6 = 1,5; 12÷8 = 1,5 → <b>sim</b>, k = 1,5.<br><b>Triângulos 3, 4, 5 e 6, 8, 11:</b> 6÷3 = 2; 8÷4 = 2; 11÷5 = 2,2 → <b>não</b> (uma razão é diferente).</div>
+<h3>Caso 7 — Perímetro e área</h3>
+<p>Se os lados ficam multiplicados por <b>k</b>:</p>
+<ul><li>o <b>perímetro</b> (soma de lados) também fica multiplicado por <b>k</b>;</li><li>a <b>área</b> fica multiplicada por <b>k²</b>, porque área é “comprimento × comprimento” (base × altura, e as duas cresceram k vezes).</li></ul>
+<div class="ex">k = 3, perímetro do menor 12 cm, área do menor 5 cm².<br>Perímetro do maior = 12 × 3 = <b>36 cm</b>.<br>Área do maior = 5 × 3² = 5 × 9 = <b>45 cm²</b> (e não 15!).<br><b>Ao contrário:</b> áreas 8 e 72 → razão 72 ÷ 8 = 9 = k² → <b>k = 3</b>.</div>
+<h3>Caso 8 — Escala, mapas e maquetes</h3>
+<div class="ex">Maquete na escala 1 : 100 e uma parede de 7 cm na maquete → real: 7 × 100 = 700 cm = <b>7 m</b>.<br>É semelhança com k = 100.</div>
+<h3>Erros comuns</h3><ul><li>Comparar lados que <b>não</b> correspondem (sempre ache os ângulos iguais primeiro).</li><li>No triângulo dentro do outro, usar DB em vez do lado inteiro AB.</li><li>Achar que a área cresce k vezes (cresce <b>k²</b>).</li><li>Achar que iguais ângulos implicam lados iguais. Não: lados <b>proporcionais</b>.</li></ul>
+<p class="tip"><b>Resumo:</b> semelhança = zoom · ângulos iguais, lados × k · casos AA, LAL, LLL · perímetro × k, área × k² · sempre ache “quem corresponde a quem” antes de montar a proporção.</p>`;
+
+TEORIA['tales-semelhanca']=`
+<h3>A ideia</h3>
+<p>Imagine as <b>linhas de um caderno</b> (retas paralelas) e duas réguas atravessando essas linhas, uma mais deitada que a outra. As réguas cortam as linhas em pedaços. O Teorema de Tales diz: <b>os pedaços de uma régua são proporcionais aos da outra</b>. Se numa régua o 2º pedaço é o dobro do 1º, na outra também será.</p>
+${SVG_TALES}
+<p class="big">{a/b} = {c/d}</p>
+<p>As retas paralelas (r, s, t) formam um <b>feixe</b>. As duas retas que cortam são as <b>transversais</b>.</p>
+<h3>A receita</h3>
+<ol><li>Identifique as paralelas e as duas transversais.</li><li>Monte a proporção <b>na mesma ordem</b> nas duas transversais: {de cima/de baixo} = {de cima/de baixo}.</li><li>Multiplique cruzado e resolva a equação.</li></ol>
+<h3>Caso 1 — Achar um segmento</h3>
+<div class="ex">a = 4, b = 6, c = 10 e d = x.<ol><li>{4/6} = {10/x}.</li><li>4x = 60 → x = <b>15</b>.</li></ol>
+<b>Confere pelo “quantas vezes”:</b> de 4 para 10 multiplicou por 2,5; de 6 para 15 também ✓</div>
+<h3>Caso 2 — Com x nos dois segmentos</h3>
+<div class="ex">Numa transversal 3 e 5; na outra x e x + 4.<ol><li>{3/5} = {x/x + 4}.</li><li>Multiplique cruzado: 3(x + 4) = 5x → 3x + 12 = 5x.</li><li>12 = 2x → x = <b>6</b> (os segmentos são 6 e 10).</li></ol></div>
+<h3>Caso 3 — Dividir um total na mesma proporção</h3>
+<div class="ex">Numa transversal os pedaços são 2 e 3. Na outra, o total é 20. Quanto mede cada pedaço?<ol><li>Total da 1ª: 2 + 3 = 5.</li><li>Quantas vezes maior: 20 ÷ 5 = 4.</li><li>Pedaços: 2 × 4 = <b>8</b> e 3 × 4 = <b>12</b>.</li></ol></div>
+<h3>Caso 4 — Tales dentro do triângulo</h3>
+${SVG_ENC}
+<p>Uma reta paralela a um lado divide os outros dois lados na <b>mesma proporção</b>: {AD/DB} = {AE/EC}.</p>
+<div class="ex">AD = 4, DB = 6, AE = 6. Quanto mede EC?<ol><li>{4/6} = {6/x}.</li><li>4x = 36 → x = <b>9</b>.</li></ol></div>
+<h3>Caso 5 — Problema com terrenos</h3>
+<div class="ex">Dois lotes têm frentes de 20 m e 30 m para a Rua A; as divisas laterais são paralelas. Para a Rua B, a frente total é 75 m.<ol><li>Total na Rua A: 50 m. Razão: 75 ÷ 50 = 1,5.</li><li>Frentes na Rua B: 20 × 1,5 = <b>30 m</b> e 30 × 1,5 = <b>45 m</b>.</li></ol></div>
+<h3>Erros comuns</h3><ul><li>Inverter a ordem na proporção ({cima/baixo} numa e {baixo/cima} na outra).</li><li>Usar Tales quando as retas <b>não</b> são paralelas (aí não vale).</li><li>Esquecer os parênteses ao multiplicar cruzado com x + algo.</li></ul>
+<p class="tip"><b>Ligação:</b> Tales é a base da <b>semelhança de triângulos</b> (veja o assunto “Semelhança de triângulos”, logo depois deste).</p>`;
+
+/* ===== CAMADA DIDÁTICA: a ideia em linguagem simples + como reconhecer o tipo de problema ===== */
+var INTRO={
+'sistema-numeracao':{i:'Pense numa caixa de ovos: 10 unidades formam 1 dezena, 10 dezenas formam 1 centena, e assim por diante. Por isso o <b>lugar</b> do algarismo muda o valor dele: o 3 em 300 vale cem vezes mais que o 3 em 3.',r:['“Quanto vale o algarismo…” → valor posicional: algarismo × valor da casa.','“Decomponha” → separe em casas (milhares + centenas + …).','“Arredonde para a…” → olhe o vizinho da direita.']},
+'expressoes-numericas':{i:'Uma expressão é uma conta com várias operações. Assim como numa receita de bolo a ordem importa (não dá para assar antes de misturar), na matemática existe uma <b>ordem obrigatória</b> para todo mundo chegar no mesmo resultado.',r:['Tem ( ), [ ], { } → resolva de dentro para fora.','Mistura de + e × → × e ÷ primeiro.','Só × e ÷ (ou só + e −) → da esquerda para a direita.']},
+'potenciacao':{i:'Potência é um jeito curto de escrever “multiplicar o mesmo número várias vezes”. 2⁵ é só uma abreviação de 2 × 2 × 2 × 2 × 2. O expoente diz <b>quantas vezes</b> o número aparece, <b>não</b> por quanto multiplicar.',r:['Número pequeno em cima → potência: multiplique a base por ela mesma.','Mesma base multiplicando → soma os expoentes; dividindo → subtrai.','Expoente 0 → resultado 1.']},
+'radiciacao':{i:'A raiz é a pergunta ao contrário da potência: “<b>que número</b>, vezes ele mesmo, dá isso?”. Se 7 × 7 = 49, então √49 = 7. É como descobrir o lado de um quadrado sabendo a área.',r:['√ sem número pequeno → raiz quadrada (número × ele mesmo).','∛ → número × ele × ele.','Número grande → fatore e divida os expoentes pelo índice.']},
+'multiplos-divisores':{i:'<b>Múltiplos</b> são a tabuada do número (5, 10, 15, 20…), e ela nunca acaba. <b>Divisores</b> são os números que dividem certinho, sem sobrar resto, e eles são poucos. Os critérios de divisibilidade são “testes rápidos” para não precisar fazer a conta.',r:['“É divisível por…?” → use o critério (2: par; 3: soma dos algarismos; 5: termina em 0 ou 5…).','“Liste os divisores” → teste em pares: 1 e o número, 2 e …','“Múltiplos de…” → faça a tabuada.']},
+'primos-fatoracao':{i:'Números primos são os “tijolos” da multiplicação: só se dividem por 1 e por eles mesmos (2, 3, 5, 7, 11…). Todo número pode ser montado multiplicando primos, e fatorar é <b>desmontar</b> o número até sobrar só tijolo.',r:['“Fatore” → divida pelo menor primo possível, repetidamente.','“É primo?” → teste os primos até a raiz do número.','“Quantos divisores?” → fatore, some 1 em cada expoente e multiplique.']},
+'mmc':{i:'MMC é o <b>primeiro encontro</b> de duas tabuadas. Se um ônibus passa a cada 4 min e outro a cada 6 min, eles passam juntos de 12 em 12 min. Pense em “quando vai <b>acontecer junto de novo</b>?”.',r:['“Juntos de novo”, “ao mesmo tempo”, “próxima vez” → MMC.','Somar frações com denominadores diferentes → MMC dos denominadores.','Números que não têm divisor comum → MMC é o produto.']},
+'mdc':{i:'MDC é o <b>maior pedaço</b> que cabe certinho nos dois números. Se você tem fitas de 12 m e 18 m e quer cortar em pedaços iguais, do maior tamanho possível, sem sobrar: pedaços de 6 m.',r:['“Maior tamanho possível”, “dividir em partes iguais sem sobrar” → MDC.','Simplificar fração de uma vez → divida em cima e embaixo pelo MDC.','Dúvida entre MMC e MDC: se a resposta tem que ser <b>menor</b> que os números → MDC; maior → MMC.']},
+'fracoes':{i:'Fração é um <b>pedaço de um inteiro</b>. Numa pizza cortada em 8 fatias, comer 3 é comer {3/8}. O número de baixo diz em quantas partes iguais o inteiro foi cortado; o de cima, quantas você pegou.',r:['“Simplifique” → divida em cima e embaixo pelo mesmo número.','“Equivalente” → multiplique (ou divida) em cima e embaixo pelo mesmo número.','“Fração de uma quantidade” ({2/5} de 30) → divida pelo de baixo e multiplique pelo de cima.']},
+'comparacao-fracoes':{i:'Comparar frações é decidir qual pedaço de pizza é maior. Com o mesmo número de fatias (mesmo denominador), ganha quem pegou mais. Com fatias de tamanhos diferentes, primeiro <b>cortamos todas do mesmo tamanho</b> (mesmo denominador).',r:['Mesmo denominador → maior numerador ganha.','Mesmo numerador → menor denominador ganha (fatias maiores).','Tudo diferente → iguale os denominadores (MMC) ou multiplique cruzado.']},
+'soma-subtracao-fracoes':{i:'Só dá para somar pedaços <b>do mesmo tamanho</b>: 1 fatia de pizza de 4 + 1 fatia de pizza de 6 não dá “2 fatias de 10”. Primeiro transformamos tudo em fatias iguais (mesmo denominador) e aí somamos as fatias.',r:['Denominadores iguais → conserva embaixo e soma em cima.','Denominadores diferentes → MMC, depois “divide pelo de baixo e multiplica pelo de cima”.','Número misto → transforme em fração imprópria antes.']},
+'multiplicacao-divisao-fracoes':{i:'Multiplicar fração é pegar “<b>um pedaço de um pedaço</b>”: metade de metade é um quarto. Dividir é perguntar “quantas vezes cabe?”: quantas metades cabem em 3 pizzas? 6. Por isso dividir é multiplicar pelo inverso.',r:['× → em cima vezes em cima, embaixo vezes embaixo.','÷ → conserva a primeira e multiplica pelo inverso da segunda.','Simplifique cruzado antes de multiplicar para a conta ficar pequena.']},
+'decimais':{i:'Decimal é dinheiro: R$ 2,75 é 2 reais e 75 centavos. A vírgula separa o inteiro dos “pedaços” (décimos, centésimos). Quase todo erro some se você <b>alinhar as vírgulas</b> como faria somando valores numa nota fiscal.',r:['+ ou − → vírgula embaixo de vírgula (complete com zeros).','× → multiplique sem vírgula e depois conte as casas decimais.','÷ → iguale as casas decimais e tire as vírgulas.']},
+'fracao-decimal':{i:'Fração e decimal são <b>duas roupas do mesmo número</b>: {1/2} e 0,5 são a mesma coisa. Para ir de fração para decimal, divida o de cima pelo de baixo. Para voltar, leia o decimal em voz alta (0,25 = vinte e cinco centésimos = {25/100}).',r:['Fração → decimal: divida numerador ÷ denominador.','Decimal → fração: número sem vírgula sobre 10, 100, 1000… e simplifique.','Denominador 10, 100, 1000 → é só andar com a vírgula.']},
+'porcentagem':{i:'Porcentagem é uma fração com denominador 100: 30% quer dizer 30 de cada 100. É a língua dos descontos e das promoções. Truque: 10% é só <b>andar a vírgula uma casa</b>, e quase tudo sai a partir daí.',r:['“X% de Y” → Y × X ÷ 100 (ou use os 10%).','Desconto → multiplique por (1 − taxa); aumento → por (1 + taxa).','“Quantos por cento” → parte ÷ todo × 100.']},
+'inteiros-reta-modulo':{i:'Números negativos aparecem em temperatura abaixo de zero, saldo devedor e andares de garagem. Na reta, quanto mais para a <b>direita</b>, maior. Por isso −2 é maior que −10 (está menos frio a −2 °C). Módulo é a <b>distância até o zero</b>, sem ligar para o sinal.',r:['Comparar → quem está mais à direita na reta é maior.','| | → tire o sinal (distância até o zero).','Oposto/simétrico → troque o sinal.']},
+'inteiros-soma-subtracao':{i:'Pense em dinheiro: positivo é o que você <b>tem</b>, negativo é o que você <b>deve</b>. Tenho 5 e devo 8 → no fim devo 3 (−3). Sinais iguais: junta e mantém o sinal. Sinais diferentes: subtrai e fica o sinal de quem “ganhou”.',r:['Sinais iguais → soma e repete o sinal.','Sinais diferentes → subtrai e usa o sinal do maior módulo.','−(−) → vira +; elimine os parênteses primeiro.']},
+'inteiros-multiplicacao-divisao':{i:'Na multiplicação e divisão, só existe uma regra: <b>sinais iguais dão +, sinais diferentes dão −</b>. Pense como “o inimigo do meu inimigo é meu amigo”: (−) × (−) = (+).',r:['× ou ÷ → faça a conta sem sinal e depois aplique o jogo de sinais.','Potência de negativo → expoente par dá +, ímpar dá −.','Cuidado: −2² = −4, mas (−2)² = 4.']},
+'racionais':{i:'Racionais são todos os números que viram fração: inteiros, frações, decimais, positivos e negativos. As regras são as mesmas que você já conhece: as das frações e as dos sinais, <b>usadas juntas</b>.',r:['Primeiro decida o sinal, depois faça a conta como fração/decimal.','Misturou decimal e fração → transforme tudo para o mesmo formato.','Expressão grande → ordem das operações normal.']},
+'potencias-propriedades':{i:'Expoente negativo quer dizer “<b>vira de cabeça para baixo</b>”: 2⁻³ = {1/2³} = {1/8}. As propriedades são atalhos para não precisar abrir a potência inteira.',r:['Expoente negativo → inverte a base e o expoente fica positivo.','Mesma base → × soma, ÷ subtrai, potência de potência multiplica.','Fração elevada → eleve em cima e embaixo.']},
+'notacao-cientifica':{i:'É um jeito de escrever números <b>gigantes ou minúsculos</b> sem uma fila de zeros: a distância da Terra ao Sol, 150.000.000 km, vira 1,5 × 10⁸ km. Sempre um número entre 1 e 10 vezes uma potência de 10.',r:['Número grande → vírgula anda para a esquerda, expoente positivo.','Número pequeno (0,000…) → vírgula anda para a direita, expoente negativo.','× ou ÷ → multiplique/divida os números e some/subtraia os expoentes.']},
+'dizimas':{i:'Dízima periódica é um decimal que <b>repete para sempre</b> (0,333…). Apesar de não acabar, ela é uma fração disfarçada. A fração geratriz é a fração que “gera” essa dízima.',r:['Período logo depois da vírgula → período sobre tantos 9 quantos algarismos tiver.','Tem parte que não repete → é dízima composta: use o método do x ou a regra dos 9 e 0.','Tem parte inteira → separe e some no fim.']},
+'conjuntos-numericos':{i:'Os conjuntos são como <b>bonecas russas</b>, uma dentro da outra: naturais (ℕ) dentro dos inteiros (ℤ), dentro dos racionais (ℚ), dentro dos reais (ℝ). Os irracionais (√2, π) ficam ao lado dos racionais, também dentro dos reais.',r:['Tem sinal negativo → no mínimo inteiro.','Vira fração (inclusive dízima periódica) → racional.','Decimal infinito que não repete (√2, π) → irracional.']},
+'radicais':{i:'Simplificar radical é <b>tirar da raiz o que sai inteiro</b>. √50 = √(25 × 2) = 5√2: o 25 tem raiz exata, então sai; o 2 fica preso. Só dá para somar radicais que têm a mesma “parte presa”, como somar 3 maçãs com 2 maçãs.',r:['“Simplifique” → fatore e tire os pares (raiz quadrada).','+ ou − → só junta radicais iguais (simplifique antes).','Raiz no denominador → racionalize multiplicando em cima e embaixo.']},
+'razao-proporcao':{i:'Razão é uma <b>comparação por divisão</b>: “3 meninas para cada 2 meninos” é 3 : 2. Proporção é quando duas razões são iguais, como numa receita: se 2 xícaras de farinha vão com 3 ovos, 4 xícaras vão com 6 ovos.',r:['“Para cada”, “a razão de A para B” → A ÷ B.','Duas razões iguais com um valor faltando → multiplique cruzado.','Dividir um total na razão a : b → divida o total em a + b partes.']},
+'regra-de-tres-simples':{i:'Regra de três resolve “se isso dá aquilo, quanto dá tanto?”. O segredo é perguntar antes: <b>se uma coisa aumenta, a outra aumenta ou diminui?</b> Mais pão → mais farinha (direta). Mais pedreiros → menos dias (inversa).',r:['As duas grandezas sobem juntas → direta: multiplique cruzado.','Uma sobe e a outra desce → inversa: inverta uma coluna antes.','Na dúvida, pergunte em voz alta “se dobrar um, o outro dobra ou cai pela metade?”.']},
+'regra-de-tres-composta':{i:'É uma regra de três com <b>mais de duas grandezas</b> (operários, horas, dias, peças…). Compare cada grandeza <b>sozinha</b> com a que tem o x, perguntando: direta ou inversa? Depois junte tudo numa conta só.',r:['Coloque o x numa coluna e compare cada coluna com ela, uma de cada vez.','Seta na mesma direção → direta; contrária → inverta essa fração.','Multiplique todas as frações do lado oposto ao x.']},
+'juros-simples':{i:'Juro é o “<b>aluguel do dinheiro</b>”. No juro simples, o aluguel é sempre calculado em cima do valor inicial, então todo mês rende <b>o mesmo valor</b>. J = C · i · t.',r:['Pergunta o juro → J = C × i × t (taxa em decimal).','Pergunta o montante → M = C + J.','Taxa e tempo em unidades diferentes → converta antes (mês ↔ ano).']},
+'juros-compostos':{i:'No juro composto, o juro de um mês <b>entra na conta</b> e rende juro no mês seguinte: é o “juro sobre juro”. Por isso cresce como bola de neve: M = C · (1 + i)ᵗ.',r:['“Juros compostos”, “rendimento mensal acumulado” → M = C(1 + i)ᵗ.','Pergunta o juro → J = M − C.','Compare com o simples: o composto sempre ganha depois do 1º período.']},
+'valor-numerico':{i:'Letras na matemática são <b>caixinhas</b> esperando um número. Valor numérico é abrir a caixa: trocar a letra pelo número e fazer a conta. Coloque o número <b>entre parênteses</b>, principalmente se for negativo.',r:['“Calcule para x = …” → substitua com parênteses e faça a ordem das operações.','“Escreva a expressão que representa…” → traduza o texto: dobro = 2x, metade = x/2, sucessor = x + 1.','3x quer dizer 3 vezes x (o × fica escondido).']},
+'polinomios':{i:'Monômios são como <b>frutas</b>: 3x² e 5x² são “a mesma fruta”, então dá para juntar (8x²). Já 3x² e 3x são frutas diferentes e ficam separadas. Polinômio é uma “salada” de monômios.',r:['Somar/subtrair → junte só os termos semelhantes (mesma letra e mesmo expoente).','Sinal de − antes do parêntese → troque o sinal de todos lá dentro.','Multiplicar → chuveirinho (distributiva) e soma os expoentes da mesma letra.']},
+'produtos-notaveis':{i:'São multiplicações que aparecem tanto que viraram <b>fórmulas prontas</b>. (a + b)² NÃO é a² + b²: abrindo o quadrado (a + b)(a + b), aparece o termo do meio 2ab. Pense num quadrado de lado a + b dividido em 4 pedaços.',r:['(algo + algo)² → quadrado do 1º + 2·1º·2º + quadrado do 2º.','(algo − algo)² → mesmo, com − no meio.','(a + b)(a − b) → a² − b².']},
+'fatoracao':{i:'Fatorar é o caminho de <b>volta</b> do produto notável: transformar soma em multiplicação. É como descobrir quais peças de Lego montaram o objeto.',r:['Todos os termos têm algo em comum → coloque em evidência.','Dois quadrados com − no meio → (a + b)(a − b).','Três termos com dois quadrados → teste o trinômio quadrado perfeito ou soma e produto.']},
+'equacao-1-grau':{i:'Uma equação é uma <b>balança equilibrada</b>. Tudo o que você fizer de um lado tem que fazer do outro para ela não pender. “Passar para o outro lado trocando a operação” é só o atalho desse equilíbrio.',r:['Tem parêntese → distributiva primeiro.','Tem fração → multiplique tudo pelo MMC dos denominadores.','Letras para um lado, números para o outro; o que multiplica o x passa dividindo.']},
+'problemas-equacao-1-grau':{i:'Resolver problema é <b>traduzir português para matemática</b>. Chame de x o que você não sabe, escreva a frase como equação e resolva. A parte difícil é a tradução, não a conta.',r:['“Um número” → x; “o dobro” → 2x; “a soma” → +; “é” → =.','Idades → monte uma tabela “hoje / daqui a n anos”.','Números consecutivos → x, x + 1, x + 2.']},
+'inequacao-1-grau':{i:'Inequação é uma equação com <b>&lt; ou &gt;</b> no lugar do =. A resposta não é um número, é um <b>intervalo</b> de números. Resolve igualzinho à equação, com uma pegadinha: multiplicou ou dividiu por negativo, <b>vira o sinal</b>.',r:['Resolva como equação.','Dividiu/multiplicou por número negativo → inverta &lt; e &gt;.','“Maior inteiro”, “menor natural” → olhe o intervalo e escolha o número.']},
+'sistemas':{i:'Sistema são <b>duas pistas</b> sobre dois mistérios. Uma pista sozinha não basta: “a soma é 10” tem infinitas respostas. Juntando com “a diferença é 2”, só sobra uma: 6 e 4.',r:['Uma letra fácil de isolar → substituição.','Coeficientes iguais ou opostos → adição (some ou subtraia as equações).','Problema com dois valores desconhecidos → chame de x e y e monte duas equações.']},
+'equacao-2-grau-incompleta':{i:'Quando falta o b ou o c, não precisa de Bhaskara: tem <b>atalho</b>. Sem b: isole x² e tire a raiz (lembre do ±). Sem c: coloque o x em evidência e uma das respostas é sempre zero.',r:['ax² + c = 0 (sem x sozinho) → isole x² e tire a raiz com ±.','ax² + bx = 0 (sem número sozinho) → x(ax + b) = 0 → x = 0 ou x = −b/a.','x² igual a número negativo → não tem solução real.']},
+'equacao-2-grau':{i:'A equação do 2º grau tem x² e pode ter até <b>duas respostas</b>, porque o gráfico (uma parábola) pode cortar o eixo em dois pontos. Bhaskara é uma <b>receita que sempre funciona</b>: calcula Δ e depois x.',r:['Deixe tudo igualado a zero e identifique a, b e c (com sinal!).','Δ = b² − 4ac: positivo → 2 raízes; zero → 1; negativo → nenhuma real.','Números pequenos → tente soma e produto antes.']},
+'funcao-afim':{i:'Função afim é uma <b>regra de conta</b> que gera uma reta: f(x) = ax + b. É a conta do táxi: b é a bandeirada (valor fixo) e a é o preço por km (o quanto sobe a cada passo).',r:['“Calcule f(…)” → troque x pelo número.','“Para que x f(x) = …” → monte a equação e resolva.','Taxa fixa + valor por unidade → é função afim (b fixo, a por unidade).']},
+'funcao-quadratica':{i:'A função do 2º grau desenha uma <b>parábola</b>, a curva de uma bola chutada para cima. Se a &gt; 0 ela sorri (boca para cima, tem ponto mais baixo); se a &lt; 0 ela fica triste (boca para baixo, tem ponto mais alto).',r:['“Zeros/raízes” → f(x) = 0, Bhaskara.','“Vértice”, “valor máximo/mínimo” → xᵥ = −b/2a e substitua.','“Onde corta o eixo y” → é o c.']},
+'sequencias':{i:'Sequência é uma lista com um <b>padrão</b>. Se de um termo para o outro sempre <b>soma</b> o mesmo número, é uma PA (escada). Se sempre <b>multiplica</b> pelo mesmo número, é uma PG (bola de neve).',r:['Diferença constante → PA: aₙ = a₁ + (n − 1)·r.','Divisão constante → PG: aₙ = a₁ · qⁿ⁻¹.','Soma dos termos de PA → (a₁ + aₙ)·n ÷ 2.']},
+'angulos':{i:'Ângulo mede <b>o quanto algo gira</b>. Uma volta inteira é 360°, meia volta é 180° (linha reta) e um quarto de volta é 90° (canto de folha de papel).',r:['“Complemento” → 90° − ângulo.','“Suplemento” → 180° − ângulo.','Duas retas se cruzando → opostos pelo vértice são iguais; vizinhos somam 180°.']},
+'retas-paralelas-transversal':{i:'Duas paralelas cortadas por uma transversal formam <b>8 ângulos</b>, mas só existem <b>2 valores</b>: um agudo e um obtuso, que somam 180°. Pense num “Z” (alternos iguais) e num “F” (correspondentes iguais).',r:['Formato Z → alternos internos: iguais.','Formato F → correspondentes: iguais.','Formato C/U (mesmo lado, entre as paralelas) → colaterais: somam 180°.']},
+'triangulos':{i:'Todo triângulo, de qualquer formato, tem ângulos que somam <b>180°</b>. Rasgue os três cantos de um triângulo de papel e junte: eles formam uma linha reta. Esse fato resolve quase tudo.',r:['Falta um ângulo → 180° − os outros dois.','Isósceles → os dois ângulos da base são iguais.','“Existe triângulo com lados…?” → o maior lado tem que ser menor que a soma dos outros dois.']},
+'poligonos':{i:'Todo polígono pode ser <b>fatiado em triângulos</b> a partir de um vértice: um polígono de n lados vira n − 2 triângulos. Como cada triângulo tem 180°, a soma dos ângulos internos é (n − 2) · 180°.',r:['Soma dos internos → (n − 2) · 180°.','Polígono regular → divida a soma por n para achar cada ângulo.','Ângulos externos sempre somam 360°; diagonais → n(n − 3) ÷ 2.']},
+'perimetro':{i:'Perímetro é o <b>contorno</b>: quanto de cerca você precisa para cercar um terreno, ou de fita para contornar um quadro. É só somar todos os lados.',r:['“Cerca”, “rodapé”, “contorno”, “moldura” → perímetro.','Figura regular → lado × número de lados.','Círculo → comprimento C = 2πr.']},
+'areas':{i:'Área é o <b>espaço de dentro</b>: quanto de piso ou de tinta você precisa. Medimos contando quantos quadradinhos de 1 × 1 cabem na figura, por isso a unidade é m², cm²…',r:['“Piso”, “pintar”, “gramado”, “terreno” → área.','Retângulo → base × altura; triângulo → base × altura ÷ 2.','Figura estranha → corte em retângulos e triângulos e some.']},
+'circunferencia-circulo':{i:'<b>Circunferência</b> é só a borda (o aro da bicicleta); <b>círculo</b> é a borda com o recheio (a pizza inteira). Em qualquer círculo, a borda é cerca de 3,14 vezes o diâmetro: esse número é o π.',r:['Contorno, volta, aro → comprimento C = 2πr.','Superfície, pizza, tampa → área A = πr².','Deram o diâmetro → divida por 2 para achar o raio.']},
+'pitagoras':{i:'Só vale em <b>triângulo retângulo</b> (com um canto de 90°). O quadrado do lado maior (hipotenusa, de frente para o canto reto) é igual à soma dos quadrados dos outros dois: a² = b² + c².',r:['Triângulo retângulo com 2 lados e falta 1 → Pitágoras.','Escada encostada na parede, diagonal de retângulo/TV → Pitágoras.','Falta a hipotenusa → some os quadrados; falta um cateto → subtraia.']},
+'tales-semelhanca':{i:'Retas paralelas cortadas por duas transversais formam pedaços <b>proporcionais</b>, como as linhas de um caderno cortadas por duas réguas.',r:['Retas paralelas + duas transversais → Tales.','Monte {cima/baixo} = {cima/baixo} na mesma ordem.','Reta paralela a um lado do triângulo → Tales dentro do triângulo.']},
+'semelhanca-triangulos':{i:'Triângulos semelhantes são “<b>zoom</b>” um do outro: mesmos ângulos, lados multiplicados pelo mesmo número k.',r:['Sombra, paralela a um lado, ampulheta, maquete → semelhança.','Ache primeiro quem corresponde a quem (lados de frente para ângulos iguais).','Área → multiplica por k²; perímetro → por k.']},
+'elementos-notaveis':{i:'São as <b>4 linhas especiais</b> do triângulo (altura, mediana, bissetriz, mediatriz) e os <b>4 pontos</b> onde elas se encontram (ortocentro, baricentro, incentro, circuncentro).',r:['Aparece 90° com o lado → altura (ou mediatriz, se passar no meio do lado).','Aparece “ponto médio” → mediana; aparece “ângulo dividido em dois” → bissetriz.','Baricentro numa mediana → 2 partes para o vértice, 1 para o lado.']},
+'relacoes-metricas':{i:'Quando traçamos a altura no triângulo retângulo, ele se divide em <b>dois triângulos menores semelhantes ao grande</b>. Das proporções entre eles saem as fórmulas.',r:['Aparece a altura relativa à hipotenusa e as projeções m e n → relações métricas.','Escolha a fórmula que tem as 2 medidas que você sabe + a que quer.','Tem só 2 lados do triângulo grande → Pitágoras primeiro.']},
+'trigonometria':{i:'Num triângulo retângulo, o ângulo decide a “<b>forma</b>” do triângulo. Por isso as divisões entre os lados (seno, cosseno, tangente) dependem só do ângulo, não do tamanho. Com um ângulo e um lado, descobrimos todos os outros.',r:['Tem ângulo + um lado e quer outro lado → escolha sen, cos ou tg pelos lados envolvidos (SOH-CAH-TOA).','Ângulo de 30°, 45° ou 60° → use a tabela dos notáveis.','“Rampa”, “sombra”, “altura de prédio vista de longe” → trigonometria.']},
+'volume':{i:'Volume é <b>quanto cabe dentro</b>: quantos cubinhos de 1 × 1 × 1 enchem a caixa. Capacidade é o mesmo volume medido em litros. Ligação de ouro: <b>1 dm³ = 1 litro</b> e 1 m³ = 1000 litros.',r:['Caixa (paralelepípedo) → comprimento × largura × altura.','Cubo → aresta³; cilindro → área da base × altura.','Pede em litros → converta: 1 dm³ = 1 L; 1 m³ = 1000 L.']},
+'unidades-medida':{i:'Converter unidade é como trocar dinheiro: o valor é o mesmo, só muda a “moeda”. Na escada <b>km, hm, dam, m, dm, cm, mm</b>, cada degrau é ×10 para baixo e ÷10 para cima (área ×100, volume ×1000).',r:['Do maior para o menor → multiplica; do menor para o maior → divide.','m² → cada degrau é 100; m³ → cada degrau é 1000.','Tempo não é decimal: 1 h = 60 min (1,5 h = 1 h 30 min).']},
+'plano-cartesiano':{i:'O plano cartesiano é um <b>mapa com endereço</b>: o ponto (3, 2) quer dizer “ande 3 para a direita e 2 para cima”. Primeiro o x (horizontal), depois o y (vertical), como “primeiro a rua, depois o andar”.',r:['Quadrante → olhe os sinais de x e de y.','Distância entre pontos → Pitágoras com as diferenças de x e de y.','Ponto médio → média dos x e média dos y.']},
+'media-moda-mediana':{i:'São formas de resumir uma lista de números num só. <b>Média</b>: dividir tudo igualmente. <b>Moda</b>: o que está na moda (aparece mais). <b>Mediana</b>: o do meio da fila (depois de ordenar).',r:['“Média” → soma tudo e divide pela quantidade.','“Moda” → o que mais se repete.','“Mediana” → ordene primeiro! Quantidade par → média dos dois do meio.']},
+'probabilidade':{i:'Probabilidade mede a <b>chance</b> de algo acontecer: casos que você quer ÷ todos os casos possíveis. Vai de 0 (impossível) a 1 (certeza), ou de 0% a 100%.',r:['Uma escolha → favoráveis ÷ possíveis.','“E” (os dois acontecem, independentes) → multiplica.','“Não acontecer” → 1 − probabilidade de acontecer.']},
+'contagem':{i:'Para contar possibilidades sem listar uma por uma, divida a escolha em <b>etapas</b> e multiplique: 3 camisas e 2 calças dão 3 × 2 = 6 looks. É o princípio multiplicativo.',r:['Escolhas em etapas (e depois… e depois…) → multiplique as opções de cada etapa.','“Sem repetir” → a cada etapa sobra uma opção a menos.','Ordenar todos (anagramas, filas) → fatorial n!.']}
+};
+
+/* monta o topo e o fim da teoria */
+function didatTopo(t){
+  var d=INTRO[t.id];if(!d)return '';
+  var h='<div class="ideia"><div class="ideia-tit">💡 A ideia, em linguagem simples</div><p>'+fx(d.i)+'</p></div>';
+  if(d.r&&d.r.length) h+='<div class="reconhecer"><div class="ideia-tit">🔎 Como reconhecer na prova</div><ul>'+d.r.map(function(x){return '<li>'+fx(x)+'</li>';}).join('')+'</ul></div>';
+  return h;
+}
+function didatIndice(html){
+  var m=html.match(/<h3>[\s\S]*?<\/h3>/g)||[];if(m.length<3)return {html:html,idx:''};
+  var k=0;html=html.replace(/<h3>/g,function(){return '<h3 id="sec-'+(k++)+'">';});
+  var idx='<details class="indice"><summary class="ideia-tit">📑 Nesta página ('+m.length+' partes) — toque para ver</summary><div class="chips-i">'+m.map(function(x,j){var tx=x.replace(/<[^>]+>/g,'').replace(/^Caso \d+ — /,'');return '<a href="javascript:void 0" data-a="irsec" data-v="sec-'+j+'">'+tx+'</a>';}).join('')+'</div></details>';
+  return {html:html,idx:idx};
+}
+function didatTeste(t){
+  var L=lista(t,4242).slice(0,3);
+  return '<div class="teste"><div class="ideia-tit">✋ Teste rápido: entendeu?</div><p class="small muted" style="margin:4px 0 8px">Tente sozinho antes de abrir a resposta.</p>'+L.map(function(g,j){var st=Array.isArray(g.s)?'<ol>'+g.s.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>':'<p>'+g.s+'</p>';return '<div class="tq"><b>'+(j+1)+'.</b> '+g.q+'<details><summary>Ver resposta</summary><p><b>Resposta:</b> '+g.a+'</p>'+st+'</details></div>';}).join('')+'</div>';
+}
+
 </script>
 <script>
 /* ===== Matemática Academy — aplicativo (aluno + professor) ===== */
@@ -2284,12 +2619,13 @@ async function vAssunto(id,tab){
   var tb=document.getElementById('tabBody');
   if(tab==='teoria'){
     var lido=!prof&&ST.prog[id]&&ST.prog[id].teoria;
-    tb.innerHTML='<div class="card teoria">'+t.teoria+'</div>'+(prof?'':'<div style="margin-top:12px"><button class="btn block '+(lido?'ghost':'gold')+'" data-a="lido" data-id="'+id+'">'+(lido?'✓ Teoria estudada (vale 20%)':'Marcar teoria como estudada (+20%)')+'</button></div>')+'<button class="btn primary block" style="margin-top:10px" data-a="tab" data-id="'+id+'" data-v="ex">Ir para os exercícios →</button>';
+    var dI=didatIndice(t.teoria);tb.innerHTML='<div class="card teoria">'+didatTopo(t)+dI.idx+dI.html+didatTeste(t)+'</div>'+(prof?'':'<div style="margin-top:12px"><button class="btn block '+(lido?'ghost':'gold')+'" data-a="lido" data-id="'+id+'">'+(lido?'✓ Teoria estudada (vale 20%)':'Marcar teoria como estudada (+20%)')+'</button></div>')+'<button class="btn primary block" style="margin-top:10px" data-a="tab" data-id="'+id+'" data-v="ex">Ir para os exercícios →</button>';
   } else if(tab==='ex'){ renderQuiz(id); }
   else if(tab==='notas'){ renderNotas(id); }
   else if(tab==='meus'){ renderMeusEx(id); }
 }
 A.tab=function(el){ ST.tab[el.dataset.id]=el.dataset.v; vAssunto(el.dataset.id,el.dataset.v); window.scrollTo(0,0); };
+A.irsec=function(el){var e=document.getElementById(el.dataset.v);if(e)e.scrollIntoView({behavior:'smooth',block:'start'});};
 A.lido=async function(el){ var id=el.dataset.id; var cur=ST.prog[id]&&ST.prog[id].teoria; await saveProg(id,{teoria:!cur}); if(!cur) await addXP(15); toast(cur?'Desmarcado':'Boa! +20% neste assunto'); vAssunto(id,'teoria'); };
 
 function quizState(id){ if(!ST.quiz[id]) ST.quiz[id]={seed:0,idx:0,mode:'quiz',shown:{}}; return ST.quiz[id]; }

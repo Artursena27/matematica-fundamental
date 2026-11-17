@@ -263,12 +263,13 @@ async function vAssunto(id,tab){
   var tb=document.getElementById('tabBody');
   if(tab==='teoria'){
     var lido=!prof&&ST.prog[id]&&ST.prog[id].teoria;
-    tb.innerHTML='<div class="card teoria">'+t.teoria+'</div>'+(prof?'':'<div style="margin-top:12px"><button class="btn block '+(lido?'ghost':'gold')+'" data-a="lido" data-id="'+id+'">'+(lido?'✓ Teoria estudada (vale 20%)':'Marcar teoria como estudada (+20%)')+'</button></div>')+'<button class="btn primary block" style="margin-top:10px" data-a="tab" data-id="'+id+'" data-v="ex">Ir para os exercícios →</button>';
+    var dI=didatIndice(t.teoria);tb.innerHTML='<div class="card teoria">'+didatTopo(t)+dI.idx+dI.html+didatTeste(t)+'</div>'+(prof?'':'<div style="margin-top:12px"><button class="btn block '+(lido?'ghost':'gold')+'" data-a="lido" data-id="'+id+'">'+(lido?'✓ Teoria estudada (vale 20%)':'Marcar teoria como estudada (+20%)')+'</button></div>')+'<button class="btn primary block" style="margin-top:10px" data-a="tab" data-id="'+id+'" data-v="ex">Ir para os exercícios →</button>';
   } else if(tab==='ex'){ renderQuiz(id); }
   else if(tab==='notas'){ renderNotas(id); }
   else if(tab==='meus'){ renderMeusEx(id); }
 }
 A.tab=function(el){ ST.tab[el.dataset.id]=el.dataset.v; vAssunto(el.dataset.id,el.dataset.v); window.scrollTo(0,0); };
+A.irsec=function(el){var e=document.getElementById(el.dataset.v);if(e)e.scrollIntoView({behavior:'smooth',block:'start'});};
 A.lido=async function(el){ var id=el.dataset.id; var cur=ST.prog[id]&&ST.prog[id].teoria; await saveProg(id,{teoria:!cur}); if(!cur) await addXP(15); toast(cur?'Desmarcado':'Boa! +20% neste assunto'); vAssunto(id,'teoria'); };
 
 function quizState(id){ if(!ST.quiz[id]) ST.quiz[id]={seed:0,idx:0,mode:'quiz',shown:{}}; return ST.quiz[id]; }

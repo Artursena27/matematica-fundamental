@@ -1,5 +1,5 @@
 const fs=require('fs'),vm=require('vm');
-const code=['core','t1','t1b','t2','t3'].map(f=>fs.readFileSync('src/'+f+'.js','utf8')).join('\n')+'\nthis.TOPICS=TOPICS;this.lista=lista;';
+const code=['core','t1','t1b','t2','t3','t3b','teoria1','teoria2','teoria3','teoria4','teoria5','didatica'].map(f=>fs.readFileSync('src/'+f+'.js','utf8')).join('\n')+'\nthis.TOPICS=TOPICS;this.lista=lista;';
 const ctx={console};vm.createContext(ctx);vm.runInContext(code,ctx);
 let bad=0;const ids={};
 for(const t of ctx.TOPICS){ if(ids[t.id])console.log('DUP',t.id); ids[t.id]=1;
@@ -8,3 +8,7 @@ for(const t of ctx.TOPICS){ if(ids[t.id])console.log('DUP',t.id); ids[t.id]=1;
   for(const g of L){const txt=g.q+'|'+g.a+'|'+[].concat(g.s||'').join('|'); if(/NaN|undefined|Infinity|\[object|null/.test(txt)){console.log('BADTXT',t.id,txt.slice(0,300));bad++;break;}}
  }}
 console.log('topics',ctx.TOPICS.length,'bad',bad);
+// teoria e camada didática
+const ctx2=ctx; vm.runInContext('this.TEORIA=TEORIA;this.INTRO=INTRO;this.fx=fx;this.didatTeste=didatTeste;',ctx2);
+for(const t of ctx.TOPICS){ if(!ctx.TEORIA[t.id])console.log('SEM TEORIA',t.id); if(!ctx.INTRO[t.id])console.log('SEM INTRO',t.id); const h=ctx.fx(ctx.TEORIA[t.id]||''); if(/\{[^}]*\/[^}]*\}/.test(h.replace(/<svg[\s\S]*?<\/svg>/g,'')))console.log('FX?',t.id); ctx.didatTeste(t); }
+for(const k in ctx.INTRO) if(!ctx.TOPICS.find(t=>t.id===k)) console.log('INTRO órfã',k);
