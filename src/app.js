@@ -39,6 +39,7 @@ var ICON = {
  bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
  share:'<path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/>',
  plusq:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/>',
+ file:'<path d="M6 2.5h8l5 5V21.5H6z"/><path d="M14 2.5v5h5M9 13h6M9 17h6"/>',
  report:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 13h2v4H9zM13 10h2v7h-2z"/>',
  wa:'<path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a3.5 3.5 0 0 1-1.8-1.8l.8-1-1-2z"/>'
 };
@@ -67,7 +68,7 @@ function mockInit(role){
     doubts:[{id:8,student_id:'a1',topic_id:'pitagoras',texto:'Na questão da escada, por que a escada é a hipotenusa?',imagem:null,status:'aberta',resposta:null,created_at:now}],
     atividade:[1,2,3,4].map(function(k){return {student_id:'a1',dia:diaBR(-k),xp:25};}),
     avisos:[{id:9,para:'a1',titulo:'Nova lista: Lista de frações',texto:'Prazo: em 3 dias',link:'#/lista/6',tipo:'lista',lido:false,created_at:now},{id:10,para:'p1',titulo:'Nova dúvida de Maria Clara',texto:'Na questão da escada…',link:'#/p-duvidas',tipo:'aluno',lido:false,created_at:now}],
-    push_subs:[],
+    push_subs:[], materiais:[], blobs:{},
     horarios:[[1,'18:00',0],[1,'19:00',0],[1,'20:00',0],[2,'18:00',1],[2,'19:00',0],[2,'20:00',0],[3,'18:00',1],[3,'19:00',0],[4,'19:00',0],[5,'18:00',1],[6,'08:00',0],[6,'09:00',0]].map(function(h,k){return {id:200+k,dia:h[0],hora:h[1],ocupado:!!h[2],obs:h[2]?'Maria Clara':null};})
   };
   return role==='professor'?MEM.profiles[0]:MEM.profiles[1];
@@ -99,6 +100,7 @@ var DB = {
 async function server(path,body){
   if(MOCK){ if(path==='alunos'&&body.acao==='criar'){ var p={id:'m'+(++MEM.seq),role:'aluno',nome:body.nome,username:body.usuario,ano:body.ano}; MEM.profiles.push(p); return {ok:true,aluno:p}; }
     if(path==='alunos'&&body.acao==='remover'){ MEM.profiles=MEM.profiles.filter(function(p){return p.id!==body.id;}); return {ok:true}; }
+    if(path==='materiais') return mockMat(body);
     if(path==='professor'){ await new Promise(function(r){setTimeout(r,700);}); return {resposta:'(Modo demonstração) Vamos por partes:\n1. Leia o enunciado com calma.\n2. Identifique o que o problema pede.\n\nQuer tentar o primeiro passo?'}; }
     return {ok:true}; }
   var s=(await ST.sb.auth.getSession()).data.session; var tok=s?s.access_token:'';
@@ -217,6 +219,8 @@ async function vInicio(){
   h+='<h2>Listas para fazer</h2>'+(pend.length?'<div class="stack">'+pend.map(asgItem).join('')+'</div>':'<p class="muted">Nenhuma lista pendente. 🎉</p>');
   var atras=plan.filter(function(p){return p.data && new Date(p.data+'T12:00')<hoje();});
   h+='<h2>Próximas tarefas</h2>'+(plan.length?'<div class="stack">'+plan.slice(0,4).map(planItem).join('')+'</div>'+(atras.length?'<p class="small" style="color:var(--bad);font-weight:700">'+atras.length+' tarefa(s) atrasada(s)</p>':''):'<p class="muted">Sem tarefas. Monte seu plano na aba <a href="#/plano">Plano</a>.</p>');
+  var mats=[]; try{ mats=(await server('materiais',{acao:'listar',limite:3})).materiais||[]; }catch(e){}
+  if(mats.length) h+='<h2>Materiais do professor</h2><div class="stack">'+mats.map(matItem).join('')+'</div><a class="btn ghost block" style="margin-top:8px" href="#/materiais">Ver todos os materiais</a>';
   if(dv.length) h+='<h2>Dúvidas respondidas</h2><div class="stack">'+dv.map(doubtItem).join('')+'</div>';
   page({title:'Matemática Academy',sub:esc(me.nome),nav:'inicio',body:h});
 }
@@ -242,6 +246,7 @@ function vAssuntos(){
   var prof=isProf();
   var h='<div class="search">'+ic('search','#55627F',20)+'<input id="busca" type="search" placeholder="Pesquisar assunto: frações, MMC, Pitágoras…" value="'+esc(q)+'" aria-label="Pesquisar assunto" autocomplete="off"></div>'+
     '<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por ano">'+(meuAno?[meuAno]:[]).concat(['Todos'],ANOS.filter(function(a){return a!==meuAno;})).map(function(a){return '<button class="chip'+(a===anoSel?' on':'')+'" data-a="anoSel" data-v="'+a+'">'+(a===meuAno?'⭐ Meu ano ('+a+')':a)+'</button>';}).join('')+'</div>';
+  if(prof) h='<a class="btn gold block" style="margin-bottom:12px" href="#/materiais">'+ic('file')+' Materiais em PDF</a>'+h;
   h+='<div id="lista">'+topicGrid(L,ST.prog,!prof)+'</div>';
   page({title:prof?'Conteúdo':'Assuntos',sub:L.length+' assuntos',nav:prof?'conteudo':'assuntos',body:h});
   var inp=document.getElementById('busca'); inp.addEventListener('input',function(){ ST.busca=inp.value; var pos=inp.selectionStart; vAssuntos(); var n=document.getElementById('busca'); n.focus(); try{n.setSelectionRange(pos,pos);}catch(e){} });
@@ -263,7 +268,8 @@ async function vAssunto(id,tab){
   var tb=document.getElementById('tabBody');
   if(tab==='teoria'){
     var lido=!prof&&ST.prog[id]&&ST.prog[id].teoria;
-    var dI=didatIndice(t.teoria);tb.innerHTML='<div class="card teoria">'+didatTopo(t)+dI.idx+dI.html+didatTeste(t)+'</div>'+(prof?'':'<div style="margin-top:12px"><button class="btn block '+(lido?'ghost':'gold')+'" data-a="lido" data-id="'+id+'">'+(lido?'✓ Teoria estudada (vale 20%)':'Marcar teoria como estudada (+20%)')+'</button></div>')+'<button class="btn primary block" style="margin-top:10px" data-a="tab" data-id="'+id+'" data-v="ex">Ir para os exercícios →</button>';
+    var dI=didatIndice(t.teoria);tb.innerHTML='<div class="card teoria">'+didatTopo(t)+dI.idx+dI.html+didatTeste(t)+'</div>'+(prof?'':'<div style="margin-top:12px"><button class="btn block '+(lido?'ghost':'gold')+'" data-a="lido" data-id="'+id+'">'+(lido?'✓ Teoria estudada (vale 20%)':'Marcar teoria como estudada (+20%)')+'</button></div>')+'<button class="btn primary block" style="margin-top:10px" data-a="tab" data-id="'+id+'" data-v="ex">Ir para os exercícios →</button><div id="matTopico"></div>';
+    matTopico(id);
   } else if(tab==='ex'){ renderQuiz(id); }
   else if(tab==='notas'){ renderNotas(id); }
   else if(tab==='meus'){ renderMeusEx(id); }
@@ -449,7 +455,7 @@ async function vPainel(){
   var nt=await DB.q('notes',{eq:{dificuldade:true},order:['created_at',false],limit:10});
   asg.forEach(function(a){a._aluno=nomeAluno(a.student_id);}); dv.forEach(function(d){d._aluno=nomeAluno(d.student_id);}); nt.forEach(function(n){n._aluno=nomeAluno(n.student_id);});
   var h='<div class="hero"><h1>Olá, professor '+esc(primeiroNome(ST.me.nome))+'!</h1><p>Resumo da sua turma</p></div><div class="stats" style="margin-top:12px"><a class="stat" href="#/alunos" style="text-decoration:none"><b>'+al.length+'</b><span>alunos</span></a><a class="stat" href="#/p-listas" style="text-decoration:none"><b>'+asg.length+'</b><span>listas para corrigir</span></a><a class="stat" href="#/p-duvidas" style="text-decoration:none"><b>'+dv.length+'</b><span>dúvidas abertas</span></a><div class="stat"><b>'+nt.length+'</b><span>dificuldades recentes</span></div></div>';
-  h+='<div class="grid" style="margin-top:12px"><button class="btn primary" data-a="novoAluno">+ Cadastrar aluno</button><a class="btn gold" href="#/nova-lista">+ Mandar lista</a><a class="btn ghost" href="#/agenda-prof">'+ic('cal')+' Minha agenda</a><button class="btn ghost" data-a="novoAviso">'+ic('bell')+' Enviar aviso</button></div>'+installCard();
+  h+='<div class="grid" style="margin-top:12px"><button class="btn primary" data-a="novoAluno">+ Cadastrar aluno</button><a class="btn gold" href="#/nova-lista">+ Mandar lista</a><a class="btn ghost" href="#/agenda-prof">'+ic('cal')+' Minha agenda</a><button class="btn ghost" data-a="novoAviso">'+ic('bell')+' Enviar aviso</button><a class="btn ghost" href="#/materiais">'+ic('file')+' Materiais (PDF)</a><button class="btn ghost" data-a="novoMat">+ Enviar PDF</button></div>'+installCard();
   h+='<h2>Listas para corrigir</h2>'+(asg.length?'<div class="stack">'+asg.slice(0,5).map(asgItem).join('')+'</div>':'<p class="muted">Nenhuma entrega pendente.</p>');
   h+='<h2>Dúvidas abertas</h2>'+(dv.length?'<div class="stack">'+dv.slice(0,3).map(doubtItem).join('')+'</div>':'<p class="muted">Nenhuma dúvida aberta.</p>');
   h+='<h2>O que os alunos acham difícil</h2>'+(nt.length?'<div class="stack">'+nt.map(noteItem).join('')+'</div>':'<p class="muted">Nenhuma anotação de dificuldade.</p>');
@@ -562,6 +568,85 @@ async function renderMeusEx(id){
 }
 FORMS.exAdd=async function(f){ try{ await DB.ins('exercises',{topic_id:f.dataset.id,q:f.q.value.trim(),a:f.a.value.trim(),s:f.s.value.trim()||null,criado_por:ST.me.id}); delete ST.exProf[f.dataset.id]; toast('Exercício adicionado'); renderMeusEx(f.dataset.id); }catch(e){ toast(erroMsg(e)); } };
 A.exDel=async function(el){ if(!confirmar('Apagar este exercício?')) return; await DB.del('exercises',{id:+el.dataset.id}); delete ST.exProf[el.dataset.t]; renderMeusEx(el.dataset.t); };
+/* ================= MATERIAIS EM PDF ================= */
+var MAT_MAX = 25*1024*1024;
+function fmtTam(b){ if(!b) return ''; return b<1024*1024? Math.max(1,Math.round(b/1024))+' KB' : (b/1048576).toFixed(1).replace('.',',')+' MB'; }
+function matItem(m){
+  var t=m.topic_id&&TBY[m.topic_id]; var para=isProf()?(m.para?nomeAluno(m.para):'Todos os alunos'):'';
+  var info=[t?strip(t.nome):'Geral'].concat(para?[para]:[],m.tamanho?[fmtTam(m.tamanho)]:[],[fmtData(m.updated_at||m.created_at)]).map(esc).join(' · ');
+  return '<div class="item"><span style="flex-shrink:0;color:var(--bad)">'+ic('file','currentColor',28)+'</span><div class="grow"><b>'+esc(m.titulo)+'</b>'+(m.descricao?'<span class="small" style="display:block">'+nl2br(m.descricao)+'</span>':'')+'<span class="small muted">'+info+'</span></div><div class="row" style="flex-shrink:0;gap:6px">'+(m.url?'<a class="btn sm primary" href="'+esc(m.url)+'" target="_blank" rel="noopener">Abrir</a>':'<span class="small muted">indisponível</span>')+(isProf()?'<button class="btn sm ghost" data-a="editMat" data-id="'+m.id+'" aria-label="Editar material">Editar</button>':'')+'</div></div>';
+}
+async function vMateriais(){
+  var prof=isProf(); loading('Materiais',prof?'conteudo':'assuntos'); if(prof) await getAlunos();
+  var L=[], erro=''; try{ L=(await server('materiais',{acao:'listar'})).materiais||[]; }catch(e){ erro=erroMsg(e); }
+  ST.mats={}; L.forEach(function(m){ ST.mats[m.id]=m; });
+  var f=ST.matf||'todos'; var usados={}; L.forEach(function(m){ usados[m.topic_id||'']=1; });
+  var V=L.filter(function(m){ return f==='todos' || (m.topic_id||'')===(f==='geral'?'':f); });
+  var h=(prof?'<button class="btn gold block" data-a="novoMat">'+ic('file')+' Enviar novo PDF</button><p class="small muted">Você escolhe o assunto e se o PDF é para todos ou para um aluno só. Dá para editar o título, trocar o arquivo ou apagar depois.</p>':'');
+  if(erro) h+='<div class="err">'+esc(erro)+'</div>';
+  if(Object.keys(usados).length>1) h+='<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por assunto"><button class="chip'+(f==='todos'?' on':'')+'" data-a="matf" data-v="todos">Todos</button>'+Object.keys(usados).map(function(k){ return '<button class="chip'+(f===(k||'geral')?' on':'')+'" data-a="matf" data-v="'+esc(k||'geral')+'">'+esc(k&&TBY[k]?strip(TBY[k].nome):'Geral')+'</button>'; }).join('')+'</div>';
+  h+=V.length?'<div class="stack" style="margin-top:12px">'+V.map(matItem).join('')+'</div>':(erro?'':'<p class="empty">'+(prof?'Nenhum PDF enviado ainda.':'O professor ainda não mandou materiais.')+'</p>');
+  page({title:'Materiais',sub:L.length+' PDF(s)',back:true,nav:prof?'conteudo':'assuntos',body:h});
+}
+A.matf=function(el){ ST.matf=el.dataset.v; vMateriais(); };
+async function matTopico(id){
+  var L; try{ L=(await server('materiais',{acao:'listar',topic_id:id})).materiais||[]; }catch(e){ return; }
+  L.forEach(function(m){ (ST.mats=ST.mats||{})[m.id]=m; });
+  var box=document.getElementById('matTopico'); if(!box) return;
+  if(L.length||isProf()) box.innerHTML='<h2>PDFs do professor</h2>'+(L.length?'<div class="stack">'+L.map(matItem).join('')+'</div>':'')+(isProf()?'<button class="btn ghost block" style="margin-top:8px" data-a="novoMat" data-t="'+esc(id)+'">+ Enviar PDF para este assunto</button>':'');
+}
+A.novoMat=async function(el){ await getAlunos(); matForm(null, el&&el.dataset&&el.dataset.t); };
+A.editMat=async function(el){ await getAlunos(); var m=(ST.mats||{})[el.dataset.id]; if(m) matForm(m); };
+function matForm(m,topico){
+  var novo=!m; m=m||{}; var tp=m.topic_id||topico||'';
+  sheet(novo?'Enviar PDF':'Editar material','<form id="fmat" data-form="mat"'+(novo?'':' data-id="'+m.id+'"')+'>'+
+    '<label for="mf" style="margin-top:0">'+(novo?'Arquivo PDF':'Trocar o PDF (opcional)')+'</label><input id="mf" name="f" type="file" accept="application/pdf,.pdf"'+(novo?' required':'')+' data-change="matArq">'+
+    (novo?'':'<p class="small muted" style="margin:4px 0 0">Arquivo atual: '+esc(m.nome_arquivo||'PDF')+(m.tamanho?' · '+fmtTam(m.tamanho):'')+(m.url?' · <a href="'+esc(m.url)+'" target="_blank" rel="noopener">abrir</a>':'')+'</p>')+
+    '<label for="mt">Título</label><input id="mt" name="t" required maxlength="120" value="'+esc(m.titulo||'')+'" placeholder="Ex.: Resumo de frações">'+
+    '<label for="md">Descrição (opcional)</label><textarea id="md" name="d" maxlength="500" placeholder="Ex.: Leia antes da aula de quinta.">'+esc(m.descricao||'')+'</textarea>'+
+    '<label for="ma">Assunto</label><select id="ma" name="a"><option value="">Geral (sem assunto)</option>'+ANOS.map(function(an){ return '<optgroup label="'+an+'">'+TOPICS.filter(function(t){return t.ano===an;}).map(function(t){return '<option value="'+t.id+'"'+(t.id===tp?' selected':'')+'>'+esc(strip(t.nome))+'</option>';}).join('')+'</optgroup>'; }).join('')+'</select>'+
+    '<label for="mp">Para quem</label><select id="mp" name="p"><option value="">Todos os alunos</option>'+(ALUNOS||[]).map(function(a){return '<option value="'+a.id+'"'+(a.id===m.para?' selected':'')+'>'+esc(a.nome)+'</option>';}).join('')+'</select>'+
+    '<label class="row" style="gap:8px;font-weight:600;margin-top:14px"><input type="checkbox" name="v"'+(novo?' checked':'')+' style="width:auto;min-height:0"> Avisar os alunos (sino 🔔 e notificação)</label>'+
+    '<div id="matMsg"></div></form>',
+    '<button class="btn primary block" form="fmat" id="matBtn">'+(novo?'Enviar PDF':'Salvar alterações')+'</button>'+(novo?'':'<button class="btn danger block" style="margin-top:8px" data-a="delMat" data-id="'+m.id+'">Apagar material</button>'));
+}
+CHANGE.matArq=function(inp){ var f=inp.files[0], t=document.getElementById('mt'), msg=document.getElementById('matMsg'); msg.innerHTML=''; if(!f) return;
+  if(!/pdf$/i.test(f.type)&&!/\.pdf$/i.test(f.name)){ msg.innerHTML='<div class="err">Escolha um arquivo PDF.</div>'; inp.value=''; return; }
+  if(f.size>MAT_MAX){ msg.innerHTML='<div class="err">Esse PDF tem '+fmtTam(f.size)+'. O limite é 25 MB; comprima e tente de novo.</div>'; inp.value=''; return; }
+  if(t&&!t.value.trim()) t.value=f.name.replace(/\.pdf$/i,'').replace(/[_-]+/g,' ').trim().slice(0,120); };
+function subirArquivo(url,file,onProg){ return new Promise(function(ok,fail){
+  if(MOCK){ MEM.blobs[url]=URL.createObjectURL(file); var p=0; var iv=setInterval(function(){ p+=25; onProg(Math.min(p,100)); if(p>=100){ clearInterval(iv); ok(); } },120); return; }
+  var fd=new FormData(); fd.append('cacheControl','3600'); fd.append('',file,file.name);
+  var x=new XMLHttpRequest(); x.open('PUT',url); x.setRequestHeader('x-upsert','false');
+  x.upload.onprogress=function(e){ if(e.lengthComputable) onProg(Math.round(e.loaded/e.total*100)); };
+  x.onload=function(){ if(x.status>=200&&x.status<300) ok(); else { var m=''; try{ m=JSON.parse(x.responseText).message; }catch(e){} fail(new Error('O envio do arquivo falhou'+(m?': '+m:'')+'.')); } };
+  x.onerror=function(){ fail(new Error('Sem conexão com a internet.')); };
+  x.send(fd); }); }
+FORMS.mat=async function(f){ var b=document.getElementById('matBtn'), msg=document.getElementById('matMsg'), lbl=b.textContent; var file=f.f.files[0], up=null;
+  b.disabled=true; msg.innerHTML='';
+  try{
+    if(file){ if(file.size>MAT_MAX) throw new Error('O limite é 25 MB.');
+      var pr=await server('materiais',{acao:'preparar',tamanho:file.size}); b.textContent='Enviando… 0%';
+      await subirArquivo(pr.uploadUrl,file,function(p){ b.textContent='Enviando… '+p+'%'; }); up=pr.path; b.textContent='Salvando…'; }
+    var body={acao:'salvar',titulo:f.t.value,descricao:f.d.value,topic_id:f.a.value||null,para:f.p.value||null,avisar:f.v.checked};
+    if(f.dataset.id) body.id=+f.dataset.id||f.dataset.id;
+    if(up){ body.path=up; body.nome_arquivo=file.name; body.tamanho=file.size; }
+    await server('materiais',body); closeSheet(); toast(f.dataset.id?'Material atualizado':'PDF enviado!'); render();
+  }catch(e){ if(up) server('materiais',{acao:'descartar',path:up}).catch(function(){}); msg.innerHTML='<div class="err">'+esc(erroMsg(e))+'</div>'; b.disabled=false; b.textContent=lbl; }
+};
+A.delMat=async function(el){ if(!confirmar('Apagar este material? Os alunos deixam de ver o PDF.')) return; el.disabled=true;
+  try{ await server('materiais',{acao:'apagar',id:+el.dataset.id||el.dataset.id}); closeSheet(); toast('Material apagado'); render(); }catch(e){ toast(erroMsg(e)); el.disabled=false; } };
+function mockMat(b){
+  var me=ST.me, prof=isProf();
+  if(b.acao==='listar'){ var L=MEM.materiais.filter(function(m){ return (prof||!m.para||m.para===me.id) && (!b.topic_id||m.topic_id===b.topic_id); }).slice().reverse().map(function(m){ return Object.assign({},m,{url:MEM.blobs[m.path]||null}); }); return {materiais:b.limite?L.slice(0,b.limite):L}; }
+  if(!prof) throw new Error('Só o professor pode fazer isso.');
+  if(b.acao==='preparar'){ var p='m'+(++MEM.seq)+'.pdf'; return {path:p,uploadUrl:p}; }
+  if(b.acao==='salvar'){ var row={titulo:b.titulo,descricao:b.descricao||null,topic_id:b.topic_id,para:b.para,updated_at:new Date().toISOString()}; if(b.path){ row.path=b.path; row.nome_arquivo=b.nome_arquivo; row.tamanho=b.tamanho; }
+    if(b.id){ var cur=MEM.materiais.filter(function(m){return m.id===b.id;})[0]; Object.assign(cur,row); return {ok:true,material:cur}; }
+    var n=Object.assign({id:++MEM.seq,created_at:row.updated_at},row); MEM.materiais.push(n); return {ok:true,material:n}; }
+  if(b.acao==='apagar'){ MEM.materiais=MEM.materiais.filter(function(m){return m.id!==b.id;}); return {ok:true}; }
+  return {ok:true};
+}
 function vMeuPerfil(){ page({title:'Minha conta',back:true,nav:'',body:installCard()+'<div class="stack" style="margin:12px 0">'+pushBtn()+'<a class="btn ghost block" href="#/agenda-prof">'+ic('cal')+' Minha agenda</a></div><div class="card row"><span class="avatar" style="width:56px;height:56px">'+esc(iniciais(ST.me.nome))+'</span><div class="grow"><b style="font-size:18px">'+esc(ST.me.nome)+'</b><span class="muted small">Professor</span></div></div><p class="small muted">Para os alunos entrarem: '+esc(location.origin)+'</p><button class="btn danger block" style="margin-top:16px" data-a="sair">Sair da conta</button>'}); }
 
 /* ================= SEQUÊNCIA (estilo Duolingo) ================= */
@@ -615,7 +700,7 @@ A.meta=async function(el){ var m=+el.dataset.v; try{ if(!MOCK){ var r=await ST.s
 
 /* ================= AVISOS ================= */
 A.irAvisos=function(){ location.hash='#/avisos'; };
-var AVICON={lista:'📝',correcao:'✅',duvida:'💬',sequencia:'🔥',prazo:'⏰',recado:'📣',aluno:'❓',info:'🔔'};
+var AVICON={lista:'📝',correcao:'✅',duvida:'💬',sequencia:'🔥',prazo:'⏰',recado:'📣',aluno:'❓',material:'📄',info:'🔔'};
 async function vAvisos(){
   loading('Avisos',''); var L=await DB.q('avisos',{eq:{para:ST.me.id},order:['created_at',false],limit:60});
   var h=(isProf()?'<button class="btn gold block" data-a="novoAviso">'+ic('bell')+' Enviar aviso para alunos</button>':'')+pushCard(true);
@@ -778,13 +863,13 @@ async function render(){
       if(r==='painel') return await vPainel(); if(r==='alunos') return await vAlunos(); if(r==='aluno') return await vAluno(p[1],p[2]);
       if(r==='p-listas') return await vPListas(); if(r==='nova-lista'){ if(!ST.nl||ST.nl.reset||p[1]) ST.nl=null; return await vNovaLista(p[1]); }
       if(r==='corrigir'||r==='ver-lista') return await vCorrigir(p[1]); if(r==='p-duvidas') return await vPDuvidas();
-      if(r==='conteudo'||r==='assuntos') return vAssuntos(); if(r==='assunto') return await vAssunto(p[1],p[2]); if(r==='meu-perfil') return vMeuPerfil();
+      if(r==='conteudo'||r==='assuntos') return vAssuntos(); if(r==='assunto') return await vAssunto(p[1],p[2]); if(r==='meu-perfil') return vMeuPerfil(); if(r==='materiais') return await vMateriais();
       if(r==='avisos') return await vAvisos(); if(r==='relatorio') return await vRelatorio(p[1]); if(r==='agenda-prof') return await vAgendaProf();
       location.hash='#/painel'; return;
     }
     if(r==='inicio') return await vInicio(); if(r==='assuntos') return vAssuntos(); if(r==='assunto') return await vAssunto(p[1],p[2]);
     if(r==='plano') return await vPlano(); if(r==='listas') return await vListas(); if(r==='lista') return await vLista(p[1]);
-    if(r==='duvidas') return await vDuvidas(); if(r==='perfil') return await vPerfil();
+    if(r==='duvidas') return await vDuvidas(); if(r==='perfil') return await vPerfil(); if(r==='materiais') return await vMateriais();
     if(r==='sequencia') return vSequencia(); if(r==='avisos') return await vAvisos(); if(r==='diagnostico') return vDiag();
     location.hash='#/inicio';
   }catch(e){ console.error(e); page({title:'Ops',nav:'',body:'<div class="err">'+esc(erroMsg(e))+'</div><button class="btn block" style="margin-top:12px" data-a="recarregar">Tentar de novo</button>'}); }
