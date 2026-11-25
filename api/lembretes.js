@@ -31,6 +31,8 @@ module.exports = async (req, res) => {
       await rest('avisos', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: { para: l.student_id, titulo, texto, link: '#/lista/' + l.id, tipo: 'prazo' } }); avisos++;
       enviados += await enviar([l.student_id], { titulo, texto, link: '#/lista/' + l.id });
     }
+    // LGPD: registros de atividade ficam só 90 dias
+    await rest('eventos?created_at=lt.' + diaBR(-90), { method: 'DELETE', headers: { Prefer: 'return=minimal' } }).catch(() => {});
     json(res, 200, { ok: true, avisos, enviados });
   } catch (e) { json(res, 500, { erro: e.message }); }
 };

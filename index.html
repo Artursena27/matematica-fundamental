@@ -2415,7 +2415,7 @@ var MEM = null;
 function mockInit(role){
   var now=new Date().toISOString(); var d=function(n){var x=hoje();x.setDate(x.getDate()+n);return isoDate(x);};
   MEM={ seq:100,
-    profiles:[{id:'p1',role:'professor',nome:'Artur Sena',username:null,ano:null},{id:'a1',role:'aluno',nome:'Maria Clara Souza',username:'mariaclara',ano:'8º ano',meta_xp:20,diagnostico:(/diag=1/.test(location.search)?null:{pulado:true}),responsavel_whatsapp:'81999999999',valor_hora:30,horario:{desde:d(-8),slots:[{dia:2,hora:'18:00',dur:60},{dia:3,hora:'18:00',dur:60},{dia:5,hora:'18:00',dur:60}]}},{id:'a2',role:'aluno',nome:'João Pedro Lima',username:'joaopedro',ano:'7º ano'}],
+    profiles:[{id:'p1',role:'professor',nome:'Artur Sena',username:null,ano:null},{id:'a1',role:'aluno',nome:'Maria Clara Souza',username:'mariaclara',ano:'8º ano',meta_xp:20,diagnostico:(/diag=1/.test(location.search)?null:{pulado:true}),responsavel_whatsapp:'81999999999',last_seen:new Date(Date.now()-60000).toISOString(),valor_hora:30,horario:{desde:d(-8),slots:[{dia:2,hora:'18:00',dur:60},{dia:3,hora:'18:00',dur:60},{dia:5,hora:'18:00',dur:60}]}},{id:'a2',role:'aluno',nome:'João Pedro Lima',username:'joaopedro',ano:'7º ano'}],
     progress:[{student_id:'a1',topic_id:'fracoes',teoria:true,acertos:{},pct:90,updated_at:now},{student_id:'a1',topic_id:'equacao-1-grau',teoria:true,acertos:{},pct:45,updated_at:now},{student_id:'a1',topic_id:'mmc',teoria:false,acertos:{},pct:15,updated_at:now},{student_id:'a1',topic_id:'pitagoras',teoria:true,acertos:{},pct:68,updated_at:now}],
     notes:[{id:1,student_id:'a1',topic_id:'equacao-1-grau',texto:'Não entendo quando o número negativo passa dividindo.',dificuldade:true,created_at:now}],
     plan_items:[{id:2,student_id:'a1',topic_id:'equacao-1-grau',titulo:'Terminar exercícios de equação',data:d(1),feito:false},{id:3,student_id:'a1',topic_id:'pitagoras',titulo:'Revisar Pitágoras para a prova',data:d(-1),feito:false},{id:4,student_id:'a1',topic_id:null,titulo:'Levar caderno na aula',data:null,feito:true}],
@@ -2425,6 +2425,7 @@ function mockInit(role){
     atividade:[1,2,3,4].map(function(k){return {student_id:'a1',dia:diaBR(-k),xp:25};}),
     avisos:[{id:9,para:'a1',titulo:'Nova lista: Lista de frações',texto:'Prazo: em 3 dias',link:'#/lista/6',tipo:'lista',lido:false,created_at:now},{id:10,para:'p1',titulo:'Nova dúvida de Maria Clara',texto:'Na questão da escada…',link:'#/p-duvidas',tipo:'aluno',lido:false,created_at:now}],
     push_subs:[], materiais:[], blobs:{}, config:[{chave:'pub_pix',valor:'(81) 98226-7438'}],
+    eventos:(function(){ var t=Date.now(), m=60000, E=[]; var add=function(min,tipo,ref,det){ E.push({id:900+E.length,student_id:'a1',tipo:tipo,ref:ref,detalhe:det||null,created_at:new Date(t-min*m).toISOString()}); }; add(1500,'app'); add(1495,'assunto','fracoes'); [1,2,3].forEach(function(n,k){ add(1494-k*2,'questao','fracoes:0:'+(n-1),{n:n,lista:1}); add(1493-k*2,'resposta','fracoes:0:'+(n-1),{n:n,lista:1,ok:n!==2}); }); add(40,'app'); add(38,'lista','6',{titulo:'Lista de frações'}); add(30,'pagamentos'); return E; })(),
     aulas:[{id:301,student_id:'a1',data:d(-5),hora:'19:00',duracao_min:60,valor:null,status:'pendente',obs:'Aula extra',created_at:now},{id:302,student_id:'a1',data:d(-10),hora:'18:00',duracao_min:60,valor:30,status:'paga',pago_em:now,created_at:now}],
     horarios:[[1,'18:00',0],[1,'19:00',0],[1,'20:00',0],[2,'18:00',1],[2,'19:00',0],[2,'20:00',0],[3,'18:00',1],[3,'19:00',0],[4,'19:00',0],[5,'18:00',1],[6,'08:00',0],[6,'09:00',0]].map(function(h,k){return {id:200+k,dia:h[0],hora:h[1],ocupado:!!h[2],obs:h[2]?'Maria Clara':null};})
   };
@@ -2551,6 +2552,7 @@ async function afterLogin(){
   if(!isProf() && ST.me.diagnostico==null){ if(location.hash==='#/diagnostico') render(); else location.hash='#/diagnostico'; return; }
   if(!location.hash || location.hash==='#/' ) location.hash = isProf()?'#/painel':'#/inicio'; else render();
   setTimeout(installNudge,1200);
+  if(!isProf()){ logEv('app',null,null,30); startPing(); }
 }
 async function refreshBadges(){
   try{ var b={};
@@ -2623,6 +2625,7 @@ async function vAssunto(id,tab){
   h+='<div class="tabs" role="tablist">'+tabs.map(function(x){return '<button role="tab" aria-selected="'+(tab===x[0])+'" class="'+(tab===x[0]?'on':'')+'" data-a="tab" data-id="'+id+'" data-v="'+x[0]+'">'+x[1]+'</button>';}).join('')+'</div><div id="tabBody"></div>';
   var fab=prof?'':'<div class="fab"><button class="ia" data-a="abrirIA" data-id="'+id+'">'+ic('spark','#FFC93C',20)+'Professor IA</button><button class="duv" data-a="novaDuvida" data-id="'+id+'">'+ic('chat','#0E1B3D',20)+'Dúvida</button></div>';
   page({title:t.nome,sub:t.ano,back:true,nav:prof?'conteudo':'assuntos',body:h,fab:fab});
+  if(!prof) logEv('assunto',id);
   var tb=document.getElementById('tabBody');
   if(tab==='teoria'){
     var lido=!prof&&ST.prog[id]&&ST.prog[id].teoria;
@@ -2640,6 +2643,7 @@ function quizState(id){ if(!ST.quiz[id]) ST.quiz[id]={seed:0,idx:0,mode:'quiz',s
 function fullList(id,seed){ return getList(id,seed).concat(seed===0?(ST.exProf[id]||[]):[]); }
 function renderQuiz(id){
   var s=quizState(id), L=fullList(id,s.seed), prof=isProf(); if(s.idx>=L.length) s.idx=0;
+  if(!prof&&s.mode==='quiz') logEv('questao',id+':'+s.seed+':'+s.idx,{n:s.idx+1,lista:s.seed+1},30);
   var ac=(!prof&&ST.prog[id]&&ST.prog[id].acertos)||{};
   var h='<div class="row wrap" style="justify-content:space-between"><div class="seg" role="group" aria-label="Modo"><button class="'+(s.mode==='quiz'?'on':'')+'" data-a="qmode" data-id="'+id+'" data-v="quiz">Quiz</button><button class="'+(s.mode==='gab'?'on':'')+'" data-a="qmode" data-id="'+id+'" data-v="gab">Com gabarito</button></div><div class="row"><span class="small muted" style="font-weight:700">Lista '+(s.seed+1)+'</span>'+(s.seed>0?'<button class="btn sm ghost" data-a="seed" data-id="'+id+'" data-v="-1" aria-label="Lista anterior">←</button>':'')+'<button class="btn sm gold" data-a="seed" data-id="'+id+'" data-v="1">Nova lista ↻</button></div></div>';
   if(s.mode==='quiz'){
@@ -2671,14 +2675,14 @@ function quizOpts(id,seed,idx,g){
   return ST.opts[key]=r.sh(out);
 }
 A.escolhe=async function(el){ var id=el.dataset.id, s=quizState(id); var L=fullList(id,s.seed), g=L[s.idx]; var opts=quizOpts(id,s.seed,s.idx,g); var k=+el.dataset.v; var ok=opts[k]===g.a;
-  s.pick=s.pick||{}; s.pick[s.idx]=k; s.shown[s.idx]=1;
+  s.pick=s.pick||{}; s.pick[s.idx]=k; s.shown[s.idx]=1; logEv('resposta',id+':'+s.seed+':'+s.idx,{n:s.idx+1,lista:s.seed+1,ok:ok},0);
   if(!isProf()){ var ac=Object.assign({},(ST.prog[id]&&ST.prog[id].acertos)||{}); var kk=s.seed+':'+s.idx; if(ac[kk]===undefined){ ac[kk]=ok; await saveProg(id,{acertos:ac}); await addXP(ok?10:3); } }
   renderQuiz(id); updHdr(id); };
 function updHdr(id){ if(!ST.prog[id]) return; var hdr=document.querySelector('#main .row b'); if(hdr){ hdr.textContent=ST.prog[id].pct+'%'; hdr.style.color=pctColor(ST.prog[id].pct); var rr=document.querySelector('#main .big-ruler'); if(rr) rr.outerHTML=ruler(ST.prog[id].pct,true); } }
 function ansHTML(g){ var st=steps(g.s); return '<div class="answer"><div class="small muted" style="font-weight:800;letter-spacing:.08em">RESPOSTA</div><div class="ans">'+g.a+'</div>'+(st.length?'<div style="margin-top:8px;font-weight:800">Passo a passo:</div><ol class="steps">'+st.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>':'')+'</div>'; }
 A.qmode=function(el){ quizState(el.dataset.id).mode=el.dataset.v; renderQuiz(el.dataset.id); };
 A.seed=function(el){ var s=quizState(el.dataset.id); s.seed=Math.max(0,s.seed+ +el.dataset.v); s.idx=0; s.shown={}; s.pick={}; renderQuiz(el.dataset.id); };
-A.revela=async function(el){ var id=el.dataset.id, s=quizState(id); s.shown[s.idx]=1; if(!isProf()){ var ac=Object.assign({},(ST.prog[id]&&ST.prog[id].acertos)||{}); var kk=s.seed+':'+s.idx; if(ac[kk]===undefined){ ac[kk]=false; await saveProg(id,{acertos:ac}); } } renderQuiz(id); updHdr(id); };
+A.revela=async function(el){ var id=el.dataset.id, s=quizState(id); s.shown[s.idx]=1; logEv('revelou',id+':'+s.seed+':'+s.idx,{n:s.idx+1,lista:s.seed+1},0); if(!isProf()){ var ac=Object.assign({},(ST.prog[id]&&ST.prog[id].acertos)||{}); var kk=s.seed+':'+s.idx; if(ac[kk]===undefined){ ac[kk]=false; await saveProg(id,{acertos:ac}); } } renderQuiz(id); updHdr(id); };
 A.qnav=function(el){ var s=quizState(el.dataset.id); var L=fullList(el.dataset.id,s.seed); s.idx=Math.max(0,Math.min(L.length-1,s.idx+ +el.dataset.v)); renderQuiz(el.dataset.id); };
 A.qjump=function(el){ quizState(el.dataset.id).idx=+el.dataset.v; renderQuiz(el.dataset.id); };
 A.imprimir=function(){ try{ window.print(); }catch(e){} };
@@ -2698,7 +2702,7 @@ function confirmar(m){ try{ return window.confirm(m); }catch(e){ return true; } 
 
 /* ----- Professor IA ----- */
 A.abrirIA=function(el){
-  var id=el.dataset.id, t=TBY[id]; var s=ST.quiz[id]; var ctx='Assunto: '+t.nome+' ('+t.ano+').';
+  var id=el.dataset.id, t=TBY[id]; logEv('ia',id); var s=ST.quiz[id]; var ctx='Assunto: '+t.nome+' ('+t.ano+').';
   if(ST.tab[id]==='ex'&&s){ var g=fullList(id,s.seed)[s.idx]; ctx+='\nO aluno está na questão: '+strip(g.q)+'\nGabarito: '+strip(g.a)+'\nResolução: '+steps(g.s).map(strip).join(' ');}
   if(!ST.chat||ST.chat.id!==id) ST.chat={id:id,ctx:ctx,msgs:[{de:'ia',texto:'Oi! Sou o Professor IA. Pode perguntar sobre **'+t.nome+'** ou mandar a foto de um exercício. Como posso ajudar?'}],img:null};
   else ST.chat.ctx=ctx;
@@ -2770,7 +2774,7 @@ async function vListas(){
 }
 function itemQ(it){ return it.prof?esc(strip(it.q)):it.q; }
 async function vLista(id){
-  loading('Lista','listas'); var a=(await DB.q('assignments',{eq:{id:+id}}))[0]; if(!a){ location.hash='#/listas'; return; }
+  loading('Lista','listas'); var a=(await DB.q('assignments',{eq:{id:+id}}))[0]; if(!a){ location.hash='#/listas'; return; } logEv('lista',a.id,{titulo:a.titulo});
   var t=a.topic_id&&TBY[a.topic_id]; var draftKey='rasc-'+a.id; var draft={}; try{ draft=JSON.parse(localStorage.getItem(draftKey)||'{}'); }catch(e){}
   var h='<h1>'+esc(a.titulo)+'</h1><p class="muted" style="margin-top:-6px">'+(t?t.nome+' · ':'')+a.itens.length+' questões'+(a.prazo?' · prazo '+fmtData(a.prazo):'')+'</p>';
   if(a.status==='corrigida'){ var ac=(a.correcao||[]).filter(function(c){return c&&c.ok;}).length;
@@ -2798,6 +2802,7 @@ async function vPerfil(){
   h+='<h2>Meu andamento</h2>'+(prog.length?'<div class="grid g3">'+prog.sort(function(a,b){return b.pct-a.pct;}).map(function(p){return topicCard(TBY[p.topic_id],p.pct);}).join('')+'</div>':'<p class="muted">Comece um assunto na aba Assuntos.</p>');
   h+='<h2>Minhas anotações</h2>'+(notes.length?'<div class="stack">'+notes.map(noteItem).join('')+'</div>':'<p class="muted">Nenhuma anotação.</p>');
   h+='<h2>Configurações</h2><div class="stack"><a class="btn ghost block" href="#/financeiro">💰 Meus pagamentos</a><a class="btn ghost block" href="#/sequencia">'+flame(20,'on')+' Minha sequência e meta diária</a><a class="btn ghost block" href="#/diagnostico">Refazer teste de nivelamento</a>'+pushBtn()+'</div>'+installCard();
+  h+='<div class="card small" style="margin-top:16px"><b>🔒 Privacidade</b><p style="margin:6px 0 0">Para acompanhar seus estudos, o professor vê quando você usou o app pela última vez, quais assuntos, listas, questões e PDFs você abriu, suas respostas e se você viu os avisos. Nada disso é compartilhado com outras pessoas, e os registros são apagados depois de 90 dias. Dúvidas? Fale com o professor.</p></div>';
   h+='<button class="btn danger block" style="margin-top:24px" data-a="sair">Sair da conta</button>';
   page({title:'Meu perfil',back:true,nav:'',body:h});
 }
@@ -2822,7 +2827,7 @@ async function vPainel(){
 async function vAlunos(){
   loading('Alunos','alunos'); var al=await getAlunos(true); var pr=await DB.q('progress',{select:'student_id,pct'});
   var med={}; pr.forEach(function(p){ (med[p.student_id]=med[p.student_id]||[]).push(p.pct); }); var at={}; try{ (await DB.q('atividade',{select:'student_id,dia,xp'})).forEach(function(r){ (at[r.student_id]=at[r.student_id]||{})[r.dia]=r.xp; }); }catch(e){}
-  var h='<div class="grid"><button class="btn primary" data-a="novoAluno">+ Cadastrar aluno</button><a class="btn gold" href="#/financeiro">💰 Financeiro</a></div>'+(al.length?'<div class="stack" style="margin-top:12px">'+al.map(function(a){ var m=med[a.id]||[]; var v=m.length?Math.round(m.reduce(function(s,x){return s+x;},0)/m.length):0; return '<a class="item" style="text-decoration:none" href="#/aluno/'+a.id+'"><span class="avatar">'+esc(iniciais(a.nome))+'</span><div class="grow"><b>'+esc(a.nome)+'</b><span class="small muted">@'+esc(a.username)+' · '+esc(a.ano||'')+' · '+m.length+' assunto(s) · 🔥 '+streakInfo(at[a.id]||{},a.meta_xp||20).seq+'</span><div style="margin-top:6px">'+ruler(v)+'</div></div><b style="color:'+pctColor(v)+'">'+v+'%</b></a>'; }).join('')+'</div>':'<p class="empty">Nenhum aluno ainda. Cadastre o primeiro!</p>');
+  var h='<div class="grid"><button class="btn primary" data-a="novoAluno">+ Cadastrar aluno</button><a class="btn gold" href="#/financeiro">💰 Financeiro</a></div>'+(al.length?'<div class="stack" style="margin-top:12px">'+al.map(function(a){ var m=med[a.id]||[]; var v=m.length?Math.round(m.reduce(function(s,x){return s+x;},0)/m.length):0; return '<a class="item" style="text-decoration:none" href="#/aluno/'+a.id+'"><span class="avatar">'+esc(iniciais(a.nome))+'</span><div class="grow"><b>'+esc(a.nome)+'</b><span class="small muted">@'+esc(a.username)+' · '+esc(a.ano||'')+' · '+m.length+' assunto(s) · 🔥 '+streakInfo(at[a.id]||{},a.meta_xp||20).seq+'</span><div>'+vistoBadge(a)+'</div><div style="margin-top:6px">'+ruler(v)+'</div></div><b style="color:'+pctColor(v)+'">'+v+'%</b></a>'; }).join('')+'</div>':'<p class="empty">Nenhum aluno ainda. Cadastre o primeiro!</p>');
   page({title:'Alunos',sub:al.length+' cadastrados',nav:'alunos',body:h});
 }
 A.novoAluno=function(){ sheet('Cadastrar aluno','<form id="fa" data-form="aluno"><label for="an" style="margin-top:0">Nome completo</label><input id="an" name="n" required><label for="aa">Ano</label><select id="aa" name="a">'+ANOS.map(function(a){return '<option>'+a+'</option>';}).join('')+'</select><label for="au">Usuário (para o login)</label><input id="au" name="u" required autocapitalize="none" autocorrect="off" placeholder="ex.: mariaclara" pattern="[a-z0-9._\\-]{3,30}"><p class="small muted" style="margin:4px 0 0">Só letras minúsculas sem acento, números, ponto ou hífen.</p><label for="as">Senha inicial (mínimo 6)</label><input id="as" name="s" required minlength="6" value="'+Math.random().toString(36).slice(2,8)+'"><div id="amsg"></div></form>','<button class="btn primary block" form="fa">Cadastrar</button>');
@@ -2840,14 +2845,15 @@ async function vAluno(id,tab){
   tab=tab||ST.tab['al'+id]||'prog'; ST.tab['al'+id]=tab; loading(esc(a.nome),'alunos');
   var prog=await loadProg(id); var ps=Object.values(prog).filter(function(p){return TBY[p.topic_id];});
   var media=ps.length?Math.round(ps.reduce(function(s,p){return s+p.pct;},0)/ps.length):0;
-  var h='<div class="card row"><span class="avatar" style="width:52px;height:52px">'+esc(iniciais(a.nome))+'</span><div class="grow"><b style="font-size:18px">'+esc(a.nome)+'</b><span class="small muted">@'+esc(a.username)+' · '+esc(a.ano||'')+'</span><div style="margin-top:6px">'+ruler(media)+'</div></div><b style="color:'+pctColor(media)+'">'+media+'%</b></div>';
-  var tabs=[['prog','Progresso'],['fin','Financeiro'],['notas','Anotações'],['plano','Plano'],['listas','Listas'],['conta','Conta']];
+  var h='<div class="card row"><span class="avatar" style="width:52px;height:52px">'+esc(iniciais(a.nome))+'</span><div class="grow"><b style="font-size:18px">'+esc(a.nome)+'</b><span class="small muted">@'+esc(a.username)+' · '+esc(a.ano||'')+'</span><div>'+vistoBadge(a)+'</div><div style="margin-top:6px">'+ruler(media)+'</div></div><b style="color:'+pctColor(media)+'">'+media+'%</b></div>';
+  var tabs=[['prog','Progresso'],['ativ','Atividade'],['fin','Financeiro'],['notas','Anotações'],['plano','Plano'],['listas','Listas'],['conta','Conta']];
   h+='<div class="grid" style="margin-top:10px"><a class="btn gold" href="#/relatorio/'+id+'">'+ic('report')+' Relatório para os pais</a><button class="btn ghost" data-a="novoAviso" data-id="'+id+'">'+ic('bell')+' Mandar aviso</button></div>';
   h+='<div class="chips" style="margin-top:12px">'+tabs.map(function(x){return '<button class="chip'+(tab===x[0]?' on':'')+'" data-a="alTab" data-id="'+id+'" data-v="'+x[0]+'">'+x[1]+'</button>';}).join('')+'</div><div id="alBody" style="margin-top:6px"></div>';
   page({title:esc(a.nome),sub:esc(a.ano||''),back:true,nav:'alunos',body:h});
   var b=document.getElementById('alBody'), x='';
   if(tab==='prog'){ x=diagResumo(a)+'<p class="small muted">'+ps.length+' assunto(s) iniciados.</p>'+(ps.length?'<div class="grid g3">'+ps.sort(function(p,q){return q.pct-p.pct;}).map(function(p){return topicCard(TBY[p.topic_id],p.pct,'#/assunto/'+p.topic_id);}).join('')+'</div>':'<p class="empty">Ainda não começou nenhum assunto.</p>')+'<h2>Assuntos do '+esc(a.ano||'ano')+' ainda não iniciados</h2><div class="stack">'+TOPICS.filter(function(t){return t.ano===a.ano&&!prog[t.id];}).map(function(t){return '<div class="item"><div class="grow"><b>'+t.nome+'</b></div><span class="badge bad">0%</span></div>';}).join('')+'</div>'; }
   else if(tab==='fin'){ x=await finProfHTML(a); }
+  else if(tab==='ativ'){ x=await ativHTML(a); }
   else if(tab==='notas'){ var nn=await DB.q('notes',{eq:{student_id:id},order:['created_at',false]}); x=nn.length?'<div class="stack">'+nn.map(noteItem).join('')+'</div>':'<p class="empty">Nenhuma anotação.</p>'; }
   else if(tab==='plano'){ x=await vPlano(id,true); }
   else if(tab==='listas'){ var ls=await DB.q('assignments',{eq:{student_id:id},order:['created_at',false]}); ls.forEach(function(l){l._aluno=a.nome;}); x='<a class="btn gold block" href="#/nova-lista/'+id+'">+ Mandar lista para '+esc(primeiroNome(a.nome))+'</a>'+(ls.length?'<div class="stack" style="margin-top:12px">'+ls.map(asgItem).join('')+'</div>':'<p class="empty">Nenhuma lista enviada.</p>'); }
@@ -2933,7 +2939,7 @@ function fmtTam(b){ if(!b) return ''; return b<1024*1024? Math.max(1,Math.round(
 function matItem(m){
   var t=m.topic_id&&TBY[m.topic_id]; var para=isProf()?(m.para?nomeAluno(m.para):'Todos os alunos'):'';
   var info=[t?strip(t.nome):'Geral'].concat(para?[para]:[],m.tamanho?[fmtTam(m.tamanho)]:[],[fmtData(m.updated_at||m.created_at)]).map(esc).join(' · ');
-  return '<div class="item"><span style="flex-shrink:0;color:var(--bad)">'+ic('file','currentColor',28)+'</span><div class="grow"><b>'+esc(m.titulo)+'</b>'+(m.descricao?'<span class="small" style="display:block">'+nl2br(m.descricao)+'</span>':'')+'<span class="small muted">'+info+'</span></div><div class="row" style="flex-shrink:0;gap:6px">'+(m.url?'<a class="btn sm primary" href="'+esc(m.url)+'" target="_blank" rel="noopener">Abrir</a>':'<span class="small muted">indisponível</span>')+(isProf()?'<button class="btn sm ghost" data-a="editMat" data-id="'+m.id+'" aria-label="Editar material">Editar</button>':'')+'</div></div>';
+  return '<div class="item"><span style="flex-shrink:0;color:var(--bad)">'+ic('file','currentColor',28)+'</span><div class="grow"><b>'+esc(m.titulo)+'</b>'+(m.descricao?'<span class="small" style="display:block">'+nl2br(m.descricao)+'</span>':'')+'<span class="small muted">'+info+'</span></div><div class="row" style="flex-shrink:0;gap:6px">'+(m.url?'<a class="btn sm primary" href="'+esc(m.url)+'" target="_blank" rel="noopener" data-mat="'+m.id+'" data-t="'+esc(m.titulo)+'">Abrir</a>':'<span class="small muted">indisponível</span>')+(isProf()?'<button class="btn sm ghost" data-a="editMat" data-id="'+m.id+'" aria-label="Editar material">Editar</button>':'')+'</div></div>';
 }
 async function vMateriais(){
   var prof=isProf(); loading('Materiais',prof?'conteudo':'assuntos'); if(prof) await getAlunos();
@@ -3005,6 +3011,50 @@ function mockMat(b){
     var n=Object.assign({id:++MEM.seq,created_at:row.updated_at},row); MEM.materiais.push(n); return {ok:true,material:n}; }
   if(b.acao==='apagar'){ MEM.materiais=MEM.materiais.filter(function(m){return m.id!==b.id;}); return {ok:true}; }
   return {ok:true};
+}
+/* ================= ATIVIDADE DO ALUNO (acompanhamento) ================= */
+var EVLOG={};
+function logEv(tipo,ref,det,janelaMin){ if(!ST.me||isProf()) return; var k=tipo+'|'+(ref||''), now=Date.now(), jan=(janelaMin==null?10:janelaMin)*60000;
+  if(jan&&EVLOG[k]&&now-EVLOG[k]<jan) return; EVLOG[k]=now;
+  DB.ins('eventos',{student_id:ST.me.id,tipo:tipo,ref:ref==null?null:String(ref),detalhe:det||null}).catch(function(){}); }
+function startPing(){ if(ST.pingOn||isProf()) return; ST.pingOn=1;
+  var f=function(){ if(document.visibilityState!=='visible') return; if(MOCK){ ST.me.last_seen=new Date().toISOString(); return; } try{ ST.sb.rpc('ping').then(function(){},function(){}); }catch(e){} };
+  f(); setInterval(f,60000); document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'){ f(); logEv('app',null,null,30); } }); }
+document.addEventListener('click',function(e){ var a=e.target.closest&&e.target.closest('a[data-mat]'); if(a) logEv('material',a.dataset.mat,{titulo:a.dataset.t},5); },true);
+function hhmm(ts){ var d=new Date(ts); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function diaRel(ts){ var d=new Date(ts); d.setHours(0,0,0,0); var n=Math.round((hoje()-d)/86400000); return n===0?'hoje':n===1?'ontem':fmtData(isoDate(d)); }
+function quandoTxt(ts){ return diaRel(ts)+' às '+hhmm(ts); }
+function vistoInfo(al){ var t=al&&al.last_seen; if(!t) return {on:false,txt:'Ainda não abriu o app (ou não há registro)'}; var diff=Date.now()-new Date(t).getTime(); if(diff<150000) return {on:true,txt:'Online agora'}; return {on:false,txt:'Visto por último '+quandoTxt(t)}; }
+function vistoBadge(al){ var v=vistoInfo(al); return '<span class="small" style="display:inline-flex;align-items:center;gap:5px;font-weight:700;color:'+(v.on?'var(--ok)':'var(--muted)')+'"><span style="width:9px;height:9px;border-radius:50%;background:'+(v.on?'#22C55E':'#B8C0D4')+';display:inline-block"></span>'+esc(v.txt)+'</span>'; }
+function nomeTopico(id){ return id&&TBY[id]?strip(TBY[id].nome):'assunto'; }
+async function ativHTML(al){
+  var ev=[], av=[];
+  try{ ev=await DB.q('eventos',{eq:{student_id:al.id},order:['created_at',false],limit:400}); }catch(e){ return '<div class="err">Não consegui carregar a atividade: '+esc(erroMsg(e))+'</div>'; }
+  try{ av=await DB.q('avisos',{eq:{para:al.id},order:['created_at',false],limit:15}); }catch(e){}
+  var x='<div class="card">'+vistoBadge(al)+'<p class="small muted" style="margin:6px 0 0">"Online" = app aberto na tela nos últimos 2 minutos.</p></div>';
+  x+='<h2>Avisos e lembretes</h2>'+(av.length?'<div class="stack">'+av.map(function(v){ return '<div class="item"><span style="font-size:22px">'+(AVICON[v.tipo]||'🔔')+'</span><div class="grow"><b>'+esc(v.titulo)+'</b><span class="small muted">Enviado '+quandoTxt(v.created_at)+'</span></div>'+(v.lido?'<span class="badge ok" style="white-space:nowrap">✓ Visto'+(v.lido_em?' '+quandoTxt(v.lido_em):'')+'</span>':'<span class="badge gray" style="white-space:nowrap">Não visto</span>')+'</div>'; }).join('')+'</div><p class="small muted">"Visto" = o aluno abriu o sino 🔔 no app depois de receber. Não dá para saber se ele só olhou a notificação na tela do celular sem abrir o app.</p>':'<p class="muted">Nenhum aviso enviado.</p>');
+  // linha do tempo, agrupando questões do mesmo assunto/lista no mesmo dia
+  var dias={}, ordem=[];
+  ev.slice().reverse().forEach(function(e){ var dk=isoDate(new Date(e.created_at)); if(!dias[dk]){ dias[dk]={itens:[],quiz:{}}; ordem.push(dk); } var D=dias[dk], det=e.detalhe||{};
+    if(e.tipo==='questao'||e.tipo==='resposta'||e.tipo==='revelou'){ var tp=String(e.ref||'').split(':')[0], qk=tp+'|'+(det.lista||1); var g=D.quiz[qk];
+      if(!g){ g=D.quiz[qk]={tipo:'quiz',topic:tp,lista:det.lista||1,ini:e.created_at,fim:e.created_at,vistas:{},ok:0,err:0,rev:0}; D.itens.push(g); }
+      g.fim=e.created_at; if(det.n) g.vistas[det.n]=1; if(e.tipo==='resposta'){ if(det.ok) g.ok++; else g.err++; } if(e.tipo==='revelou') g.rev++; }
+    else D.itens.push({tipo:e.tipo,ref:e.ref,det:det,ini:e.created_at,fim:e.created_at}); });
+  function linha(it){ var txt;
+    if(it.tipo==='quiz'){ var ns=Object.keys(it.vistas).map(Number).sort(function(a,b){return a-b;}); var partes=[]; if(it.ok) partes.push('acertou '+it.ok); if(it.err) partes.push('errou '+it.err); if(it.rev) partes.push('pediu a resolução '+it.rev+'x');
+      txt='✏️ <b>'+esc(nomeTopico(it.topic))+'</b> · Lista '+it.lista+': viu '+(ns.length===1?'a questão '+ns[0]:ns.length+' questões ('+ns.join(', ')+')')+(partes.length?' · '+partes.join(', '):''); }
+    else if(it.tipo==='app') txt='📱 Abriu o app';
+    else if(it.tipo==='assunto') txt='📖 Abriu o assunto <b>'+esc(nomeTopico(it.ref))+'</b>';
+    else if(it.tipo==='lista') txt='📝 Abriu a lista <b>"'+esc(it.det.titulo||'')+'"</b>';
+    else if(it.tipo==='material') txt='📄 Abriu o PDF <b>"'+esc(it.det.titulo||'')+'"</b>';
+    else if(it.tipo==='pagamentos') txt='💰 Viu a tela de pagamentos';
+    else if(it.tipo==='ia') txt='✨ Usou o Professor IA em <b>'+esc(nomeTopico(it.ref))+'</b>';
+    else txt=esc(it.tipo);
+    var hr=hhmm(it.ini)+(hhmm(it.fim)!==hhmm(it.ini)?'–'+hhmm(it.fim):'');
+    return '<div class="item" style="padding:10px 12px"><span class="small muted" style="min-width:74px;font-weight:700">'+hr+'</span><div class="grow small">'+txt+'</div></div>'; }
+  x+='<h2>Linha do tempo</h2>'+(ordem.length?ordem.reverse().map(function(dk){ var D=dias[dk]; return '<h3 style="margin:14px 0 6px;font-size:15px;text-transform:capitalize">'+esc(diaRel(dk+'T12:00:00'))+'</h3><div class="stack">'+D.itens.slice().reverse().map(linha).join('')+'</div>'; }).join(''):'<p class="muted">Nenhuma atividade registrada ainda. Os registros começam a aparecer a partir de agora, quando o aluno usar o app.</p>');
+  x+='<p class="small muted" style="margin-top:14px">Os registros de atividade ficam guardados por 90 dias e depois são apagados automaticamente.</p>';
+  return x;
 }
 /* ================= FINANCEIRO ================= */
 var DIAS_C=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'], DIAS_L=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
@@ -3111,7 +3161,7 @@ FORMS.pix=async function(f){ try{ await DB.ups('config',{chave:'pub_pix',valor:f
 
 // tela do aluno (só leitura)
 async function vFinAluno(){
-  loading('Pagamentos',''); var al=ST.me; var r=await loadFin(al); var pix=await getPix();
+  loading('Pagamentos',''); logEv('pagamentos'); var al=ST.me; var r=await loadFin(al); var pix=await getPix();
   var h=finCards(r,al);
   if(r.pend.length){ h+='<h2>A pagar</h2><div class="stack">'+r.pend.map(function(a){return aulaLinha(a,al,false);}).join('')+'</div>';
     h+='<div class="card" style="margin-top:12px"><b>Como pagar</b>'+(pix?'<p style="margin:6px 0">PIX: <b style="word-break:break-all">'+esc(pix)+'</b></p><button class="btn ghost block" data-a="copiar" data-v="'+esc(pix)+'">Copiar chave PIX</button>':'<p class="muted small" style="margin:6px 0">Combine com o professor.</p>')+'<a class="btn wa block" style="margin-top:8px" target="_blank" rel="noopener" href="https://wa.me/'+WA+'?text='+encodeURIComponent('Olá, professor! Aqui é '+al.nome+'. Fiz o pagamento de '+brl(r.totPend)+' das aulas. Segue o comprovante:')+'">'+ic('wa','#fff',20)+' Enviar comprovante</a></div>'; }

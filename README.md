@@ -15,3 +15,6 @@ O professor envia, edita (título, descrição, assunto, para quem, trocar o arq
 ## Financeiro
 Cada aluno tem a aba **Financeiro** (Alunos → aluno → Financeiro): horário fixo e valor da hora, aulas da agenda para confirmar ("Dei a aula" / "Não teve"), aulas avulsas, pagamentos pendentes, marcar como pago e cobrar pelo WhatsApp. A tela **Painel → Financeiro** mostra o total a receber por aluno e a chave PIX. O aluno vê os pagamentos (só leitura) no Início e em Perfil → Meus pagamentos.
 - Antes de usar, rode `sql/academy_v4_financeiro.sql` no SQL Editor do Supabase.
+
+## Atividade do aluno
+Aba **Atividade** em cada aluno: online agora / visto por último, avisos vistos (e quando) e linha do tempo do que o aluno abriu (app, assuntos, questões e respostas, listas, PDFs, pagamentos, Professor IA). O aluno é informado em Perfil → Privacidade. Registros apagados após 90 dias pelo agendador diário. SQL: `sql/academy_v5_atividade.sql`.
