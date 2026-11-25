@@ -11,3 +11,7 @@ Site de apoio às aulas: teoria e 20 exercícios resolvidos (com passo a passo) 
 O professor envia, edita (título, descrição, assunto, para quem, trocar o arquivo) e apaga PDFs em **Painel → Materiais (PDF)**. Os alunos veem os materiais no Início, na tela **Materiais** e dentro de cada assunto.
 - Antes de usar, rode `sql/academy_v3_materiais.sql` no SQL Editor do Supabase (cria a tabela `academy.materiais` e o bucket privado `materiais`).
 - Os arquivos vão direto do navegador para o Storage (até 25 MB) e os alunos abrem por links temporários gerados em `api/materiais.js`.
+
+## Financeiro
+Cada aluno tem a aba **Financeiro** (Alunos → aluno → Financeiro): horário fixo e valor da hora, aulas da agenda para confirmar ("Dei a aula" / "Não teve"), aulas avulsas, pagamentos pendentes, marcar como pago e cobrar pelo WhatsApp. A tela **Painel → Financeiro** mostra o total a receber por aluno e a chave PIX. O aluno vê os pagamentos (só leitura) no Início e em Perfil → Meus pagamentos.
+- Antes de usar, rode `sql/academy_v4_financeiro.sql` no SQL Editor do Supabase.
