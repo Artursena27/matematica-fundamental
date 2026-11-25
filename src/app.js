@@ -690,7 +690,7 @@ async function finProfHTML(al){
   x+='<p class="small muted" style="margin:8px 0 0">'+(h.slots.length?'Aulas fixas: '+h.slots.map(function(s){return DIAS_C[s.dia]+' '+s.hora+' ('+durTxt(s.dur)+')';}).join(', '):'Sem horário fixo cadastrado.')+(al.valor_hora?' · '+brl(al.valor_hora)+'/hora':'')+'</p>';
   if(r.confirmar.length) x+='<h2>Aulas da agenda para confirmar <span class="muted small">('+r.confirmar.length+')</span></h2><p class="small muted" style="margin-top:-4px">Confirme as aulas que você deu. Elas entram como pendentes de pagamento.</p><div class="stack">'+r.confirmar.slice().reverse().map(function(s){ return '<div class="item"><div class="grow"><b>'+esc(dataLonga(s.data))+' · '+esc(s.hora)+'</b><span class="small muted">'+durTxt(s.duracao_min)+' · '+brl(valorAula(s,al))+'</span></div><div class="row" style="gap:6px;flex-shrink:0"><button class="btn sm primary" data-a="finConfirma" data-id="'+al.id+'" data-d="'+s.data+'" data-h="'+esc(s.hora)+'" data-m="'+s.duracao_min+'">Dei a aula</button><button class="btn sm ghost" data-a="finFalta" data-id="'+al.id+'" data-d="'+s.data+'" data-h="'+esc(s.hora)+'" data-m="'+s.duracao_min+'">Não teve</button></div></div>'; }).join('')+'</div>';
   x+='<h2>Pagamentos pendentes <span class="muted small">('+r.pend.length+')</span></h2>';
-  if(r.pend.length){ x+='<div class="stack">'+r.pend.map(function(a){return aulaLinha(a,al,true);}).join('')+'</div><div class="grid" style="margin-top:10px"><button class="btn primary" data-a="finPagarSel" data-id="'+al.id+'">✓ Marcar selecionadas como pagas</button><button class="btn wa" data-a="finCobrar" data-id="'+al.id+'">'+ic('wa','#fff',20)+' Cobrar no WhatsApp</button></div>'; }
+  if(r.pend.length){ x+='<div class="stack">'+r.pend.map(function(a){return aulaLinha(a,al,true);}).join('')+'</div><div class="grid" style="margin-top:10px"><button class="btn primary" data-a="finPagarSel" data-id="'+al.id+'">✓ Marcar selecionadas como pagas</button><button class="btn wa" data-a="finCobrar" data-id="'+al.id+'">'+ic('wa','#fff',20)+' Cobrar os pais no WhatsApp</button></div><button class="btn gold block" style="margin-top:10px" data-a="finLembrar">'+ic('bell')+' Lembrar '+esc(primeiroNome(al.nome))+' no celular</button>'; }
   else x+='<p class="muted">Nenhuma aula esperando pagamento.</p>';
   if(r.prox.length) x+='<h2>Próximas aulas (7 dias)</h2><div class="card"><div class="small muted">'+r.prox.map(function(s){return esc(dataLonga(s.data))+' '+esc(s.hora);}).join(' · ')+'</div><b style="display:block;margin-top:6px">Previsto: '+brl(r.totProx)+'</b></div>';
   if(r.pagas.length) x+='<details style="margin-top:18px"><summary style="font-weight:800;cursor:pointer">Histórico de pagas ('+r.pagas.length+')</summary><div class="stack" style="margin-top:10px">'+r.pagas.slice(0,40).map(function(a){return aulaLinha(a,al,true);}).join('')+'</div></details>';
@@ -731,6 +731,17 @@ FORMS.finHorario=async function(f){ var al=ST.fin.al, slots=[]; [1,2,3,4,5,6,0].
   var patch={valor_hora:f.vh.value===''?null:+f.vh.value,horario:{desde:f.desde.value||isoDate(hoje()),slots:slots}};
   try{ await DB.upd('profiles',{id:al.id},patch); Object.assign(al,patch); await getAlunos(true); closeSheet(); toast('Horário salvo'); finRecarregar(); }catch(e){ toast(erroMsg(e)); } };
 
+function finDiasTxt(pend){ var hj=isoDate(hoje()), ont=new Date(hoje()); ont.setDate(ont.getDate()-1); ont=isoDate(ont);
+  if(pend.length>3) return 'das últimas '+pend.length+' aulas';
+  var L=pend.map(function(a){ if(a.data===hj) return 'de hoje'; if(a.data===ont) return 'de ontem'; var d=new Date(a.data+'T12:00:00'); var dias=Math.round((hoje()-d)/86400000); var passada=dias>hoje().getDay(); return 'de '+DIAS_L[d.getDay()]+(d.getDay()>0&&d.getDay()<6?'-feira':'')+(passada&&dias<14?(d.getDay()===0||d.getDay()===6?' passado':' passada'):'')+(dias>=14?' ('+a.data.slice(8,10)+'/'+a.data.slice(5,7)+')':''); });
+  return (L.length>1? 'das aulas '+L.slice(0,-1).join(', ')+' e '+L[L.length-1] : 'da aula '+L[0]); }
+A.finLembrar=function(){ var al=ST.fin.al, r=finResumo(al,ST.fin.aulas); if(!r.pend.length){ toast('Nenhuma aula pendente.'); return; }
+  var txt='Oi, '+primeiroNome(al.nome)+'! 😊 Passando só pra lembrar do pagamento '+finDiasTxt(r.pend)+' ('+brl(r.totPend)+'). Quando puder, toque aqui para ver a chave PIX. Obrigado!';
+  sheet('Lembrete para '+esc(primeiroNome(al.nome)),'<form id="flb" data-form="finLembrar"><label for="lt" style="margin-top:0">Título</label><input id="lt" name="t" maxlength="80" required value="Lembrete das aulas 💰"><label for="lx">Mensagem</label><textarea id="lx" name="x" maxlength="200" required rows="5">'+esc(txt.slice(0,200))+'</textarea><p class="small muted">Chega como notificação no celular do aluno (se ele ativou as notificações) e fica no sino 🔔 do app. Ao tocar, ele abre a tela de pagamentos com a chave PIX.</p></form>','<button class="btn primary block" form="flb">Enviar lembrete</button>'); };
+FORMS.finLembrar=async function(f){ var b=document.querySelector('[form="flb"]'); b.disabled=true; var al=ST.fin.al;
+  try{ if(MOCK){ closeSheet(); toast('Lembrete enviado (demonstração)'); return; }
+    var r=await server('push',{para:[al.id],titulo:f.t.value.trim(),texto:f.x.value.trim(),link:'#/financeiro',tipo:'pagamento',salvarAviso:true});
+    closeSheet(); toast(r.enviados?'Lembrete enviado ao celular de '+primeiroNome(al.nome):'Lembrete salvo no app. '+primeiroNome(al.nome)+' ainda não ativou as notificações no celular.'); }catch(e){ toast(erroMsg(e)); b.disabled=false; } };
 // tela geral do professor
 async function vFinProf(){
   loading('Financeiro','alunos'); var al=await getAlunos(true); var todas=await DB.q('aulas',{order:['data',false]}); var pix=await getPix();
@@ -805,7 +816,7 @@ A.meta=async function(el){ var m=+el.dataset.v; try{ if(!MOCK){ var r=await ST.s
 
 /* ================= AVISOS ================= */
 A.irAvisos=function(){ location.hash='#/avisos'; };
-var AVICON={lista:'📝',correcao:'✅',duvida:'💬',sequencia:'🔥',prazo:'⏰',recado:'📣',aluno:'❓',material:'📄',info:'🔔'};
+var AVICON={lista:'📝',correcao:'✅',duvida:'💬',sequencia:'🔥',prazo:'⏰',recado:'📣',aluno:'❓',material:'📄',pagamento:'💰',info:'🔔'};
 async function vAvisos(){
   loading('Avisos',''); var L=await DB.q('avisos',{eq:{para:ST.me.id},order:['created_at',false],limit:60});
   var h=(isProf()?'<button class="btn gold block" data-a="novoAviso">'+ic('bell')+' Enviar aviso para alunos</button>':'')+pushCard(true);
