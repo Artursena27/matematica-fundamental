@@ -102,7 +102,8 @@ var DB = {
 };
 async function server(path,body){
   if(MOCK){ if(path==='alunos'&&body.acao==='criar'){ var p={id:'m'+(++MEM.seq),role:'aluno',nome:body.nome,username:body.usuario,ano:body.ano,responsavel_nome:body.responsavel_nome||null,responsavel_whatsapp:body.responsavel_whatsapp||null}; MEM.profiles.push(p); return {ok:true,aluno:p}; }
-    if(path==='alunos'&&body.acao==='editar'){ var pe=MEM.profiles.filter(function(p){return p.id===body.id;})[0]; if(!pe)throw new Error('Aluno não encontrado.'); if(body.ano)pe.ano=body.ano; pe.responsavel_nome=body.responsavel_nome||null; pe.responsavel_whatsapp=body.responsavel_whatsapp||null; return {ok:true,aluno:pe}; }\n    if(path==='alunos'&&body.acao==='remover'){ MEM.profiles=MEM.profiles.filter(function(p){return p.id!==body.id;}); return {ok:true}; }
+    if(path==='alunos'&&body.acao==='editar'){ var pe=MEM.profiles.filter(function(p){return p.id===body.id;})[0]; if(!pe)throw new Error('Aluno não encontrado.'); if(body.ano)pe.ano=body.ano; pe.responsavel_nome=body.responsavel_nome||null; pe.responsavel_whatsapp=body.responsavel_whatsapp||null; return {ok:true,aluno:pe}; }
+    if(path==='alunos'&&body.acao==='remover'){ MEM.profiles=MEM.profiles.filter(function(p){return p.id!==body.id;}); return {ok:true}; }
     if(path==='materiais') return mockMat(body);
     if(path==='professor'){ await new Promise(function(r){setTimeout(r,700);}); return {resposta:'(Modo demonstração) Vamos por partes:\n1. Leia o enunciado com calma.\n2. Identifique o que o problema pede.\n\nQuer tentar o primeiro passo?'}; }
     return {ok:true}; }
