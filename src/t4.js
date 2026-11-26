@@ -79,7 +79,7 @@ function gen4(kind,r,i){
       function(){return {q:'Duas retas como '+paralela+' não se encontram. Como são chamadas?',a:'Retas paralelas',s:'Retas paralelas seguem lado a lado e não se cruzam.'};},
       function(){var p=r.p(['duas ruas que se cruzam formando um canto reto','o encontro entre a parede e o chão','os lados vizinhos de um quadrado']);return {q:'A situação '+p+' representa retas de que tipo?',a:'Retas perpendiculares',s:'Elas se encontram formando um ângulo reto de 90°.'};},
       function(){var obj=r.p(['borboleta','coração desenhado','folha com duas metades iguais']);return {q:'Quando dobramos uma figura como uma '+obj+' e as duas metades combinam, ela apresenta qual característica?',a:'Simetria',s:'A dobra indica o eixo de simetria: as duas metades se correspondem.'};},
-      function(){return {q:'Qual sólido tem uma base e faces laterais triangulares que se encontram em uma ponta?',a:'Pirâmide',s:'A pirâmide tem uma base e faces triangulares que se encontram no vértice do topo.'};}
+      function(){return {q:'Uma pirâmide com base de '+base+' lados tem quantas faces?',a:(base+1)+' faces',s:'A pirâmide tem uma base e uma face triangular para cada lado da base: '+base+' + 1 = '+(base+1)+' faces.'};}
     ]);
   }
   if(kind==='measure'){
