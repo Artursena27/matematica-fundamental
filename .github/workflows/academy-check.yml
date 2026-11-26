@@ -1,0 +1,22 @@
+name: Academy build and content checks
+on:
+  push:
+    branches:
+      - feat/academy-4-5-portugues-theo
+  pull_request:
+    branches:
+      - main
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build static app
+        run: node build.js
+      - name: Test topic generators
+        run: node test.js
