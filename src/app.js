@@ -48,7 +48,7 @@ function ic(n,c,w){ return '<svg viewBox="0 0 24 24" width="'+(w||24)+'" height=
 /* ---------- conteúdo ---------- */
 TOPICS.forEach(function(t){ if(TEORIA[t.id]) t.teoria = fx(TEORIA[t.id]); });
 var TBY = {}; TOPICS.forEach(function(t){ TBY[t.id]=t; });
-var AREAS = ['Números','Álgebra','Geometria','Grandezas e medidas','Estatística e probabilidade'];
+var AREAS = ['Números','Álgebra','Geometria','Grandezas e medidas','Estatística e probabilidade'];\nvar PORTUGUES_4 = ['Interpretação de texto: localizar informação, inferir e ideia principal','Gêneros curtos: bilhete, notícia, fábula e problema matemático','Sinônimos e antônimos','Substantivo, adjetivo e verbo','Pontuação','Produção de frases e pequenos textos'];
 var ANOS = ['4º ano','5º ano','6º ano','7º ano','8º ano','9º ano'];
 var listCache = {};
 function getList(id,seed){ var k=id+'|'+seed; if(!listCache[k]) listCache[k]=lista(TBY[id],seed); return listCache[k]; }
@@ -244,18 +244,28 @@ function doubtItem(d){
 A.zoom=function(el){ sheet('Foto','<img src="'+esc(el.getAttribute('src'))+'" alt="Foto ampliada" style="width:100%;border-radius:12px">'); };
 
 function vAssuntos(){
-  var meuAno=!isProf()&&ST.me.ano&&ANOS.indexOf(ST.me.ano)>=0?ST.me.ano:null; var q=ST.busca||'', anoSel=ST.anoSel||meuAno||'Todos';
-  var words=norm(q).split(/\s+/).filter(Boolean);
-  var L=TOPICS.slice().sort(function(x,y){ return (x.ano===meuAno?0:1)-(y.ano===meuAno?0:1); }).filter(function(t){ if(anoSel!=='Todos'&&t.ano!==anoSel&&!words.length) return false; var hay=norm(t.nome+' '+t.tags+' '+t.area+' '+t.ano); return words.every(function(w){return hay.indexOf(w)>=0;}); });
-  var prof=isProf();
-  var h='<div class="search">'+ic('search','#55627F',20)+'<input id="busca" type="search" placeholder="Pesquisar assunto: frações, MMC, Pitágoras…" value="'+esc(q)+'" aria-label="Pesquisar assunto" autocomplete="off"></div>'+
-    '<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por ano">'+(meuAno?[meuAno]:[]).concat(['Todos'],ANOS.filter(function(a){return a!==meuAno;})).map(function(a){return '<button class="chip'+(a===anoSel?' on':'')+'" data-a="anoSel" data-v="'+a+'">'+(a===meuAno?'⭐ Meu ano ('+a+')':a)+'</button>';}).join('')+'</div>';
-  if(prof) h='<a class="btn gold block" style="margin-bottom:12px" href="#/materiais">'+ic('file')+' Materiais em PDF</a>'+h;
-  h+='<div id="lista">'+topicGrid(L,ST.prog,!prof)+'</div>';
-  page({title:prof?'Conteúdo':'Assuntos',sub:L.length+' assuntos',nav:prof?'conteudo':'assuntos',body:h});
-  var inp=document.getElementById('busca'); inp.addEventListener('input',function(){ ST.busca=inp.value; var pos=inp.selectionStart; vAssuntos(); var n=document.getElementById('busca'); n.focus(); try{n.setSelectionRange(pos,pos);}catch(e){} });
+  var meuAno=!isProf()&&ST.me.ano&&ANOS.indexOf(ST.me.ano)>=0?ST.me.ano:null;
+  var q=ST.busca||'', anoSel=ST.anoSel||meuAno||'Todos', disc=ST.discSel||'Matemática';
+  var words=norm(q).split(/\\s+/).filter(Boolean), prof=isProf(), h='';
+  h+='<div class="chips" style="margin-top:8px" role="group" aria-label="Disciplina"><button class="chip'+(disc==='Matemática'?' on':'')+'" data-a="discSel" data-v="Matemática">Matemática</button><button class="chip'+(disc==='Português'?' on':'')+'" data-a="discSel" data-v="Português">Português</button></div>';
+  h+='<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por ano">'+(meuAno?[meuAno]:[]).concat(['Todos'],ANOS.filter(function(a){return a!==meuAno;})).map(function(a){return '<button class="chip'+(a===anoSel?' on':'')+'" data-a="anoSel" data-v="'+a+'">'+(a===meuAno?'⭐ Meu ano ('+a+')':a)+'</button>';}).join('')+'</div>';
+  if(disc==='Matemática'){
+    var L=TOPICS.slice().sort(function(x,y){ return (x.ano===meuAno?0:1)-(y.ano===meuAno?0:1); }).filter(function(t){ if(anoSel!=='Todos'&&t.ano!==anoSel&&!words.length) return false; var hay=norm(t.nome+' '+t.tags+' '+t.area+' '+t.ano); return words.every(function(w){return hay.indexOf(w)>=0;}); });
+    h+='<div class="search">'+ic('search','#55627F',20)+'<input id="busca" type="search" placeholder="Pesquisar assunto: frações, MMC, Pitágoras…" value="'+esc(q)+'" aria-label="Pesquisar assunto" autocomplete="off"></div><div id="lista">'+topicGrid(L,ST.prog,!prof)+'</div>';
+    page({title:prof?'Conteúdo':'Assuntos',sub:L.length+' assuntos de Matemática',nav:prof?'conteudo':'assuntos',body:(prof?'<a class="btn gold block" style="margin-bottom:12px" href="#/materiais">'+ic('file')+' Materiais em PDF</a>':'')+h});
+    var inp=document.getElementById('busca'); inp.addEventListener('input',function(){ ST.busca=inp.value; var pos=inp.selectionStart; vAssuntos(); var n=document.getElementById('busca'); n.focus(); try{n.setSelectionRange(pos,pos);}catch(e){} });
+  } else {
+    var P=PORTUGUES_4.filter(function(t){return (anoSel==='Todos'||anoSel==='4º ano')&&words.every(function(w){return norm(t).indexOf(w)>=0;});});
+    h+='<div class="search">'+ic('search','#55627F',20)+'<input id="busca" type="search" placeholder="Pesquisar assunto de Português…" value="'+esc(q)+'" aria-label="Pesquisar assunto" autocomplete="off"></div>';
+    h+='<p class="small muted">Catálogo de apoio para organizar PDFs. Português não gera listas, correção nem progresso.</p>';
+    h+='<div class="stack">'+P.map(function(t){return '<div class="item"><div class="grow"><span class="badge">4º ano</span><b style="display:block;margin-top:5px">'+esc(t)+'</b></div>'+(prof?'<button class="btn sm gold" data-a="novoMat" data-disc="Português" data-ano="4º ano" data-assunto="'+esc(t)+'">Enviar PDF</button>':'')+'</div>';}).join('')+'</div>';
+    if(!P.length)h+='<p class="empty">Nenhum assunto encontrado para esse filtro.</p>';
+    page({title:prof?'Conteúdo':'Assuntos',sub:P.length+' assuntos de Português',nav:prof?'conteudo':'assuntos',body:(prof?'<a class="btn gold block" style="margin-bottom:12px" href="#/materiais">'+ic('file')+' Materiais em PDF</a>':'')+h});
+    var pin=document.getElementById('busca');pin.addEventListener('input',function(){ST.busca=pin.value;var pos=pin.selectionStart;vAssuntos();var n=document.getElementById('busca');n.focus();try{n.setSelectionRange(pos,pos);}catch(e){}});
+  }
 }
 A.anoSel=function(el){ ST.anoSel=el.dataset.v; vAssuntos(); };
+A.discSel=function(el){ ST.discSel=el.dataset.v; ST.busca=''; ST.anoSel='Todos'; vAssuntos(); };
 
 async function vAssunto(id,tab){
   var t=TBY[id]; if(!t){ location.hash='#/assuntos'; return; }
