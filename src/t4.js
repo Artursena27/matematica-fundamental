@@ -48,7 +48,7 @@ function gen4(kind,r,i){
     return mix(i,[
       function(){return {q:'Uma barra foi dividida em '+den+' partes iguais. Uma parte corresponde a qual fração?',a:'1/'+den,s:'O número de baixo mostra o total de partes iguais. Uma parte é 1/'+den+'.'};},
       function(){return {q:'Qual é maior: 1/'+den+' ou 1/'+(den===2?3:2)+'?',a:'1/'+(den===2?2:2),s:'Quando o numerador é 1, quanto maior o denominador, menor é cada pedaço. Por isso 1/2 é maior.'};},
-      function(){return 'Uma folha foi cortada em '+den+' pedaços iguais. Qual fração representa um pedaço?'.replace('?', '?'),a:'1/'+den,s:'Um pedaço de um total de '+den+' partes iguais é 1/'+den+'.'};},
+      function(){return {q:'Uma folha foi cortada em '+den+' pedaços iguais. Qual fração representa um pedaço?',a:'1/'+den,s:'Um pedaço de um total de '+den+' partes iguais é 1/'+den+'.'};},
       function(){return {q:'Complete: a fração que representa uma parte de '+den+' partes iguais é ___.',a:'1/'+den,s:'O numerador é 1 porque estamos escolhendo uma parte; o denominador é '+den+' porque existem '+den+' partes iguais.'};},
       function(){return {q:'Uma fita foi separada em '+den+' partes iguais. Que fração representa uma dessas partes?',a:'1/'+den,s:'Uma parte de '+den+' partes iguais corresponde a 1/'+den+'.'};}
     ]);
