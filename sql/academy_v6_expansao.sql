@@ -7,7 +7,7 @@ alter table academy.profiles add column if not exists valor_mensal numeric(10,2)
 alter table academy.materiais add column if not exists disciplina text not null default 'Matemática';
 alter table academy.materiais add column if not exists ano text;
 alter table academy.materiais add column if not exists assunto text;
-update academy.materiais set disciplina = 'Matemática' where disciplina is null or btrim(disciplina) = '';
+update academy.materiais set disciplina = 'Matemática' where disciplina is null or btrim(disciplina) = '' or disciplina not in ('Matemática','Português');
 alter table academy.materiais alter column disciplina set default 'Matemática';
 alter table academy.materiais drop constraint if exists materiais_disciplina_check;
 alter table academy.materiais add constraint materiais_disciplina_check
