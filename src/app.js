@@ -48,7 +48,8 @@ function ic(n,c,w){ return '<svg viewBox="0 0 24 24" width="'+(w||24)+'" height=
 /* ---------- conteúdo ---------- */
 TOPICS.forEach(function(t){ if(TEORIA[t.id]) t.teoria = fx(TEORIA[t.id]); });
 var TBY = {}; TOPICS.forEach(function(t){ TBY[t.id]=t; });
-var AREAS = ['Números','Álgebra','Geometria','Grandezas e medidas','Estatística e probabilidade'];\nvar PORTUGUES_4 = ['Interpretação de texto: localizar informação, inferir e ideia principal','Gêneros curtos: bilhete, notícia, fábula e problema matemático','Sinônimos e antônimos','Substantivo, adjetivo e verbo','Pontuação','Produção de frases e pequenos textos'];
+var AREAS = ['Números','Álgebra','Geometria','Grandezas e medidas','Estatística e probabilidade'];
+var PORTUGUES_4 = ['Interpretação de texto: localizar informação, inferir e ideia principal','Gêneros curtos: bilhete, notícia, fábula e problema matemático','Sinônimos e antônimos','Substantivo, adjetivo e verbo','Pontuação','Produção de frases e pequenos textos'];
 var ANOS = ['4º ano','5º ano','6º ano','7º ano','8º ano','9º ano'];
 var listCache = {};
 function getList(id,seed){ var k=id+'|'+seed; if(!listCache[k]) listCache[k]=lista(TBY[id],seed); return listCache[k]; }
@@ -246,7 +247,7 @@ A.zoom=function(el){ sheet('Foto','<img src="'+esc(el.getAttribute('src'))+'" al
 function vAssuntos(){
   var meuAno=!isProf()&&ST.me.ano&&ANOS.indexOf(ST.me.ano)>=0?ST.me.ano:null;
   var q=ST.busca||'', anoSel=ST.anoSel||meuAno||'Todos', disc=ST.discSel||'Matemática';
-  var words=norm(q).split(/\\s+/).filter(Boolean), prof=isProf(), h='';
+  var words=norm(q).split(/\s+/).filter(Boolean), prof=isProf(), h='';
   h+='<div class="chips" style="margin-top:8px" role="group" aria-label="Disciplina"><button class="chip'+(disc==='Matemática'?' on':'')+'" data-a="discSel" data-v="Matemática">Matemática</button><button class="chip'+(disc==='Português'?' on':'')+'" data-a="discSel" data-v="Português">Português</button></div>';
   h+='<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por ano">'+(meuAno?[meuAno]:[]).concat(['Todos'],ANOS.filter(function(a){return a!==meuAno;})).map(function(a){return '<button class="chip'+(a===anoSel?' on':'')+'" data-a="anoSel" data-v="'+a+'">'+(a===meuAno?'⭐ Meu ano ('+a+')':a)+'</button>';}).join('')+'</div>';
   if(disc==='Matemática'){
