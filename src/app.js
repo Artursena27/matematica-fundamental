@@ -50,6 +50,7 @@ TOPICS.forEach(function(t){ if(TEORIA[t.id]) t.teoria = fx(TEORIA[t.id]); });
 var TBY = {}; TOPICS.forEach(function(t){ TBY[t.id]=t; });
 var AREAS = ['Números','Álgebra','Geometria','Grandezas e medidas','Estatística e probabilidade'];
 var PORTUGUES_4 = ['Interpretação de texto: localizar informação, inferir e ideia principal','Gêneros curtos: bilhete, notícia, fábula e problema matemático','Sinônimos e antônimos','Substantivo, adjetivo e verbo','Pontuação','Produção de frases e pequenos textos'];
+var PORTUGUES_TOPICS = PORTUGUES_4.map(function(nome,i){return {id:'pt4-'+(i+1),nome:nome,ano:'4º ano',disciplina:'Português',area:'Língua Portuguesa'};});
 var ANOS = ['4º ano','5º ano','6º ano','7º ano','8º ano','9º ano'];
 var listCache = {};
 function getList(id,seed){ var k=id+'|'+seed; if(!listCache[k]) listCache[k]=lista(TBY[id],seed); return listCache[k]; }
@@ -257,10 +258,10 @@ function vAssuntos(){
     page({title:prof?'Conteúdo':'Assuntos',sub:L.length+' assuntos de Matemática',nav:prof?'conteudo':'assuntos',body:(prof?'<a class="btn gold block" style="margin-bottom:12px" href="#/materiais">'+ic('file')+' Materiais em PDF</a>':'')+h});
     var inp=document.getElementById('busca'); inp.addEventListener('input',function(){ ST.busca=inp.value; var pos=inp.selectionStart; vAssuntos(); var n=document.getElementById('busca'); n.focus(); try{n.setSelectionRange(pos,pos);}catch(e){} });
   } else {
-    var P=PORTUGUES_4.filter(function(t){return (anoSel==='Todos'||anoSel==='4º ano')&&words.every(function(w){return norm(t).indexOf(w)>=0;});});
+    var P=PORTUGUES_TOPICS.filter(function(t){return (anoSel==='Todos'||t.ano===anoSel)&&words.every(function(w){return norm(t.nome).indexOf(w)>=0;});});
     h+='<div class="search">'+ic('search','#55627F',20)+'<input id="busca" type="search" placeholder="Pesquisar assunto de Português…" value="'+esc(q)+'" aria-label="Pesquisar assunto" autocomplete="off"></div>';
     h+='<p class="small muted">Catálogo de apoio para organizar PDFs. Português não gera listas, correção nem progresso.</p>';
-    h+='<div class="stack">'+P.map(function(t){return '<div class="item"><div class="grow"><span class="badge">4º ano</span><b style="display:block;margin-top:5px">'+esc(t)+'</b></div>'+(prof?'<button class="btn sm gold" data-a="novoMat" data-disc="Português" data-ano="4º ano" data-assunto="'+esc(t)+'">Enviar PDF</button>':'')+'</div>';}).join('')+'</div>';
+    h+='<div class="stack">'+P.map(function(t){return '<div class="item"><div class="grow"><span class="badge">4º ano</span><b style="display:block;margin-top:5px">'+esc(t.nome)+'</b></div>'+(prof?'<button class="btn sm gold" data-a="novoMat" data-disc="'+t.disciplina+'" data-ano="'+t.ano+'" data-assunto="'+esc(t.nome)+'">Enviar PDF</button>':'')+'</div>';}).join('')+'</div>';
     if(!P.length)h+='<p class="empty">Nenhum assunto encontrado para esse filtro.</p>';
     page({title:prof?'Conteúdo':'Assuntos',sub:P.length+' assuntos de Português',nav:prof?'conteudo':'assuntos',body:(prof?'<a class="btn gold block" style="margin-bottom:12px" href="#/materiais">'+ic('file')+' Materiais em PDF</a>':'')+h});
     var pin=document.getElementById('busca');pin.addEventListener('input',function(){ST.busca=pin.value;var pos=pin.selectionStart;vAssuntos();var n=document.getElementById('busca');n.focus();try{n.setSelectionRange(pos,pos);}catch(e){}});
@@ -624,7 +625,7 @@ async function matTopico(id){
 A.novoMat=async function(el){ await getAlunos(); matForm(null,el&&el.dataset&&el.dataset.t,el&&el.dataset&&el.dataset.disc,el&&el.dataset&&el.dataset.ano,el&&el.dataset&&el.dataset.assunto); };
 A.editMat=async function(el){ await getAlunos(); var m=(ST.mats||{})[el.dataset.id]; if(m) matForm(m); };
 function matAssuntoOptions(disc,ano,selected){
-  if(disc==='Português') return '<option value="">Escolha o assunto</option>'+PORTUGUES_4.filter(function(x){return ano==='4º ano';}).map(function(x){return '<option value="'+esc(x)+'"'+(x===selected?' selected':'')+'>'+esc(x)+'</option>';}).join('');
+  if(disc==='Português') return '<option value="">Escolha o assunto</option>'+PORTUGUES_TOPICS.filter(function(x){return x.ano===ano;}).map(function(x){return '<option value="'+esc(x.nome)+'"'+(x.nome===selected?' selected':'')+'>'+esc(x.nome)+'</option>';}).join('');
   var topics=TOPICS.filter(function(t){return ano==='Todos'||t.ano===ano;}); return '<option value="">Geral (sem assunto)</option>'+topics.map(function(t){return '<option value="'+t.id+'"'+(t.id===selected?' selected':'')+'>'+esc(strip(t.nome))+'</option>';}).join('');
 }
 function matForm(m,topico,discArg,anoArg,assuntoArg){
