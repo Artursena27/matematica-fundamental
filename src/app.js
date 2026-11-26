@@ -251,7 +251,7 @@ function vAssuntos(){
   h+='<div class="chips" style="margin-top:8px" role="group" aria-label="Disciplina"><button class="chip'+(disc==='Matemática'?' on':'')+'" data-a="discSel" data-v="Matemática">Matemática</button><button class="chip'+(disc==='Português'?' on':'')+'" data-a="discSel" data-v="Português">Português</button></div>';
   h+='<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por ano">'+(meuAno?[meuAno]:[]).concat(['Todos'],ANOS.filter(function(a){return a!==meuAno;})).map(function(a){return '<button class="chip'+(a===anoSel?' on':'')+'" data-a="anoSel" data-v="'+a+'">'+(a===meuAno?'⭐ Meu ano ('+a+')':a)+'</button>';}).join('')+'</div>';
   if(disc==='Matemática'){
-    var L=TOPICS.slice().sort(function(x,y){ return (x.ano===meuAno?0:1)-(y.ano===meuAno?0:1); }).filter(function(t){ if(anoSel!=='Todos'&&t.ano!==anoSel&&!words.length) return false; var hay=norm(t.nome+' '+t.tags+' '+t.area+' '+t.ano); return words.every(function(w){return hay.indexOf(w)>=0;}); });
+    var L=TOPICS.slice().sort(function(x,y){ return (x.ano===meuAno?0:1)-(y.ano===meuAno?0:1); }).filter(function(t){ if(anoSel!=='Todos'&&t.ano!==anoSel) return false; var hay=norm(t.nome+' '+t.tags+' '+t.area+' '+t.ano); return words.every(function(w){return hay.indexOf(w)>=0;}); });
     h+='<div class="search">'+ic('search','#55627F',20)+'<input id="busca" type="search" placeholder="Pesquisar assunto: frações, MMC, Pitágoras…" value="'+esc(q)+'" aria-label="Pesquisar assunto" autocomplete="off"></div><div id="lista">'+topicGrid(L,ST.prog,!prof)+'</div>';
     page({title:prof?'Conteúdo':'Assuntos',sub:L.length+' assuntos de Matemática',nav:prof?'conteudo':'assuntos',body:(prof?'<a class="btn gold block" style="margin-bottom:12px" href="#/materiais">'+ic('file')+' Materiais em PDF</a>':'')+h});
     var inp=document.getElementById('busca'); inp.addEventListener('input',function(){ ST.busca=inp.value; var pos=inp.selectionStart; vAssuntos(); var n=document.getElementById('busca'); n.focus(); try{n.setSelectionRange(pos,pos);}catch(e){} });
@@ -512,10 +512,10 @@ async function vAluno(id,tab){
   else if(tab==='notas'){ var nn=await DB.q('notes',{eq:{student_id:id},order:['created_at',false]}); x=nn.length?'<div class="stack">'+nn.map(noteItem).join('')+'</div>':'<p class="empty">Nenhuma anotação.</p>'; }
   else if(tab==='plano'){ x=await vPlano(id,true); }
   else if(tab==='listas'){ var ls=await DB.q('assignments',{eq:{student_id:id},order:['created_at',false]}); ls.forEach(function(l){l._aluno=a.nome;}); x='<a class="btn gold block" href="#/nova-lista/'+id+'">+ Mandar lista para '+esc(primeiroNome(a.nome))+'</a>'+(ls.length?'<div class="stack" style="margin-top:12px">'+ls.map(asgItem).join('')+'</div>':'<p class="empty">Nenhuma lista enviada.</p>'); }
-  else if(tab==='conta'){ x='<form class="card" data-form="resp" data-id="'+id+'" style="margin-bottom:12px"><label for="rw" style="margin-top:0">WhatsApp do responsável</label><input id="rw" name="w" inputmode="tel" placeholder="(81) 9 9999-9999" value="'+esc(a.responsavel_whatsapp||'')+'"><button class="btn primary block" style="margin-top:10px">Salvar</button></form><form class="card" data-form="senha" data-id="'+id+'"><label for="ns" style="margin-top:0">Nova senha para @'+esc(a.username)+'</label><input id="ns" name="s" minlength="6" required><button class="btn primary block" style="margin-top:10px">Trocar senha</button></form><button class="btn danger block" style="margin-top:16px" data-a="removerAluno" data-id="'+id+'">Remover aluno</button>'; }
+  else if(tab==='conta'){ x='<form class="card" data-form="perfilAluno" data-id="'+id+'" style="margin-bottom:12px"><label for="ay" style="margin-top:0">Ano escolar</label><select id="ay" name="ano">'+ANOS.map(function(y){return '<option'+(y===a.ano?' selected':'')+'>'+y+'</option>';}).join('')+'</select><label for="rn">Responsável (nome)</label><input id="rn" name="rn" value="'+esc(a.responsavel_nome||'')+'" placeholder="Ex.: Igor"><label for="rw">WhatsApp do responsável</label><input id="rw" name="rw" inputmode="tel" placeholder="(81) 9 9999-9999" value="'+esc(a.responsavel_whatsapp||'')+'"><button class="btn primary block" style="margin-top:10px">Salvar dados do aluno</button></form><form class="card" data-form="senha" data-id="'+id+'"><label for="ns" style="margin-top:0">Nova senha para @'+esc(a.username)+'</label><input id="ns" name="s" minlength="6" required><button class="btn primary block" style="margin-top:10px">Trocar senha</button></form><button class="btn danger block" style="margin-top:16px" data-a="removerAluno" data-id="'+id+'">Remover aluno</button>'; }
   b.innerHTML=x;
 }
-A.alTab=function(el){ ST.tab['al'+el.dataset.id]=el.dataset.v; vAluno(el.dataset.id,el.dataset.v); };
+A.alTab=function(el){ ST.tab['al'+el.dataset.id]=el.dataset.v; vAluno(el.dataset.id,el.dataset.v); };\nFORMS.perfilAluno=async function(f){try{await server('alunos',{acao:'editar',id:f.dataset.id,ano:f.ano.value,responsavel_nome:f.rn.value.trim()||null,responsavel_whatsapp:f.rw.value.trim()||null});await getAlunos(true);toast('Dados do aluno atualizados');vAluno(f.dataset.id,'conta');}catch(e){toast(erroMsg(e));}};
 FORMS.senha=async function(f){ try{ await server('alunos',{acao:'senha',id:f.dataset.id,senha:f.s.value}); toast('Senha trocada'); f.reset(); }catch(e){ toast(erroMsg(e)); } };
 A.removerAluno=async function(el){ if(!confirmar('Remover este aluno e todos os dados dele? Isso não pode ser desfeito.')) return; try{ await server('alunos',{acao:'remover',id:el.dataset.id}); await getAlunos(true); toast('Aluno removido'); location.hash='#/alunos'; }catch(e){ toast(erroMsg(e)); } };
 
@@ -593,43 +593,56 @@ var MAT_MAX = 25*1024*1024;
 function fmtTam(b){ if(!b) return ''; return b<1024*1024? Math.max(1,Math.round(b/1024))+' KB' : (b/1048576).toFixed(1).replace('.',',')+' MB'; }
 function matItem(m){
   var t=m.topic_id&&TBY[m.topic_id]; var para=isProf()?(m.para?nomeAluno(m.para):'Todos os alunos'):'';
-  var info=[t?strip(t.nome):'Geral'].concat(para?[para]:[],m.tamanho?[fmtTam(m.tamanho)]:[],[fmtData(m.updated_at||m.created_at)]).map(esc).join(' · ');
+  var info=[m.disciplina||'Matemática',m.ano||'',m.assunto||(t?strip(t.nome):'Geral')].concat(para?[para]:[],m.tamanho?[fmtTam(m.tamanho)]:[],[fmtData(m.updated_at||m.created_at)]).filter(Boolean).map(esc).join(' · ');
   return '<div class="item"><span style="flex-shrink:0;color:var(--bad)">'+ic('file','currentColor',28)+'</span><div class="grow"><b>'+esc(m.titulo)+'</b>'+(m.descricao?'<span class="small" style="display:block">'+nl2br(m.descricao)+'</span>':'')+'<span class="small muted">'+info+'</span></div><div class="row" style="flex-shrink:0;gap:6px">'+(m.url?'<a class="btn sm primary" href="'+esc(m.url)+'" target="_blank" rel="noopener" data-mat="'+m.id+'" data-t="'+esc(m.titulo)+'">Abrir</a>':'<span class="small muted">indisponível</span>')+(isProf()?'<button class="btn sm ghost" data-a="editMat" data-id="'+m.id+'" aria-label="Editar material">Editar</button>':'')+'</div></div>';
 }
 async function vMateriais(){
   var prof=isProf(); loading('Materiais',prof?'conteudo':'assuntos'); if(prof) await getAlunos();
   var L=[], erro=''; try{ L=(await server('materiais',{acao:'listar'})).materiais||[]; }catch(e){ erro=erroMsg(e); }
   ST.mats={}; L.forEach(function(m){ ST.mats[m.id]=m; });
-  var f=ST.matf||'todos'; var usados={}; L.forEach(function(m){ usados[m.topic_id||'']=1; });
-  var V=L.filter(function(m){ return f==='todos' || (m.topic_id||'')===(f==='geral'?'':f); });
-  var h=(prof?'<button class="btn gold block" data-a="novoMat">'+ic('file')+' Enviar novo PDF</button><p class="small muted">Você escolhe o assunto e se o PDF é para todos ou para um aluno só. Dá para editar o título, trocar o arquivo ou apagar depois.</p>':'');
+  var f=ST.matf||'todos', disc=ST.matdisc||'todas', ano=ST.matano||'Todos', usados={}; L.forEach(function(m){usados[m.topic_id||'']=1;});
+  var V=L.filter(function(m){return (disc==='todas'||(m.disciplina||'Matemática')===disc)&&(ano==='Todos'||m.ano===ano)&&(f==='todos'||(m.topic_id||'')===(f==='geral'?'':f));});
+  var h=(prof?'<button class="btn gold block" data-a="novoMat">'+ic('file')+' Enviar novo PDF</button><p class="small muted">Escolha disciplina, ano, assunto e aluno destinatário. Português é material de apoio em PDF.</p>':'');
+  h+='<div class="chips" style="margin-top:10px"><button class="chip'+(disc==='todas'?' on':'')+'" data-a="matdisc" data-v="todas">Todas</button><button class="chip'+(disc==='Matemática'?' on':'')+'" data-a="matdisc" data-v="Matemática">Matemática</button><button class="chip'+(disc==='Português'?' on':'')+'" data-a="matdisc" data-v="Português">Português</button></div>';
+  h+='<div class="chips" style="margin-top:8px">'+['Todos'].concat(ANOS).map(function(y){return '<button class="chip'+(ano===y?' on':'')+'" data-a="matano" data-v="'+y+'">'+y+'</button>';}).join('')+'</div>';
   if(erro) h+='<div class="err">'+esc(erro)+'</div>';
-  if(Object.keys(usados).length>1) h+='<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por assunto"><button class="chip'+(f==='todos'?' on':'')+'" data-a="matf" data-v="todos">Todos</button>'+Object.keys(usados).map(function(k){ return '<button class="chip'+(f===(k||'geral')?' on':'')+'" data-a="matf" data-v="'+esc(k||'geral')+'">'+esc(k&&TBY[k]?strip(TBY[k].nome):'Geral')+'</button>'; }).join('')+'</div>';
+  if(Object.keys(usados).length>1) h+='<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por assunto"><button class="chip'+(f==='todos'?' on':'')+'" data-a="matf" data-v="todos">Todos os assuntos</button>'+Object.keys(usados).map(function(k){return '<button class="chip'+(f===(k||'geral')?' on':'')+'" data-a="matf" data-v="'+esc(k||'geral')+'">'+esc(k&&TBY[k]?strip(TBY[k].nome):'Geral')+'</button>';}).join('')+'</div>';
   h+=V.length?'<div class="stack" style="margin-top:12px">'+V.map(matItem).join('')+'</div>':(erro?'':'<p class="empty">'+(prof?'Nenhum PDF enviado ainda.':'O professor ainda não mandou materiais.')+'</p>');
-  page({title:'Materiais',sub:L.length+' PDF(s)',back:true,nav:prof?'conteudo':'assuntos',body:h});
+  page({title:'Materiais',sub:V.length+' PDF(s)',back:true,nav:prof?'conteudo':'assuntos',body:h});
 }
 A.matf=function(el){ ST.matf=el.dataset.v; vMateriais(); };
+A.matdisc=function(el){ST.matdisc=el.dataset.v;ST.matf='todos';vMateriais();};
+A.matano=function(el){ST.matano=el.dataset.v;vMateriais();};
 async function matTopico(id){
   var L; try{ L=(await server('materiais',{acao:'listar',topic_id:id})).materiais||[]; }catch(e){ return; }
   L.forEach(function(m){ (ST.mats=ST.mats||{})[m.id]=m; });
   var box=document.getElementById('matTopico'); if(!box) return;
   if(L.length||isProf()) box.innerHTML='<h2>PDFs do professor</h2>'+(L.length?'<div class="stack">'+L.map(matItem).join('')+'</div>':'')+(isProf()?'<button class="btn ghost block" style="margin-top:8px" data-a="novoMat" data-t="'+esc(id)+'">+ Enviar PDF para este assunto</button>':'');
 }
-A.novoMat=async function(el){ await getAlunos(); matForm(null, el&&el.dataset&&el.dataset.t); };
+A.novoMat=async function(el){ await getAlunos(); matForm(null,el&&el.dataset&&el.dataset.t,el&&el.dataset&&el.dataset.disc,el&&el.dataset&&el.dataset.ano,el&&el.dataset&&el.dataset.assunto); };
 A.editMat=async function(el){ await getAlunos(); var m=(ST.mats||{})[el.dataset.id]; if(m) matForm(m); };
-function matForm(m,topico){
-  var novo=!m; m=m||{}; var tp=m.topic_id||topico||'';
+function matAssuntoOptions(disc,ano,selected){
+  if(disc==='Português') return '<option value="">Escolha o assunto</option>'+PORTUGUES_4.filter(function(x){return ano==='4º ano';}).map(function(x){return '<option value="'+esc(x)+'"'+(x===selected?' selected':'')+'>'+esc(x)+'</option>';}).join('');
+  return '<option value="">Geral (sem assunto)</option>'+TOPICS.filter(function(t){return t.ano===ano;}).map(function(t){return '<option value="'+t.id+'"'+(t.id===selected?' selected':'')+'>'+esc(strip(t.nome))+'</option>';}).join('');
+}
+function matForm(m,topico,discArg,anoArg,assuntoArg){
+  var novo=!m; m=m||{}; var disc=m.disciplina||discArg||'Matemática', tp=m.topic_id||topico||'';
+  var ano=m.ano||(disc==='Português'?'4º ano':(TBY[tp]&&TBY[tp].ano))||anoArg||'6º ano';
+  var selected=disc==='Português'?(m.assunto||assuntoArg||''):tp;
   sheet(novo?'Enviar PDF':'Editar material','<form id="fmat" data-form="mat"'+(novo?'':' data-id="'+m.id+'"')+'>'+
     '<label for="mf" style="margin-top:0">'+(novo?'Arquivo PDF':'Trocar o PDF (opcional)')+'</label><input id="mf" name="f" type="file" accept="application/pdf,.pdf"'+(novo?' required':'')+' data-change="matArq">'+
     (novo?'':'<p class="small muted" style="margin:4px 0 0">Arquivo atual: '+esc(m.nome_arquivo||'PDF')+(m.tamanho?' · '+fmtTam(m.tamanho):'')+(m.url?' · <a href="'+esc(m.url)+'" target="_blank" rel="noopener">abrir</a>':'')+'</p>')+
+    '<label for="mdisc">Disciplina</label><select id="mdisc" name="disciplina" data-change="matDisc"><option'+(disc==='Matemática'?' selected':'')+'>Matemática</option><option'+(disc==='Português'?' selected':'')+'>Português</option></select>'+
+    '<label for="myear">Ano</label><select id="myear" name="ano" data-change="matAno">'+ANOS.map(function(y){return '<option'+(y===ano?' selected':'')+'>'+y+'</option>';}).join('')+'</select>'+
+    '<label for="ma">Assunto</label><select id="ma" name="a">'+matAssuntoOptions(disc,ano,selected)+'</select>'+
     '<label for="mt">Título</label><input id="mt" name="t" required maxlength="120" value="'+esc(m.titulo||'')+'" placeholder="Ex.: Resumo de frações">'+
     '<label for="md">Descrição (opcional)</label><textarea id="md" name="d" maxlength="500" placeholder="Ex.: Leia antes da aula de quinta.">'+esc(m.descricao||'')+'</textarea>'+
-    '<label for="ma">Assunto</label><select id="ma" name="a"><option value="">Geral (sem assunto)</option>'+ANOS.map(function(an){ return '<optgroup label="'+an+'">'+TOPICS.filter(function(t){return t.ano===an;}).map(function(t){return '<option value="'+t.id+'"'+(t.id===tp?' selected':'')+'>'+esc(strip(t.nome))+'</option>';}).join('')+'</optgroup>'; }).join('')+'</select>'+
     '<label for="mp">Para quem</label><select id="mp" name="p"><option value="">Todos os alunos</option>'+(ALUNOS||[]).map(function(a){return '<option value="'+a.id+'"'+(a.id===m.para?' selected':'')+'>'+esc(a.nome)+'</option>';}).join('')+'</select>'+
-    '<label class="row" style="gap:8px;font-weight:600;margin-top:14px"><input type="checkbox" name="v"'+(novo?' checked':'')+' style="width:auto;min-height:0"> Avisar os alunos (sino 🔔 e notificação)</label>'+
-    '<div id="matMsg"></div></form>',
+    '<label class="row" style="gap:8px;font-weight:600;margin-top:14px"><input type="checkbox" name="v"'+(novo?' checked':'')+' style="width:auto;min-height:0"> Avisar os alunos (sino 🔔 e notificação)</label><div id="matMsg"></div></form>',
     '<button class="btn primary block" form="fmat" id="matBtn">'+(novo?'Enviar PDF':'Salvar alterações')+'</button>'+(novo?'':'<button class="btn danger block" style="margin-top:8px" data-a="delMat" data-id="'+m.id+'">Apagar material</button>'));
 }
+CHANGE.matDisc=function(sel){var d=sel.value,y=document.getElementById('myear'),a=document.getElementById('ma');if(d==='Português'&&y)y.value='4º ano';if(a)a.innerHTML=matAssuntoOptions(d,y?y.value:'4º ano','');};
+CHANGE.matAno=function(sel){var d=document.getElementById('mdisc'),a=document.getElementById('ma');if(a)a.innerHTML=matAssuntoOptions(d?d.value:'Matemática',sel.value,'');};
 CHANGE.matArq=function(inp){ var f=inp.files[0], t=document.getElementById('mt'), msg=document.getElementById('matMsg'); msg.innerHTML=''; if(!f) return;
   if(!/pdf$/i.test(f.type)&&!/\.pdf$/i.test(f.name)){ msg.innerHTML='<div class="err">Escolha um arquivo PDF.</div>'; inp.value=''; return; }
   if(f.size>MAT_MAX){ msg.innerHTML='<div class="err">Esse PDF tem '+fmtTam(f.size)+'. O limite é 25 MB; comprima e tente de novo.</div>'; inp.value=''; return; }
@@ -648,7 +661,7 @@ FORMS.mat=async function(f){ var b=document.getElementById('matBtn'), msg=docume
     if(file){ if(file.size>MAT_MAX) throw new Error('O limite é 25 MB.');
       var pr=await server('materiais',{acao:'preparar',tamanho:file.size}); b.textContent='Enviando… 0%';
       await subirArquivo(pr.uploadUrl,file,function(p){ b.textContent='Enviando… '+p+'%'; }); up=pr.path; b.textContent='Salvando…'; }
-    var body={acao:'salvar',titulo:f.t.value,descricao:f.d.value,topic_id:f.a.value||null,para:f.p.value||null,avisar:f.v.checked};
+    var disc=f.disciplina.value, ano=f.ano.value, assunto=f.a.value||null; var body={acao:'salvar',titulo:f.t.value,descricao:f.d.value,disciplina:disc,ano:ano,assunto:disc==='Português'?assunto:(assunto&&TBY[assunto]?strip(TBY[assunto].nome):null),topic_id:disc==='Português'?null:assunto,para:f.p.value||null,avisar:f.v.checked};
     if(f.dataset.id) body.id=+f.dataset.id||f.dataset.id;
     if(up){ body.path=up; body.nome_arquivo=file.name; body.tamanho=file.size; }
     await server('materiais',body); closeSheet(); toast(f.dataset.id?'Material atualizado':'PDF enviado!'); render();
@@ -748,7 +761,7 @@ async function finProfHTML(al){
   var r=await loadFin(al); var h=horarioDe(al);
   var x=finCards(r,al);
   x+='<div class="grid" style="margin-top:12px"><button class="btn gold" data-a="finAvulsa" data-id="'+al.id+'">+ Lançar aula</button><button class="btn ghost" data-a="finHorario" data-id="'+al.id+'">'+ic('cal')+' Horário e valor</button></div>';
-  x+='<p class="small muted" style="margin:8px 0 0">'+(h.slots.length?'Aulas fixas: '+h.slots.map(function(s){return DIAS_C[s.dia]+' '+s.hora+' ('+durTxt(s.dur)+')';}).join(', '):'Sem horário fixo cadastrado.')+(al.valor_hora?' · '+brl(al.valor_hora)+'/hora':'')+'</p>';
+  x+='<p class="small muted" style="margin:8px 0 0">'+(h.slots.length?'Aulas fixas: '+h.slots.map(function(s){return DIAS_C[s.dia]+' '+s.hora+' ('+durTxt(s.dur)+')';}).join(', '):'Sem horário fixo cadastrado.')+(al.valor_hora?' · '+brl(al.valor_hora)+'/hora':'')+(al.valor_mensal?' · Mensalidade fixa: '+brl(al.valor_mensal)+'/mês':'')+'</p>';
   if(r.confirmar.length) x+='<h2>Aulas da agenda para confirmar <span class="muted small">('+r.confirmar.length+')</span></h2><p class="small muted" style="margin-top:-4px">Confirme as aulas que você deu. Elas entram como pendentes de pagamento.</p><div class="stack">'+r.confirmar.slice().reverse().map(function(s){ return '<div class="item"><div class="grow"><b>'+esc(dataLonga(s.data))+' · '+esc(s.hora)+'</b><span class="small muted">'+durTxt(s.duracao_min)+' · '+brl(valorAula(s,al))+'</span></div><div class="row" style="gap:6px;flex-shrink:0"><button class="btn sm primary" data-a="finConfirma" data-id="'+al.id+'" data-d="'+s.data+'" data-h="'+esc(s.hora)+'" data-m="'+s.duracao_min+'">Dei a aula</button><button class="btn sm ghost" data-a="finFalta" data-id="'+al.id+'" data-d="'+s.data+'" data-h="'+esc(s.hora)+'" data-m="'+s.duracao_min+'">Não teve</button></div></div>'; }).join('')+'</div>';
   x+='<h2>Pagamentos pendentes <span class="muted small">('+r.pend.length+')</span></h2>';
   if(r.pend.length){ x+='<div class="stack">'+r.pend.map(function(a){return aulaLinha(a,al,true);}).join('')+'</div><div class="grid" style="margin-top:10px"><button class="btn primary" data-a="finPagarSel" data-id="'+al.id+'">✓ Marcar selecionadas como pagas</button><button class="btn wa" data-a="finCobrar" data-id="'+al.id+'">'+ic('wa','#fff',20)+' Cobrar os pais no WhatsApp</button></div><button class="btn gold block" style="margin-top:10px" data-a="finLembrar">'+ic('bell')+' Lembrar '+esc(primeiroNome(al.nome))+' no celular</button>'; }
@@ -784,12 +797,12 @@ FORMS.finAula=async function(f){ var al=ST.fin.al, id=f.dataset.id&&(+f.dataset.
   try{ if(id) await DB.upd('aulas',{id:id},row); else { row.student_id=al.id; await DB.ins('aulas',row); } closeSheet(); toast(id?'Aula atualizada':'Aula lançada'); finRecarregar(); }catch(e){ toast(erroMsg(e)); } };
 A.finApagar=async function(el){ if(!confirmar('Apagar este lançamento?')) return; try{ await DB.del('aulas',{id:+el.dataset.id||el.dataset.id}); closeSheet(); toast('Lançamento apagado'); finRecarregar(); }catch(e){ toast(erroMsg(e)); } };
 A.finHorario=function(){ var al=ST.fin.al, h=horarioDe(al), by={}; h.slots.forEach(function(s){ by[s.dia]=s; });
-  sheet('Horário e valor de '+esc(primeiroNome(al.nome)),'<form id="fho" data-form="finHorario"><label for="vh" style="margin-top:0">Valor da hora-aula (R$)</label><input id="vh" name="vh" type="number" min="0" step="0.01" inputmode="decimal" value="'+(al.valor_hora!=null?al.valor_hora:'')+'" placeholder="Ex.: 30">'+
+  sheet('Horário e valor de '+esc(primeiroNome(al.nome)),'<form id="fho" data-form="finHorario"><label for="vm" style="margin-top:0">Mensalidade fixa (R$) — opcional</label><input id="vm" name="vm" type="number" min="0" step="0.01" inputmode="decimal" value="'+(al.valor_mensal!=null?al.valor_mensal:'')+'" placeholder="Ex.: 400"><label for="vh" style="margin-top:0">Valor da hora-aula (R$) — opcional</label><input id="vh" name="vh" type="number" min="0" step="0.01" inputmode="decimal" value="'+(al.valor_hora!=null?al.valor_hora:'')+'" placeholder="Ex.: 30">'+
     '<label style="margin-top:16px">Dias de aula fixos</label><div class="stack">'+[1,2,3,4,5,6,0].map(function(d){ var s=by[d]; return '<div class="item" style="align-items:center;padding:8px 12px"><label class="row grow" style="gap:8px;margin:0;font-weight:700"><input type="checkbox" name="d'+d+'"'+(s?' checked':'')+' style="width:22px;height:22px;min-height:0"> '+DIAS_L[d]+'</label><input type="time" name="h'+d+'" value="'+esc(s?s.hora:'18:00')+'" aria-label="Hora de '+DIAS_L[d]+'" style="width:110px"><input type="number" name="m'+d+'" min="15" step="15" value="'+(s?s.dur:60)+'" aria-label="Duração em minutos de '+DIAS_L[d]+'" style="width:76px"><span class="small muted">min</span></div>'; }).join('')+'</div>'+
     '<label for="hd">Contar aulas fixas a partir de</label><input id="hd" name="desde" type="date" value="'+esc(h.desde||isoDate(hoje()))+'"><p class="small muted">As aulas fixas a partir dessa data aparecem para você confirmar com um toque. Aulas fora do horário você lança em "+ Lançar aula".</p></form>',
     '<button class="btn primary block" form="fho">Salvar</button>'); };
 FORMS.finHorario=async function(f){ var al=ST.fin.al, slots=[]; [1,2,3,4,5,6,0].forEach(function(d){ if(f['d'+d].checked) slots.push({dia:d,hora:f['h'+d].value||'18:00',dur:+f['m'+d].value||60}); });
-  var patch={valor_hora:f.vh.value===''?null:+f.vh.value,horario:{desde:f.desde.value||isoDate(hoje()),slots:slots}};
+  var patch={valor_hora:f.vh.value===''?null:+f.vh.value,valor_mensal:f.vm.value===''?null:+f.vm.value,horario:{desde:f.desde.value||isoDate(hoje()),slots:slots}};
   try{ await DB.upd('profiles',{id:al.id},patch); Object.assign(al,patch); await getAlunos(true); closeSheet(); toast('Horário salvo'); finRecarregar(); }catch(e){ toast(erroMsg(e)); } };
 
 function finDiasTxt(pend){ var hj=isoDate(hoje()), ont=new Date(hoje()); ont.setDate(ont.getDate()-1); ont=isoDate(ont);
