@@ -1,6 +1,7 @@
 -- v6: expansão para 4º/5º ano, disciplinas nos materiais e mensalidade fixa
 -- A tabela profiles já armazena ano como texto, sem CHECK/ENUM restritivo.
 alter table academy.profiles add column if not exists responsavel_nome text;
+alter table academy.profiles add column if not exists responsavel_whatsapp text;
 alter table academy.profiles add column if not exists valor_mensal numeric(10,2);
 
 -- Materiais antigos passam a ser Matemática, sem alterar destinatários, arquivos ou assuntos.
