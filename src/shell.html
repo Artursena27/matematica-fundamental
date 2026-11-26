@@ -256,6 +256,65 @@ main.has-fab{padding-bottom:calc(160px + var(--safeb))}
 .printonly{display:none}
 @media print{.report{border:none;padding:0}.printonly{display:block}.noprint,.toast{display:none!important}.sheet-bg{display:none}}
 
+
+/* ===== jogos do 4º ano ===== */
+.jg-convite{display:flex;align-items:center;gap:12px;width:100%;border:none;border-radius:20px;padding:14px 16px;margin-bottom:12px;background:linear-gradient(135deg,#FFC93C,#FF8A65);color:#14213D;text-align:left;font:inherit;box-shadow:0 4px 12px rgba(255,138,101,.35);cursor:pointer}
+.jg-convite>span:first-child{font-size:34px}.jg-convite>span:last-child{font-size:22px;font-weight:900}
+.teoria.kid{font-size:17px;line-height:1.6}.teoria.kid .ex{border-radius:16px}
+.jg-masc{display:flex;align-items:flex-end;gap:10px;margin:8px 0 12px}
+.jg-coruja{font-size:46px;line-height:1;animation:jgBalanca 2.4s ease-in-out infinite;flex-shrink:0}
+.jg-balao{position:relative;background:#fff;border:2px solid var(--accent);border-radius:18px 18px 18px 4px;padding:12px 14px;font-size:17px;line-height:1.45;font-weight:600;flex:1}
+.jg-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;background:#fff;border:2px solid var(--line);border-radius:20px;padding:14px;cursor:pointer;transition:transform .1s}
+.jg-card:active{transform:scale(.98)}.jg-card b{font-size:18px}
+.jg-card-emoji{font-size:40px;width:58px;height:58px;display:grid;place-items:center;background:var(--accent2);border-radius:16px;flex-shrink:0}
+.jg-play{width:40px;height:40px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-size:16px;flex-shrink:0}
+.jg-topo{display:flex;align-items:center;gap:8px}.jg-topo b{font-size:16px}
+.jg-estrelas{display:flex;gap:2px;font-size:18px}
+.jg-area{background:#fff;border:2px solid var(--line);border-radius:22px;padding:14px}
+.jg-vis{margin-bottom:12px}.jg-center{text-align:center}.jg-svg{max-width:100%;height:auto}
+.jg-big{font-size:30px;font-weight:900;letter-spacing:.5px}
+.jg-opts{display:grid;gap:10px}.jg-opts.c2{grid-template-columns:1fr 1fr}
+.jg-opt{font:inherit;font-size:19px;font-weight:800;min-height:62px;padding:10px 12px;border-radius:18px;border:3px solid var(--line);background:#F7F9FE;color:var(--ink);cursor:pointer;transition:transform .1s}
+.jg-opt:active{transform:scale(.96)}.jg-opt.certo{background:var(--okbg);border-color:var(--ok);color:var(--ok)}.jg-opt.errado{background:var(--badbg);border-color:var(--bad);color:var(--bad);animation:jgTreme .4s}
+.jg-fb{margin-top:14px;border-radius:22px;padding:16px;border:3px solid}.jg-fb.ok{background:var(--okbg);border-color:var(--ok)}.jg-fb.bad{background:#FFF4E5;border-color:#FB8C00}
+.jg-fb-tit{font-size:24px;font-weight:900;animation:jgPula .5s}.jg-fb ol{margin:8px 0 12px;padding-left:22px;font-size:16px;line-height:1.5}
+.jg-fim{text-align:center;padding:18px 6px}.jg-trofeu{font-size:90px;animation:jgPula .8s}.jg-fim-est{font-size:34px;margin:6px 0}
+.jg-trilha{display:flex;align-items:center;gap:8px;font-size:24px;margin-bottom:10px}.jg-trilho{flex:1;height:10px;border-radius:9px;background:repeating-linear-gradient(90deg,#DDE3F0 0 10px,transparent 10px 16px);position:relative}
+.jg-trilho i{position:absolute;top:50%;transform:translate(-50%,-50%) rotate(45deg);font-style:normal;font-size:28px;transition:left .6s}
+.jg-visor{font-size:40px;font-weight:900;text-align:center;border:3px dashed var(--line);border-radius:18px;padding:8px;margin:8px auto;max-width:240px;min-height:64px}.jg-visor.ok{border-color:var(--ok);color:var(--ok)}.jg-visor.bad{border-color:var(--bad);color:var(--bad)}
+.jg-teclas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px;margin:0 auto}
+.jg-teclas button{font:inherit;font-size:28px;font-weight:900;min-height:60px;border-radius:16px;border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}.jg-teclas button:active{background:var(--accent2)}.jg-teclas .ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.jg-conta{font:900 30px/1.25 ui-monospace,Menlo,Consolas,monospace;text-align:center;margin:0 auto;width:max-content;color:var(--ink)}
+.jg-blocos{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.jg-casa{display:flex;flex-direction:column;align-items:center;gap:4px;background:#F7F9FE;border-radius:14px;padding:6px 2px}.jg-casa b{font-size:13px}
+.jg-cubos{display:grid;grid-template-columns:repeat(3,14px);gap:3px;min-height:52px;align-content:end}.jg-cubos i{width:14px;height:14px;border-radius:3px;display:block;box-shadow:inset 0 -2px 0 rgba(0,0,0,.2)}
+.jg-cnt{font-size:22px;font-weight:900}.jg-casa button{font:inherit;width:44px;height:38px;border-radius:12px;border:2px solid var(--line);background:#fff;font-size:22px;font-weight:900;cursor:pointer}
+.jg-total{text-align:center;font-size:19px;margin:10px 0}.jg-total b{font-size:24px}
+.jg-conferir{margin-top:12px;min-height:56px;font-size:20px!important;border-radius:18px!important}
+.jg-acoes{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.jg-pilha{text-align:center;font-size:28px;line-height:1.3;background:#FFF8E1;border-radius:16px;padding:8px;word-break:break-all}
+.jg-pratos{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-top:10px}
+.jg-prato{font:inherit;min-height:96px;border-radius:50%/40%;border:4px solid #B0BEC5;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;cursor:pointer}.jg-prato span{font-size:20px;word-break:break-all;line-height:1.1}.jg-prato b{font-size:18px}
+.jg-bandeja{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;min-height:42px;background:#F1F8E9;border-radius:14px;padding:8px}
+.jg-carteira{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.jg-din{font:inherit;font-weight:900;cursor:pointer;display:inline-grid;place-items:center}.jg-din.nota{background:#A5D6A7;border:2px solid #2E7D32;color:#1B5E20;border-radius:8px;min-width:70px;height:44px;font-size:16px}.jg-din.moeda{background:radial-gradient(circle at 35% 35%,#FFF59D,#FBC02D);border:2px solid #F57F17;color:#5D4037;border-radius:50%;width:50px;height:50px;font-size:13px}
+.jg-bandeja .jg-din.nota{min-width:50px;height:30px;font-size:12px}.jg-bandeja .jg-din.moeda{width:34px;height:34px;font-size:10px}
+.jg-relbt{display:grid;gap:8px;text-align:center;margin-top:8px}
+.jg-grupos{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.jg-grupo{border:3px dashed #90A4AE;border-radius:16px;padding:6px 8px;font-size:24px;max-width:120px}
+.jg-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;font-size:22px;font-weight:800}
+.jg-seq{font-size:32px;text-align:center;letter-spacing:2px;font-weight:900;line-height:1.4}.jg-q{display:inline-block;min-width:44px;border-bottom:4px solid var(--accent);color:#C79100}
+.jg-texto{background:#FFFDF5;border:2px solid #F3E2B3;border-radius:16px;padding:12px 14px;font-size:18px;line-height:1.6}.jg-texto p{margin:6px 0 0}.jg-frase{font-size:22px;text-align:center;font-weight:700}
+.jg-pares{display:grid;grid-template-columns:1fr 1fr;gap:10px}.jg-pares>div{display:grid;gap:8px}
+.jg-par{font:inherit;font-size:18px;font-weight:800;min-height:54px;border-radius:16px;border:3px solid var(--line);background:#F7F9FE;cursor:pointer}.jg-par.sel{border-color:var(--accent);background:var(--accent2)}.jg-par.feito{border-color:var(--ok);background:var(--okbg);color:var(--ok)}
+.jg-palavras,.jg-linha{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.jg-linha{min-height:64px;border:3px dashed var(--line);border-radius:18px;padding:8px;margin-bottom:12px}.jg-linha.ok{border-color:var(--ok);background:var(--okbg)}.jg-linha.bad{border-color:var(--bad)}
+.jg-pal{font:inherit;font-size:20px;font-weight:800;padding:8px 14px;min-height:48px;border-radius:14px;border:3px solid var(--line);background:#fff;cursor:pointer}.jg-pal.on{border-color:#1E88E5;background:#E3F2FD}.jg-pal.certo{border-color:var(--ok);background:var(--okbg)}.jg-pal.errado{border-color:var(--bad);background:var(--badbg)}.jg-pal-ponto{font-size:24px;font-weight:900}
+.confete{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}.confete i{position:absolute;top:-20px;width:10px;height:16px;border-radius:2px;animation:jgCai 1.8s ease-in forwards}
+@keyframes jgCai{to{transform:translateY(110vh) rotate(720deg);opacity:.7}}
+@keyframes jgPula{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes jgTreme{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes jgBalanca{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+@media (prefers-reduced-motion:reduce){.jg-coruja,.jg-fb-tit,.jg-trofeu,.jg-opt.errado{animation:none}.confete{display:none}}
 </style>
 </head>
 <body>

@@ -262,8 +262,8 @@ function vAssuntos(){
   } else {
     var P=PORTUGUES_TOPICS.filter(function(t){return (anoSel==='Todos'||t.ano===anoSel)&&words.every(function(w){return norm(t.nome).indexOf(w)>=0;});});
     h+='<div class="search">'+ic('search','#55627F',20)+'<input id="busca" type="search" placeholder="Pesquisar assunto de Português…" value="'+esc(q)+'" aria-label="Pesquisar assunto" autocomplete="off"></div>';
-    h+='<p class="small muted">Catálogo de apoio para organizar PDFs. Português não gera listas, correção nem progresso.</p>';
-    h+='<div class="stack">'+P.map(function(t){return '<div class="item"><div class="grow"><span class="badge">4º ano</span><b style="display:block;margin-top:5px">'+esc(t.nome)+'</b></div>'+(prof?'<button class="btn sm gold" data-a="novoMat" data-disc="'+t.disciplina+'" data-ano="'+t.ano+'" data-assunto="'+esc(t.nome)+'">Enviar PDF</button>':'<button class="btn sm ghost" data-a="verPdfPt">Ver PDFs</button>')+'</div>';}).join('')+'</div>';
+    h+='<p class="small muted">Joguinhos, explicação e PDFs de apoio. Português não entra nas listas, na correção nem no progresso.</p>';
+    h+='<div class="stack">'+P.map(function(t){ var jj=JOGOS[t.id]||[]; return '<a class="item" style="text-decoration:none" href="#/pt/'+t.id+'"><span style="font-size:30px">'+(jj[0]?jj[0].emoji:'📘')+'</span><div class="grow"><span class="badge">4º ano</span><b style="display:block;margin-top:5px">'+esc(t.nome)+'</b><span class="small muted">🎮 '+jj.length+' jogos · 📖 explicação · 📄 PDFs</span></div><span class="jg-play">▶</span></a>';}).join('')+'</div>';
     if(!P.length)h+='<p class="empty">Nenhum assunto encontrado para esse filtro.</p>';
     page({title:prof?'Conteúdo':'Assuntos',sub:P.length+' assuntos de Português',nav:prof?'conteudo':'assuntos',body:(prof?'<a class="btn gold block" style="margin-bottom:12px" href="#/materiais">'+ic('file')+' Materiais em PDF</a>':'')+h});
     var pin=document.getElementById('busca');pin.addEventListener('input',function(){ST.busca=pin.value;var pos=pin.selectionStart;vAssuntos();var n=document.getElementById('busca');n.focus();try{n.setSelectionRange(pos,pos);}catch(e){}});
@@ -281,7 +281,8 @@ async function vAssunto(id,tab){
   var p=prof?null:pctOf(id);
   var h='<div class="row wrap"><span class="badge">'+t.ano+'</span><span class="badge gray">'+t.area+'</span></div><h1 style="margin-top:8px">'+t.nome+'</h1>';
   if(!prof) h+='<div class="row"><div style="flex:1">'+ruler(p,true)+'</div><b style="color:'+pctColor(p)+'">'+p+'%</b></div>';
-  var tabs=prof?[['teoria','Teoria'],['ex','Exercícios'],['meus','Meus exercícios']]:[['teoria','Teoria'],['ex','Exercícios'],['notas','Anotações']];
+  var kid=temJogos(id);
+  var tabs=kid?(prof?[['jogos','🎮 Jogos'],['teoria','📖 Teoria'],['ex','✏️ Exercícios'],['meus','Meus']]:[['jogos','🎮 Jogar'],['teoria','📖 Aprender'],['ex','✏️ Treinar'],['notas','📝 Notas']]):(prof?[['teoria','Teoria'],['ex','Exercícios'],['meus','Meus exercícios']]:[['teoria','Teoria'],['ex','Exercícios'],['notas','Anotações']]);
   h+='<div class="tabs" role="tablist">'+tabs.map(function(x){return '<button role="tab" aria-selected="'+(tab===x[0])+'" class="'+(tab===x[0]?'on':'')+'" data-a="tab" data-id="'+id+'" data-v="'+x[0]+'">'+x[1]+'</button>';}).join('')+'</div><div id="tabBody"></div>';
   var fab=prof?'':'<div class="fab"><button class="ia" data-a="abrirIA" data-id="'+id+'">'+ic('spark','#FFC93C',20)+'Professor IA</button><button class="duv" data-a="novaDuvida" data-id="'+id+'">'+ic('chat','#0E1B3D',20)+'Dúvida</button></div>';
   page({title:t.nome,sub:t.ano,back:true,nav:prof?'conteudo':'assuntos',body:h,fab:fab});
@@ -289,9 +290,10 @@ async function vAssunto(id,tab){
   var tb=document.getElementById('tabBody');
   if(tab==='teoria'){
     var lido=!prof&&ST.prog[id]&&ST.prog[id].teoria;
-    var dI=didatIndice(t.teoria);tb.innerHTML='<div class="card teoria">'+didatTopo(t)+dI.idx+dI.html+didatTeste(t)+'</div>'+(prof?'':'<div style="margin-top:12px"><button class="btn block '+(lido?'ghost':'gold')+'" data-a="lido" data-id="'+id+'">'+(lido?'✓ Teoria estudada (vale 20%)':'Marcar teoria como estudada (+20%)')+'</button></div>')+'<button class="btn primary block" style="margin-top:10px" data-a="tab" data-id="'+id+'" data-v="ex">Ir para os exercícios →</button><div id="matTopico"></div>';
+    var dI=didatIndice(t.teoria);tb.innerHTML=(kid?'<button class="jg-convite" data-a="tab" data-id="'+id+'" data-v="jogos"><span>🎮</span><span class="grow"><b>Bora brincar!</b><br><span class="small">Tem '+JOGOS[id].length+' joguinhos deste assunto</span></span><span>▶</span></button>':'')+'<div class="card teoria'+(kid?' kid':'')+'">'+didatTopo(t)+dI.idx+dI.html+didatTeste(t)+'</div>'+(prof?'':'<div style="margin-top:12px"><button class="btn block '+(lido?'ghost':'gold')+'" data-a="lido" data-id="'+id+'">'+(lido?'✓ Teoria estudada (vale 20%)':'Marcar teoria como estudada (+20%)')+'</button></div>')+'<button class="btn primary block" style="margin-top:10px" data-a="tab" data-id="'+id+'" data-v="ex">Ir para os exercícios →</button><div id="matTopico"></div>';
     matTopico(id);
   } else if(tab==='ex'){ renderQuiz(id); }
+  else if(tab==='jogos'){ tb.innerHTML=jgTela(id); }
   else if(tab==='notas'){ renderNotas(id); }
   else if(tab==='meus'){ renderMeusEx(id); }
 }
@@ -311,7 +313,7 @@ function renderQuiz(id){
     h+='<div class="card" style="margin-top:12px"><div class="row" style="justify-content:space-between"><span class="qnum">QUESTÃO '+(s.idx+1)+' DE '+L.length+'</span>'+(g.prof?'<span class="badge">do professor</span>':'')+'</div><div class="progress"><i style="width:'+((s.idx+1)/L.length*100)+'%"></i></div><div class="qtext">'+g.q+'</div>';
     var opts=quizOpts(id,s.seed,s.idx,g); var esc_=s.pick&&s.pick[s.idx];
     h+='<div class="stack" style="margin-top:14px" role="group" aria-label="Alternativas">'+opts.map(function(o,k){ var cls='btn ghost block opt'; if(shown){ if(o===g.a) cls='btn block opt on-ok'; else if(esc_===k) cls='btn block opt on-bad'; } return '<button class="'+cls+'" style="justify-content:flex-start;text-align:left" data-a="escolhe" data-id="'+id+'" data-v="'+k+'"'+(shown?' disabled':'')+'><b style="margin-right:6px">'+'ABCD'[k]+')</b> <span>'+o+'</span></button>'; }).join('')+'</div>';
-    if(shown){ h+='<div class="'+(st===false?'err':'okmsg')+'" style="margin-top:12px">'+(st===false?'Não foi dessa vez. Veja a resolução:':'Acertou! 🎉')+'</div>'+ansHTML(g); }
+    if(shown){ h+='<div class="'+(st===false?'err':'okmsg')+'" style="margin-top:12px">'+(st===false?(temJogos(id)?MASCOTE+' Quase! Vamos ver juntos como faz:':'Não foi dessa vez. Veja a resolução:'):(temJogos(id)?JG_OK[(s.idx+s.seed)%JG_OK.length]:'Acertou! 🎉'))+'</div>'+ansHTML(g); }
     else h+='<button class="btn sm ghost" style="margin-top:10px" data-a="revela" data-id="'+id+'">Não sei — ver a resolução</button>';
     h+='<div class="qnav"><button class="btn ghost" data-a="qnav" data-id="'+id+'" data-v="-1" '+(s.idx===0?'disabled':'')+'>← Anterior</button><button class="btn '+(shown?'primary':'ghost')+'" data-a="qnav" data-id="'+id+'" data-v="1" '+(s.idx===L.length-1?'disabled':'')+'>Próxima →</button></div>';
     h+='<div class="dots" aria-label="Ir para a questão">'+L.map(function(_,k){ var v=ac[s.seed+':'+k]; return '<button data-a="qjump" data-id="'+id+'" data-v="'+k+'" class="'+(k===s.idx?'cur ':'')+(v===true?'ok':v===false?'bad':'')+'" aria-label="Questão '+(k+1)+'">'+(k+1)+'</button>'; }).join('')+'</div>';
@@ -337,7 +339,7 @@ function quizOpts(id,seed,idx,g){
 A.escolhe=async function(el){ var id=el.dataset.id, s=quizState(id); var L=fullList(id,s.seed), g=L[s.idx]; var opts=quizOpts(id,s.seed,s.idx,g); var k=+el.dataset.v; var ok=opts[k]===g.a;
   s.pick=s.pick||{}; s.pick[s.idx]=k; s.shown[s.idx]=1; logEv('resposta',id+':'+s.seed+':'+s.idx,{n:s.idx+1,lista:s.seed+1,ok:ok},0);
   if(!isProf()){ var ac=Object.assign({},(ST.prog[id]&&ST.prog[id].acertos)||{}); var kk=s.seed+':'+s.idx; if(ac[kk]===undefined){ ac[kk]=ok; await saveProg(id,{acertos:ac}); await addXP(ok?10:3); } }
-  renderQuiz(id); updHdr(id); };
+  renderQuiz(id); updHdr(id); if(ok&&temJogos(id)) confete(); };
 function updHdr(id){ if(!ST.prog[id]) return; var hdr=document.querySelector('#main .row b'); if(hdr){ hdr.textContent=ST.prog[id].pct+'%'; hdr.style.color=pctColor(ST.prog[id].pct); var rr=document.querySelector('#main .big-ruler'); if(rr) rr.outerHTML=ruler(ST.prog[id].pct,true); } }
 function ansHTML(g){ var st=steps(g.s); return '<div class="answer"><div class="small muted" style="font-weight:800;letter-spacing:.08em">RESPOSTA</div><div class="ans">'+g.a+'</div>'+(st.length?'<div style="margin-top:8px;font-weight:800">Passo a passo:</div><ol class="steps">'+st.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>':'')+'</div>'; }
 A.qmode=function(el){ quizState(el.dataset.id).mode=el.dataset.v; renderQuiz(el.dataset.id); };
@@ -700,7 +702,7 @@ function diaRel(ts){ var d=new Date(ts); d.setHours(0,0,0,0); var n=Math.round((
 function quandoTxt(ts){ return diaRel(ts)+' às '+hhmm(ts); }
 function vistoInfo(al){ var t=al&&al.last_seen; if(!t) return {on:false,txt:'Ainda não abriu o app (ou não há registro)'}; var diff=Date.now()-new Date(t).getTime(); if(diff<150000) return {on:true,txt:'Online agora'}; return {on:false,txt:'Visto por último '+quandoTxt(t)}; }
 function vistoBadge(al){ var v=vistoInfo(al); return '<span class="small" style="display:inline-flex;align-items:center;gap:5px;font-weight:700;color:'+(v.on?'var(--ok)':'var(--muted)')+'"><span style="width:9px;height:9px;border-radius:50%;background:'+(v.on?'#22C55E':'#B8C0D4')+';display:inline-block"></span>'+esc(v.txt)+'</span>'; }
-function nomeTopico(id){ return id&&TBY[id]?strip(TBY[id].nome):'assunto'; }
+function nomeTopico(id){ if(id&&TBY[id]) return strip(TBY[id].nome); var pt=id&&PORTUGUES_TOPICS.filter(function(t){return t.id===id;})[0]; return pt?'Português: '+pt.nome:'assunto'; }
 async function ativHTML(al){
   var ev=[], av=[];
   try{ ev=await DB.q('eventos',{eq:{student_id:al.id},order:['created_at',false],limit:400}); }catch(e){ return '<div class="err">Não consegui carregar a atividade: '+esc(erroMsg(e))+'</div>'; }
@@ -720,6 +722,7 @@ async function ativHTML(al){
     else if(it.tipo==='app') txt='📱 Abriu o app';
     else if(it.tipo==='assunto') txt='📖 Abriu o assunto <b>'+esc(nomeTopico(it.ref))+'</b>';
     else if(it.tipo==='lista') txt='📝 Abriu a lista <b>"'+esc(it.det.titulo||'')+'"</b>';
+    else if(it.tipo==='jogo') txt='🎮 Jogou <b>'+esc(it.det.jogo||'')+'</b> ('+esc(nomeTopico(it.ref))+'): '+(it.det.acertos||0)+' de '+(it.det.de||5)+' ⭐';
     else if(it.tipo==='material') txt='📄 Abriu o PDF <b>"'+esc(it.det.titulo||'')+'"</b>';
     else if(it.tipo==='pagamentos') txt='💰 Viu a tela de pagamentos';
     else if(it.tipo==='ia') txt='✨ Usou o Professor IA em <b>'+esc(nomeTopico(it.ref))+'</b>';
@@ -1072,11 +1075,11 @@ async function render(){
       if(r==='painel') return await vPainel(); if(r==='alunos') return await vAlunos(); if(r==='aluno') return await vAluno(p[1],p[2]);
       if(r==='p-listas') return await vPListas(); if(r==='nova-lista'){ if(!ST.nl||ST.nl.reset||p[1]) ST.nl=null; return await vNovaLista(p[1]); }
       if(r==='corrigir'||r==='ver-lista') return await vCorrigir(p[1]); if(r==='p-duvidas') return await vPDuvidas();
-      if(r==='conteudo'||r==='assuntos') return vAssuntos(); if(r==='assunto') return await vAssunto(p[1],p[2]); if(r==='meu-perfil') return vMeuPerfil(); if(r==='materiais') return await vMateriais(); if(r==='financeiro') return await vFinProf();
+      if(r==='conteudo'||r==='assuntos') return vAssuntos(); if(r==='assunto') return await vAssunto(p[1],p[2]); if(r==='pt') return await vPt(p[1],p[2]); if(r==='meu-perfil') return vMeuPerfil(); if(r==='materiais') return await vMateriais(); if(r==='financeiro') return await vFinProf();
       if(r==='avisos') return await vAvisos(); if(r==='relatorio') return await vRelatorio(p[1]); if(r==='agenda-prof') return await vAgendaProf();
       location.hash='#/painel'; return;
     }
-    if(r==='inicio') return await vInicio(); if(r==='assuntos') return vAssuntos(); if(r==='assunto') return await vAssunto(p[1],p[2]);
+    if(r==='inicio') return await vInicio(); if(r==='assuntos') return vAssuntos(); if(r==='assunto') return await vAssunto(p[1],p[2]); if(r==='pt') return await vPt(p[1],p[2]);
     if(r==='plano') return await vPlano(); if(r==='listas') return await vListas(); if(r==='lista') return await vLista(p[1]);
     if(r==='duvidas') return await vDuvidas(); if(r==='perfil') return await vPerfil(); if(r==='materiais') return await vMateriais(); if(r==='financeiro') return await vFinAluno();
     if(r==='sequencia') return vSequencia(); if(r==='avisos') return await vAvisos(); if(r==='diagnostico') return vDiag();
@@ -1104,5 +1107,6 @@ async function boot(){
   try{ var st=await fetch('/api/setup').then(function(r){return r.json();}); if(st.precisaSetup) return screenSetup(); }catch(e){}
   screenLogin();
 }
+/*JOGOS*/
 boot();
 })();
