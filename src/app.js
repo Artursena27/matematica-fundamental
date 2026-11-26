@@ -624,17 +624,17 @@ A.novoMat=async function(el){ await getAlunos(); matForm(null,el&&el.dataset&&el
 A.editMat=async function(el){ await getAlunos(); var m=(ST.mats||{})[el.dataset.id]; if(m) matForm(m); };
 function matAssuntoOptions(disc,ano,selected){
   if(disc==='Português') return '<option value="">Escolha o assunto</option>'+PORTUGUES_4.filter(function(x){return ano==='4º ano';}).map(function(x){return '<option value="'+esc(x)+'"'+(x===selected?' selected':'')+'>'+esc(x)+'</option>';}).join('');
-  return '<option value="">Geral (sem assunto)</option>'+TOPICS.filter(function(t){return t.ano===ano;}).map(function(t){return '<option value="'+t.id+'"'+(t.id===selected?' selected':'')+'>'+esc(strip(t.nome))+'</option>';}).join('');
+  var topics=TOPICS.filter(function(t){return ano==='Todos'||t.ano===ano;}); return '<option value="">Geral (sem assunto)</option>'+topics.map(function(t){return '<option value="'+t.id+'"'+(t.id===selected?' selected':'')+'>'+esc(strip(t.nome))+'</option>';}).join('');
 }
 function matForm(m,topico,discArg,anoArg,assuntoArg){
   var novo=!m; m=m||{}; var disc=m.disciplina||discArg||'Matemática', tp=m.topic_id||topico||'';
-  var ano=m.ano||(disc==='Português'?'4º ano':(TBY[tp]&&TBY[tp].ano))||anoArg||'6º ano';
+  var ano=m.ano||(disc==='Português'?'4º ano':(TBY[tp]&&TBY[tp].ano))||anoArg||(novo?'4º ano':'Todos');
   var selected=disc==='Português'?(m.assunto||assuntoArg||''):tp;
   sheet(novo?'Enviar PDF':'Editar material','<form id="fmat" data-form="mat"'+(novo?'':' data-id="'+m.id+'"')+'>'+
     '<label for="mf" style="margin-top:0">'+(novo?'Arquivo PDF':'Trocar o PDF (opcional)')+'</label><input id="mf" name="f" type="file" accept="application/pdf,.pdf"'+(novo?' required':'')+' data-change="matArq">'+
     (novo?'':'<p class="small muted" style="margin:4px 0 0">Arquivo atual: '+esc(m.nome_arquivo||'PDF')+(m.tamanho?' · '+fmtTam(m.tamanho):'')+(m.url?' · <a href="'+esc(m.url)+'" target="_blank" rel="noopener">abrir</a>':'')+'</p>')+
     '<label for="mdisc">Disciplina</label><select id="mdisc" name="disciplina" data-change="matDisc"><option'+(disc==='Matemática'?' selected':'')+'>Matemática</option><option'+(disc==='Português'?' selected':'')+'>Português</option></select>'+
-    '<label for="myear">Ano</label><select id="myear" name="ano" data-change="matAno">'+ANOS.map(function(y){return '<option'+(y===ano?' selected':'')+'>'+y+'</option>';}).join('')+'</select>'+
+    '<label for="myear">Ano</label><select id="myear" name="ano" data-change="matAno">'+['Todos'].concat(ANOS).map(function(y){return '<option'+(y===ano?' selected':'')+'>'+y+'</option>';}).join('')+'</select>'+
     '<label for="ma">Assunto</label><select id="ma" name="a">'+matAssuntoOptions(disc,ano,selected)+'</select>'+
     '<label for="mt">Título</label><input id="mt" name="t" required maxlength="120" value="'+esc(m.titulo||'')+'" placeholder="Ex.: Resumo de frações">'+
     '<label for="md">Descrição (opcional)</label><textarea id="md" name="d" maxlength="500" placeholder="Ex.: Leia antes da aula de quinta.">'+esc(m.descricao||'')+'</textarea>'+
@@ -662,7 +662,7 @@ FORMS.mat=async function(f){ var b=document.getElementById('matBtn'), msg=docume
     if(file){ if(file.size>MAT_MAX) throw new Error('O limite é 25 MB.');
       var pr=await server('materiais',{acao:'preparar',tamanho:file.size}); b.textContent='Enviando… 0%';
       await subirArquivo(pr.uploadUrl,file,function(p){ b.textContent='Enviando… '+p+'%'; }); up=pr.path; b.textContent='Salvando…'; }
-    var disc=f.disciplina.value, ano=f.ano.value, assunto=f.a.value||null; var body={acao:'salvar',titulo:f.t.value,descricao:f.d.value,disciplina:disc,ano:ano,assunto:disc==='Português'?assunto:(assunto&&TBY[assunto]?strip(TBY[assunto].nome):null),topic_id:disc==='Português'?null:assunto,para:f.p.value||null,avisar:f.v.checked};
+    var disc=f.disciplina.value, ano=f.ano.value==='Todos'?'':f.ano.value, assunto=f.a.value||null; var body={acao:'salvar',titulo:f.t.value,descricao:f.d.value,disciplina:disc,ano:ano,assunto:disc==='Português'?assunto:(assunto&&TBY[assunto]?strip(TBY[assunto].nome):null),topic_id:disc==='Português'?null:assunto,para:f.p.value||null,avisar:f.v.checked};
     if(f.dataset.id) body.id=+f.dataset.id||f.dataset.id;
     if(up){ body.path=up; body.nome_arquivo=file.name; body.tamanho=file.size; }
     await server('materiais',body); closeSheet(); toast(f.dataset.id?'Material atualizado':'PDF enviado!'); render();
