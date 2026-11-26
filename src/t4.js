@@ -2,20 +2,29 @@
 function gen4(kind,r,i){
   var a,b,c,nm;
   if(kind==='num'){
-    a=r.i(10000,99999); b=r.i(10000,99999);
+    a=r.i(10000,99999); b=r.i(10000,99999); if(a===b) b=a+r.i(1,900);
+    var CASAS=['dezenas de milhar','unidades de milhar','centenas','dezenas','unidades'], VAL=[10000,1000,100,10,1];
+    var str=String(a), pos; do{ pos=r.i(0,4); }while(str[pos]==='0'); var dg=+str[pos];
+    var marc=n(a).replace(/\d/g,function(ch,k){ var idx=k>2?k-1:k; return idx===pos?'<b class="hl">'+ch+'</b>':ch; });
     return mix(i,[
-      function(){var str=String(a),pos=r.i(0,4),d=str[pos],v=+d*Math.pow(10,4-pos);return {q:'No número '+n(a)+', qual é o valor do algarismo '+d+' que está na posição '+(pos+1)+' da esquerda?',a:n(v),s:'Cada algarismo vale conforme sua posição: dezenas de milhar, milhares, centenas, dezenas e unidades. O '+d+' nessa posição vale '+n(v)+'.'};},
-      function(){return {q:'Qual número vem imediatamente depois de '+n(a)+'?',a:n(a+1),s:'Para encontrar o sucessor, somamos 1: '+n(a)+' + 1 = '+n(a+1)+'.'};},
-      function(){return {q:'Qual número vem imediatamente antes de '+n(a)+'?',a:n(a-1),s:'Para encontrar o antecessor, tiramos 1: '+n(a)+' − 1 = '+n(a-1)+'.'};},
-      function(){return {q:'Qual é o maior número: '+n(a)+' ou '+n(b)+'?',a:n(Math.max(a,b)),s:'Compare primeiro a quantidade de algarismos. Se for igual, compare da esquerda para a direita.'};}
+      function(){return {q:'No número '+marc+', quanto vale o algarismo destacado?',a:n(dg*VAL[pos]),s:['O '+dg+' está na casa das '+CASAS[pos]+'.','Cada unidade dessa casa vale '+n(VAL[pos])+'.','Então ele vale '+dg+' × '+n(VAL[pos])+' = '+n(dg*VAL[pos])+'.']};},
+      function(){return {q:'Qual número vem logo depois de '+n(a)+'?',a:n(a+1),s:['O número que vem depois é o sucessor.','Basta somar 1: '+n(a)+' + 1 = '+n(a+1)+'.']};},
+      function(){return {q:'Qual número vem logo antes de '+n(a)+'?',a:n(a-1),s:['O número que vem antes é o antecessor.','Basta tirar 1: '+n(a)+' − 1 = '+n(a-1)+'.']};},
+      function(){var M=Math.max(a,b),m=Math.min(a,b),sa=String(M),sb=String(m),k=0;while(sa[k]===sb[k])k++;return {q:'Qual é o maior número: '+n(a)+' ou '+n(b)+'?',a:n(M),s:['Os dois têm 5 algarismos, então comparamos da esquerda para a direita.',(k?'As primeiras casas são iguais. ':'')+'Na casa das '+CASAS[k]+', '+sa[k]+' é maior que '+sb[k]+'.','Logo, '+n(M)+' é o maior.']};},
+      function(){return {q:'Quantas dezenas de milhar há no número '+n(a)+'?',a:String(Math.floor(a/10000)),s:['A dezena de milhar é o primeiro algarismo de um número de 5 algarismos.','Em '+n(a)+', é o '+Math.floor(a/10000)+'.']};}
     ]);
   }
   if(kind==='decomp'){
     a=r.i(1,9); b=r.i(0,9); c=r.i(0,9); var d=r.i(0,9), e=r.i(0,9), val=a*10000+b*1000+c*100+d*10+e;
+    var NOMES=[['dezena de milhar','dezenas de milhar'],['unidade de milhar','unidades de milhar'],['centena','centenas'],['dezena','dezenas'],['unidade','unidades']];
+    var dig=[a,b,c,d,e], VAL=[10000,1000,100,10,1];
+    var parc=dig.map(function(x,k){return x*VAL[k];}).filter(function(x){return x>0;});
+    var fala=dig.map(function(x,k){return x?x+' '+NOMES[k][x>1?1:0]:'';}).filter(Boolean);
+    var falaTxt=fala.length>1?fala.slice(0,-1).join(', ')+' e '+fala[fala.length-1]:fala[0];
     return mix(i,[
-      function(){return {q:'Decomponha o número '+n(val)+' em dezenas de milhar, milhares, centenas, dezenas e unidades.',a:a*10000+' + '+b*1000+' + '+c*100+' + '+d*10+' + '+e,s:'Separe cada algarismo pelo valor da casa: '+a+' dezenas de milhar, '+b+' milhares, '+c+' centenas, '+d+' dezenas e '+e+' unidades.'};},
-      function(){return {q:'Que número é formado por '+a+' dezenas de milhar, '+b+' milhares, '+c+' centenas, '+d+' dezenas e '+e+' unidades?',a:n(val),s:a*10000+' + '+b*1000+' + '+c*100+' + '+d*10+' + '+e+' = '+n(val)+'.'};},
-      function(){return {q:'No número '+n(val)+', quanto vale o algarismo '+a+'?',a:n(a*10000),s:'O '+a+' está na casa das dezenas de milhar: '+a+' × 10.000 = '+n(a*10000)+'.'};}
+      function(){return {q:'Decomponha o número '+n(val)+' como uma soma (ex.: 3.000 + 200 + 5).',a:parc.map(function(x){return n(x);}).join(' + '),s:['Separe cada algarismo pela sua casa: '+falaTxt+'.','Escreva quanto cada um vale e some. As casas com zero não entram.','Fica '+parc.map(function(x){return n(x);}).join(' + ')+'.']};},
+      function(){return {q:'Que número tem '+falaTxt+'?',a:n(val),s:['Escreva o valor de cada parte: '+parc.map(function(x){return n(x);}).join(' + ')+'.','Some tudo (casa vazia vira zero): '+n(val)+'.']};},
+      function(){return {q:'Qual número é '+parc.map(function(x){return n(x);}).join(' + ')+'?',a:n(val),s:['Coloque cada parte na sua casa no quadro de ordens.','Onde não tem nada, escreva 0.','O número é '+n(val)+'.']};}
     ]);
   }
   if(kind==='add'){
@@ -92,19 +101,27 @@ function gen4(kind,r,i){
     ]);
   }
   if(kind==='time'){
-    a=r.i(1,10); b=r.i(1,50);
+    a=r.i(1,10); b=r.i(1,50); var hi=r.i(7,17), mi=r.p([0,10,15,20,30,40,45]), du=r.p([25,30,40,45,50,70,80,90,100].filter(function(x){return mi+x<120;}));
+    var fim=hi*60+mi+du, hh=function(t){var m=t%60;return Math.floor(t/60)+'h'+(m?String(m).padStart(2,'0'):'');};
     return mix(i,[
-      function(){return {q:'Quantos minutos há em '+a+' horas?',a:n(a*60)+' minutos',s:'Cada hora tem 60 minutos: '+a+' × 60 = '+a*60+'.'};},
-      function(){return {q:'Uma aula começou às 14h e durou '+(a*10)+' minutos. A que horas terminou?',a:(14+Math.floor(a/6))+':'+String((a*10)%60).padStart(2,'0'),s:'Some a duração ao horário inicial, lembrando que 60 minutos formam 1 hora.'};},
-      function(){return {q:'Quantos minutos se passaram das 8h até as 9h'+String(b).padStart(2,'0')+'?',a:n(60+b)+' minutos',s:'Das 8h às 9h são 60 minutos. Acrescente mais '+b+': '+(60+b)+' minutos.'};}
+      function(){return {q:'Quantos minutos há em '+a+(a>1?' horas':' hora')+'?',a:n(a*60)+' minutos',s:['Cada hora tem 60 minutos.',a+' × 60 = '+(a*60)+' minutos.']};},
+      function(){return {q:'Uma atividade começou às '+hh(hi*60+mi)+' e durou '+du+' minutos. A que horas terminou?',a:hh(fim),s:['Começou às '+hh(hi*60+mi)+'.',(mi+du>=60?'Faltam '+(60-mi)+' minutos para chegar às '+(hi+1)+'h. Sobram '+(du-(60-mi))+' minutos.':'Somando '+du+' minutos aos '+mi+' minutos: '+(mi+du)+' minutos.'),'Terminou às '+hh(fim)+'.']};},
+      function(){return {q:'Quantos minutos se passaram das '+hi+'h até as '+(hi+1)+'h'+String(b).padStart(2,'0')+'?',a:n(60+b)+' minutos',s:['Das '+hi+'h às '+(hi+1)+'h é 1 hora = 60 minutos.','Depois andou mais '+b+' minutos.','60 + '+b+' = '+(60+b)+' minutos.']};},
+      function(){var t=60+b;return {q:'Quantas horas e minutos são '+t+' minutos?',a:'1 hora e '+b+' minutos',s:['60 minutos formam 1 hora.',t+' − 60 = '+b+'.','Então '+t+' minutos = 1 hora e '+b+' minutos.']};}
     ]);
   }
   if(kind==='stats'){
-    a=r.i(5,20); b=r.i(1,5);
+    var ESP=r.sh(['futebol','vôlei','natação','basquete','queimado']).slice(0,3), Q=[r.i(3,15),r.i(3,15),r.i(3,15)];
+    while(Q[0]===Q[1]||Q[1]===Q[2]||Q[0]===Q[2]) Q[r.i(0,2)]=r.i(3,15);
+    var mx=Q.indexOf(Math.max.apply(null,Q)), mn=Q.indexOf(Math.min.apply(null,Q)), tab=ESP.map(function(e,k){return e+': '+Q[k];}).join(' · ');
+    var cap=function(x){return x[0].toUpperCase()+x.slice(1);}, az=r.i(1,9), vm=r.i(1,9); if(az===vm) vm=az+1;
+    var cor=az>vm?'Azul':'Vermelha';
     return mix(i,[
-      function(){return {q:'Em uma pesquisa, '+a+' crianças escolheram futebol e '+(a-b)+' escolheram vôlei. Qual opção foi mais escolhida?',a:'Futebol',s:a+' é maior que '+(a-b)+'. Portanto, futebol foi a opção mais escolhida.'};},
-      function(){return {q:'Uma caixa tem '+a+' bolas: '+b+' azuis e as demais vermelhas. Qual cor é mais provável retirar?',a:(a-b>b?'Vermelha':a-b===b?'As duas têm a mesma chance':'Azul'),s:'Há '+b+' bolas azuis e '+(a-b)+' vermelhas. A cor com mais bolas tem maior chance.'};},
-      function(){return {q:'Se hoje há sol e não há nuvens, tirar o número 7 em um dado comum é um evento…',a:'Impossível',s:'Um evento impossível é aquele que não pode acontecer.'};}
+      function(){return {q:'Numa pesquisa sobre esporte preferido, a tabela ficou assim: '+tab+'. Qual esporte foi o mais escolhido?',a:cap(ESP[mx]),s:['Compare os números da tabela.','O maior é '+Q[mx]+'.','Então o mais escolhido foi '+ESP[mx]+'. No gráfico de barras, ele teria a barra mais alta.']};},
+      function(){return {q:'Na pesquisa '+tab+', quantas crianças responderam ao todo?',a:String(Q[0]+Q[1]+Q[2]),s:['Some todas as respostas.',Q.join(' + ')+' = '+(Q[0]+Q[1]+Q[2])+'.']};},
+      function(){return {q:'Na pesquisa '+tab+', qual esporte teria a barra mais baixa no gráfico?',a:cap(ESP[mn]),s:['A barra mais baixa é a do menor número.','O menor é '+Q[mn]+', de '+ESP[mn]+'.']};},
+      function(){return {q:'Uma caixa tem '+az+' bolas azuis e '+vm+' bolas vermelhas. Sem olhar, qual cor é mais provável tirar?',a:cor,s:['Há '+az+' azuis e '+vm+' vermelhas.','A cor que tem mais bolas tem mais chance.','Mais provável: '+cor.toLowerCase()+'.']};},
+      function(){var ev=r.p([['tirar o número 7','Impossível','o dado só tem números de 1 a 6'],['tirar um número menor que 7','Certo','todos os números do dado (1 a 6) são menores que 7'],['tirar o número 6','Possível, mas pouco provável','só 1 das 6 faces tem o 6']]);return {q:'Ao jogar um dado comum (faces de 1 a 6), '+ev[0]+' é um evento…',a:ev[1],s:['Pense em todos os resultados possíveis: 1, 2, 3, 4, 5 e 6.','Aqui, '+ev[2]+'.','Então o evento é: '+ev[1].toLowerCase()+'.']};}
     ]);
   }
   return {q:'Resolva a atividade.',a:'Vamos resolver juntos.',s:'Leia com atenção e procure as informações importantes.'};

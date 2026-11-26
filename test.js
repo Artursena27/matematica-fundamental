@@ -1,5 +1,5 @@
 const fs=require('fs'),vm=require('vm');
-const code=['core','t1','t1b','t2','t3','t3b','t4','teoria1','teoria2','teoria3','teoria4','teoria5','didatica'].map(f=>fs.readFileSync('src/'+f+'.js','utf8')).join('\n')+'\nthis.TOPICS=TOPICS;this.lista=lista;';
+const code=['core','t1','t1b','t2','t3','t3b','t4','teoria1','teoria2','teoria3','teoria4','teoria5','teoria6','didatica'].map(f=>fs.readFileSync('src/'+f+'.js','utf8')).join('\n')+'\nthis.TOPICS=TOPICS;this.lista=lista;';
 const ctx={console};vm.createContext(ctx);vm.runInContext(code,ctx);
 let bad=0;const ids={};
 for(const t of ctx.TOPICS){ if(ids[t.id])console.log('DUP',t.id); ids[t.id]=1;
