@@ -644,7 +644,7 @@ function matForm(m,topico,discArg,anoArg,assuntoArg){
     '<button class="btn primary block" form="fmat" id="matBtn">'+(novo?'Enviar PDF':'Salvar alterações')+'</button>'+(novo?'':'<button class="btn danger block" style="margin-top:8px" data-a="delMat" data-id="'+m.id+'">Apagar material</button>'));
 }
 CHANGE.matDisc=function(sel){var d=sel.value,y=document.getElementById('myear'),a=document.getElementById('ma');if(d==='Português'&&y)y.value='4º ano';if(a)a.innerHTML=matAssuntoOptions(d,y?y.value:'4º ano','');};
-CHANGE.matAno=function(sel){var d=document.getElementById('mdisc'),a=document.getElementById('ma');if(a)a.innerHTML=matAssuntoOptions(d?d.value:'Matemática',sel.value,'');};
+CHANGE.matAno=function(sel){var d=document.getElementById('mdisc'),a=document.getElementById('ma'),ano=sel.value;if(d&&d.value==='Português'&&ano!=='4º ano'){ano='4º ano';sel.value=ano;}if(a)a.innerHTML=matAssuntoOptions(d?d.value:'Matemática',ano,'');};
 CHANGE.matArq=function(inp){ var f=inp.files[0], t=document.getElementById('mt'), msg=document.getElementById('matMsg'); msg.innerHTML=''; if(!f) return;
   if(!/pdf$/i.test(f.type)&&!/\.pdf$/i.test(f.name)){ msg.innerHTML='<div class="err">Escolha um arquivo PDF.</div>'; inp.value=''; return; }
   if(f.size>MAT_MAX){ msg.innerHTML='<div class="err">Esse PDF tem '+fmtTam(f.size)+'. O limite é 25 MB; comprima e tente de novo.</div>'; inp.value=''; return; }
