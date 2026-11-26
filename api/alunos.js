@@ -8,6 +8,7 @@ module.exports = async (req, res) => {
   const b = await readBody(req);
   if (b.acao === 'criar') {
     const nome = String(b.nome || '').trim(), usuario = String(b.usuario || '').trim().toLowerCase(), senha = String(b.senha || ''), ano = String(b.ano || '');
+    if (!['4º ano','5º ano','6º ano','7º ano','8º ano','9º ano'].includes(ano)) return json(res, 400, { erro: 'Selecione um ano escolar válido.' });
     if (!nome) return json(res, 400, { erro: 'Informe o nome do aluno.' });
     if (!/^[a-z0-9._-]{3,30}$/.test(usuario)) return json(res, 400, { erro: 'Usuário: 3 a 30 caracteres, só letras minúsculas sem acento, números, ponto, hífen ou sublinhado.' });
     if (senha.length < 6) return json(res, 400, { erro: 'A senha precisa ter pelo menos 6 caracteres.' });
@@ -22,7 +23,10 @@ module.exports = async (req, res) => {
   if (b.acao === 'editar') {
     if ((await getRole(b.id)) !== 'aluno') return json(res, 400, { erro: 'Aluno não encontrado.' });
     const patch = {};
-    if (['4º ano','5º ano','6º ano','7º ano','8º ano','9º ano'].includes(String(b.ano || ''))) patch.ano = String(b.ano);
+    if (Object.prototype.hasOwnProperty.call(b, 'ano')) {
+      if (!['4º ano','5º ano','6º ano','7º ano','8º ano','9º ano'].includes(String(b.ano || ''))) return json(res, 400, { erro: 'Selecione um ano escolar válido.' });
+      patch.ano = String(b.ano);
+    }
     if (Object.prototype.hasOwnProperty.call(b, 'responsavel_nome')) patch.responsavel_nome = String(b.responsavel_nome || '').trim() || null;
     if (Object.prototype.hasOwnProperty.call(b, 'responsavel_whatsapp')) patch.responsavel_whatsapp = String(b.responsavel_whatsapp || '').trim() || null;
     const p = await rest('profiles?id=eq.' + encodeURIComponent(b.id), { method: 'PATCH', body: patch });
