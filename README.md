@@ -4,7 +4,7 @@ Plataforma de apoio às aulas de Matemática Academy, com painel do professor e 
 
 - `index.html` é o site pronto (gerado).
 - `src/` tem o conteúdo: `t1.js`/`t1b.js` (números), `t2.js` (álgebra), `t3.js` (geometria, medidas, estatística) e `t4.js` (Matemática do 4º ano).
-- Para regerar depois de editar: `node build.js && cp dist/index.html .`
+- Para regerar depois de editar: `node build.js`
 - Para conferir os geradores de questões: `node test.js`
 
 ## Materiais em PDF
