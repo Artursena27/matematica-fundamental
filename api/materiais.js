@@ -37,6 +37,9 @@ module.exports = async (req, res) => {
       let q = 'materiais?select=*&order=created_at.desc';
       if (!prof) q += '&or=(para.is.null,para.eq.' + encodeURIComponent(user.id) + ')';
       if (b.topic_id) q += '&topic_id=eq.' + encodeURIComponent(b.topic_id);
+      if (b.disciplina) q += '&disciplina=eq.' + encodeURIComponent(b.disciplina);
+      if (b.ano) q += '&ano=eq.' + encodeURIComponent(b.ano);
+      if (b.assunto) q += '&assunto=eq.' + encodeURIComponent(b.assunto);
       if (b.limite) q += '&limit=' + Math.min(100, Math.max(1, +b.limite || 10));
       const r = await rest(q);
       if (!r.ok) return json(res, 500, { erro: /materiais/.test(JSON.stringify(r.data)) ? 'A tabela de materiais ainda não foi criada no Supabase (rode sql/academy_v3_materiais.sql).' : 'Não consegui carregar os materiais.' });
@@ -63,7 +66,11 @@ module.exports = async (req, res) => {
 
     if (b.acao === 'salvar') {
       const titulo = limpa(b.titulo, 120); if (!titulo) return json(res, 400, { erro: 'Dê um título ao material.' });
-      const row = { titulo, descricao: limpa(b.descricao, 500) || null, topic_id: limpa(b.topic_id, 80) || null, para: b.para || null, updated_at: new Date().toISOString() };
+      const disciplina = b.disciplina === 'Português' ? 'Português' : 'Matemática';
+      const ano = ['4º ano','5º ano','6º ano','7º ano','8º ano','9º ano'].includes(String(b.ano || '')) ? String(b.ano) : null;
+      const assunto = limpa(b.assunto, 180) || null;
+      if (disciplina === 'Português' && (!ano || !assunto)) return json(res, 400, { erro: 'Selecione o ano e o assunto de Português.' });
+      const row = { titulo, descricao: limpa(b.descricao, 500) || null, disciplina, ano, assunto, topic_id: disciplina === 'Português' ? null : (limpa(b.topic_id, 80) || null), para: b.para || null, updated_at: new Date().toISOString() };
       if (row.para && (await getRole(row.para)) !== 'aluno') return json(res, 400, { erro: 'Aluno não encontrado.' });
       let antigo = null;
       if (b.path) {

@@ -1,7 +1,7 @@
 {
   "name": "Matemática Academy",
   "short_name": "Mat Academy",
-  "description": "Teoria, exercícios e acompanhamento de matemática do 6º ao 9º ano.",
+  "description": "Plataforma de apoio às aulas de Matemática Academy.",
   "lang": "pt-BR",
   "start_url": "/?app=1",
   "scope": "/",

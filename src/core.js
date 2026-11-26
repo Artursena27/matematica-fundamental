@@ -50,7 +50,7 @@ function poly(terms){
 function sup(e){return '<sup>'+e+'</sup>';}
 function raiz(x){return '√<span class="ov">'+x+'</span>';}
 function mix(i,fns){return fns[i%fns.length]();}
-function topic(t){TOPICS.push(t);}
+function topic(t){t.disciplina=t.disciplina||'Matemática';TOPICS.push(t);}
 function lista(t,seed){
   var r=R(hashStr(t.id)+(seed||0)*7919);var out=[],seen={},tries=0;
   while(out.length<20&&tries<600){tries++;var g=t.gen(r,tries-1);if(seen[g.q])continue;seen[g.q]=1;out.push(g);}

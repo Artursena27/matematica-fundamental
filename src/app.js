@@ -49,7 +49,9 @@ function ic(n,c,w){ return '<svg viewBox="0 0 24 24" width="'+(w||24)+'" height=
 TOPICS.forEach(function(t){ if(TEORIA[t.id]) t.teoria = fx(TEORIA[t.id]); });
 var TBY = {}; TOPICS.forEach(function(t){ TBY[t.id]=t; });
 var AREAS = ['Números','Álgebra','Geometria','Grandezas e medidas','Estatística e probabilidade'];
-var ANOS = ['6º ano','7º ano','8º ano','9º ano'];
+var PORTUGUES_4 = ['Interpretação de texto: localizar informação, inferir e ideia principal','Gêneros curtos: bilhete, notícia, fábula e problema matemático','Sinônimos e antônimos','Substantivo, adjetivo e verbo','Pontuação','Produção de frases e pequenos textos'];
+var PORTUGUES_TOPICS = PORTUGUES_4.map(function(nome,i){return {id:'pt4-'+(i+1),nome:nome,ano:'4º ano',disciplina:'Português',area:'Língua Portuguesa'};});
+var ANOS = ['4º ano','5º ano','6º ano','7º ano','8º ano','9º ano'];
 var listCache = {};
 function getList(id,seed){ var k=id+'|'+seed; if(!listCache[k]) listCache[k]=lista(TBY[id],seed); return listCache[k]; }
 function norm(s){ return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
@@ -59,7 +61,7 @@ var MEM = null;
 function mockInit(role){
   var now=new Date().toISOString(); var d=function(n){var x=hoje();x.setDate(x.getDate()+n);return isoDate(x);};
   MEM={ seq:100,
-    profiles:[{id:'p1',role:'professor',nome:'Artur Sena',username:null,ano:null},{id:'a1',role:'aluno',nome:'Maria Clara Souza',username:'mariaclara',ano:'8º ano',meta_xp:20,diagnostico:(/diag=1/.test(location.search)?null:{pulado:true}),responsavel_whatsapp:'81999999999',last_seen:new Date(Date.now()-60000).toISOString(),valor_hora:30,horario:{desde:d(-8),slots:[{dia:2,hora:'18:00',dur:60},{dia:3,hora:'18:00',dur:60},{dia:5,hora:'18:00',dur:60}]}},{id:'a2',role:'aluno',nome:'João Pedro Lima',username:'joaopedro',ano:'7º ano'}],
+    profiles:[{id:'p1',role:'professor',nome:'Artur Sena',username:null,ano:null},{id:'a1',role:'aluno',nome:'Maria Clara Souza',username:'mariaclara',ano:'8º ano',meta_xp:20,diagnostico:(/diag=1/.test(location.search)?null:{pulado:true}),responsavel_whatsapp:'81999999999',last_seen:new Date(Date.now()-60000).toISOString(),valor_hora:30,horario:{desde:d(-8),slots:[{dia:2,hora:'18:00',dur:60},{dia:3,hora:'18:00',dur:60},{dia:5,hora:'18:00',dur:60}]}},{id:'a2',role:'aluno',nome:'João Pedro Lima',username:'joaopedro',ano:'7º ano'},{id:'a3',role:'aluno',nome:'Theo (demonstração)',username:'theodemo',ano:'4º ano',responsavel_nome:'Igor (pai)',responsavel_whatsapp:'81988887777',valor_mensal:400,horario:{desde:d(-35),slots:[{dia:1,hora:'19:30',dur:90},{dia:3,hora:'19:30',dur:90}]}}],
     progress:[{student_id:'a1',topic_id:'fracoes',teoria:true,acertos:{},pct:90,updated_at:now},{student_id:'a1',topic_id:'equacao-1-grau',teoria:true,acertos:{},pct:45,updated_at:now},{student_id:'a1',topic_id:'mmc',teoria:false,acertos:{},pct:15,updated_at:now},{student_id:'a1',topic_id:'pitagoras',teoria:true,acertos:{},pct:68,updated_at:now}],
     notes:[{id:1,student_id:'a1',topic_id:'equacao-1-grau',texto:'Não entendo quando o número negativo passa dividindo.',dificuldade:true,created_at:now}],
     plan_items:[{id:2,student_id:'a1',topic_id:'equacao-1-grau',titulo:'Terminar exercícios de equação',data:d(1),feito:false},{id:3,student_id:'a1',topic_id:'pitagoras',titulo:'Revisar Pitágoras para a prova',data:d(-1),feito:false},{id:4,student_id:'a1',topic_id:null,titulo:'Levar caderno na aula',data:null,feito:true}],
@@ -73,7 +75,8 @@ function mockInit(role){
     aulas:[{id:301,student_id:'a1',data:d(-5),hora:'19:00',duracao_min:60,valor:null,status:'pendente',obs:'Aula extra',created_at:now},{id:302,student_id:'a1',data:d(-10),hora:'18:00',duracao_min:60,valor:30,status:'paga',pago_em:now,created_at:now}],
     horarios:[[1,'18:00',0],[1,'19:00',0],[1,'20:00',0],[2,'18:00',1],[2,'19:00',0],[2,'20:00',0],[3,'18:00',1],[3,'19:00',0],[4,'19:00',0],[5,'18:00',1],[6,'08:00',0],[6,'09:00',0]].map(function(h,k){return {id:200+k,dia:h[0],hora:h[1],ocupado:!!h[2],obs:h[2]?'Maria Clara':null};})
   };
-  return role==='professor'?MEM.profiles[0]:MEM.profiles[1];
+  var qm=/[?&]quem=([a-z0-9]+)/.exec(location.search), pq=qm&&MEM.profiles.filter(function(p){return p.id===qm[1]&&p.role==='aluno';})[0];
+  return role==='professor'?MEM.profiles[0]:(pq||MEM.profiles[1]);
 }
 function mockMatch(r,eq){ for(var k in eq){ if(r[k]!==eq[k]) return false; } return true; }
 var DB = {
@@ -100,7 +103,8 @@ var DB = {
     var r=await ST.sb.from(t).upsert(row,{onConflict:conflict}).select(); if(r.error) throw r.error; return r.data[0]; }
 };
 async function server(path,body){
-  if(MOCK){ if(path==='alunos'&&body.acao==='criar'){ var p={id:'m'+(++MEM.seq),role:'aluno',nome:body.nome,username:body.usuario,ano:body.ano}; MEM.profiles.push(p); return {ok:true,aluno:p}; }
+  if(MOCK){ if(path==='alunos'&&body.acao==='criar'){ var p={id:'m'+(++MEM.seq),role:'aluno',nome:body.nome,username:body.usuario,ano:body.ano,responsavel_nome:body.responsavel_nome||null,responsavel_whatsapp:body.responsavel_whatsapp||null}; MEM.profiles.push(p); return {ok:true,aluno:p}; }
+    if(path==='alunos'&&body.acao==='editar'){ var pe=MEM.profiles.filter(function(p){return p.id===body.id;})[0]; if(!pe)throw new Error('Aluno não encontrado.'); if(body.ano)pe.ano=body.ano; pe.responsavel_nome=body.responsavel_nome||null; pe.responsavel_whatsapp=body.responsavel_whatsapp||null; return {ok:true,aluno:pe}; }
     if(path==='alunos'&&body.acao==='remover'){ MEM.profiles=MEM.profiles.filter(function(p){return p.id!==body.id;}); return {ok:true}; }
     if(path==='materiais') return mockMat(body);
     if(path==='professor'){ await new Promise(function(r){setTimeout(r,700);}); return {resposta:'(Modo demonstração) Vamos por partes:\n1. Leia o enunciado com calma.\n2. Identifique o que o problema pede.\n\nQuer tentar o primeiro passo?'}; }
@@ -177,7 +181,7 @@ function screenSetup(){
   screenMsg('Criar conta do professor','<p class="muted">Primeiro acesso: crie a conta de professor. Depois disso esta tela não aparece mais.</p><form data-form="setup"><label for="sn">Seu nome</label><input id="sn" name="nome" required autocomplete="name"><label for="se">E-mail</label><input id="se" name="email" type="email" required autocomplete="email"><label for="ss">Senha (mínimo 6)</label><input id="ss" name="senha" type="password" minlength="6" required autocomplete="new-password"><div id="msg"></div><button class="btn primary block" style="margin-top:16px">Criar conta</button></form>');
 }
 function screenLogin(msg){
-  screenMsg('Entrar','<p class="muted" style="margin-top:-6px">Matemática Academy · 6º ao 9º ano</p><form data-form="login"><label for="lu">Usuário (ou e-mail do professor)</label><input id="lu" name="u" required autocapitalize="none" autocorrect="off" autocomplete="username"><label for="lp">Senha</label><input id="lp" name="p" type="password" required autocomplete="current-password"><div id="msg">'+(msg?'<div class="err">'+esc(msg)+'</div>':'')+'</div><button class="btn primary block" style="margin-top:16px">Entrar</button></form><p class="muted small" style="margin-top:18px">Esqueceu a senha? Fale com o professor pelo <a href="https://wa.me/'+WA+'" target="_blank" rel="noopener">WhatsApp</a>.</p>');
+  screenMsg('Entrar','<p class="muted" style="margin-top:-6px">Matemática Academy · Aprender com clareza, passo a passo</p><form data-form="login"><label for="lu">Usuário (ou e-mail do professor)</label><input id="lu" name="u" required autocapitalize="none" autocorrect="off" autocomplete="username"><label for="lp">Senha</label><input id="lp" name="p" type="password" required autocomplete="current-password"><div id="msg">'+(msg?'<div class="err">'+esc(msg)+'</div>':'')+'</div><button class="btn primary block" style="margin-top:16px">Entrar</button></form><p class="muted small" style="margin-top:18px">Esqueceu a senha? Fale com o professor pelo <a href="https://wa.me/'+WA+'" target="_blank" rel="noopener">WhatsApp</a>.</p>');
 }
 var FORMS = {};
 FORMS.setup=async function(f){ var b=f.querySelector('button'); b.disabled=true; var m=document.getElementById('msg');
@@ -222,7 +226,7 @@ async function vInicio(){
   h+='<h2>Listas para fazer</h2>'+(pend.length?'<div class="stack">'+pend.map(asgItem).join('')+'</div>':'<p class="muted">Nenhuma lista pendente. 🎉</p>');
   var atras=plan.filter(function(p){return p.data && new Date(p.data+'T12:00')<hoje();});
   h+='<h2>Próximas tarefas</h2>'+(plan.length?'<div class="stack">'+plan.slice(0,4).map(planItem).join('')+'</div>'+(atras.length?'<p class="small" style="color:var(--bad);font-weight:700">'+atras.length+' tarefa(s) atrasada(s)</p>':''):'<p class="muted">Sem tarefas. Monte seu plano na aba <a href="#/plano">Plano</a>.</p>');
-  try{ var fp=await DB.q('aulas',{eq:{student_id:me.id,status:'pendente'}}); if(fp.length){ var ft=fp.reduce(function(s2,a){return s2+valorAula(a,me);},0); h+='<a class="card" href="#/financeiro" style="display:block;text-decoration:none;margin-top:12px;background:var(--badbg);border-color:#F2BDBD"><b style="color:var(--bad)">💰 '+fp.length+' aula(s) a pagar · '+brl(ft)+'</b><span class="small muted" style="display:block">Toque para ver os detalhes e a chave PIX</span></a>'; } }catch(e){}
+  try{ var fp=await DB.q('aulas',{eq:{student_id:me.id,status:'pendente'}}); if(fp.length){ var ft=fp.reduce(function(s2,a){return s2+valorAula(a,me);},0); h+='<a class="card" href="#/financeiro" style="display:block;text-decoration:none;margin-top:12px;background:var(--badbg);border-color:#F2BDBD"><b style="color:var(--bad)">💰 '+pendTxt(fp)+' · '+brl(ft)+'</b><span class="small muted" style="display:block">Toque para ver os detalhes e a chave PIX</span></a>'; } }catch(e){}
   var mats=[]; try{ mats=(await server('materiais',{acao:'listar',limite:3})).materiais||[]; }catch(e){}
   if(mats.length) h+='<h2>Materiais do professor</h2><div class="stack">'+mats.map(matItem).join('')+'</div><a class="btn ghost block" style="margin-top:8px" href="#/materiais">Ver todos os materiais</a>';
   if(dv.length) h+='<h2>Dúvidas respondidas</h2><div class="stack">'+dv.map(doubtItem).join('')+'</div>';
@@ -244,18 +248,30 @@ function doubtItem(d){
 A.zoom=function(el){ sheet('Foto','<img src="'+esc(el.getAttribute('src'))+'" alt="Foto ampliada" style="width:100%;border-radius:12px">'); };
 
 function vAssuntos(){
-  var meuAno=!isProf()&&ST.me.ano&&ANOS.indexOf(ST.me.ano)>=0?ST.me.ano:null; var q=ST.busca||'', anoSel=ST.anoSel||meuAno||'Todos';
-  var words=norm(q).split(/\s+/).filter(Boolean);
-  var L=TOPICS.slice().sort(function(x,y){ return (x.ano===meuAno?0:1)-(y.ano===meuAno?0:1); }).filter(function(t){ if(anoSel!=='Todos'&&t.ano!==anoSel&&!words.length) return false; var hay=norm(t.nome+' '+t.tags+' '+t.area+' '+t.ano); return words.every(function(w){return hay.indexOf(w)>=0;}); });
-  var prof=isProf();
-  var h='<div class="search">'+ic('search','#55627F',20)+'<input id="busca" type="search" placeholder="Pesquisar assunto: frações, MMC, Pitágoras…" value="'+esc(q)+'" aria-label="Pesquisar assunto" autocomplete="off"></div>'+
-    '<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por ano">'+(meuAno?[meuAno]:[]).concat(['Todos'],ANOS.filter(function(a){return a!==meuAno;})).map(function(a){return '<button class="chip'+(a===anoSel?' on':'')+'" data-a="anoSel" data-v="'+a+'">'+(a===meuAno?'⭐ Meu ano ('+a+')':a)+'</button>';}).join('')+'</div>';
-  if(prof) h='<a class="btn gold block" style="margin-bottom:12px" href="#/materiais">'+ic('file')+' Materiais em PDF</a>'+h;
-  h+='<div id="lista">'+topicGrid(L,ST.prog,!prof)+'</div>';
-  page({title:prof?'Conteúdo':'Assuntos',sub:L.length+' assuntos',nav:prof?'conteudo':'assuntos',body:h});
-  var inp=document.getElementById('busca'); inp.addEventListener('input',function(){ ST.busca=inp.value; var pos=inp.selectionStart; vAssuntos(); var n=document.getElementById('busca'); n.focus(); try{n.setSelectionRange(pos,pos);}catch(e){} });
+  var meuAno=!isProf()&&ST.me.ano&&ANOS.indexOf(ST.me.ano)>=0?ST.me.ano:null;
+  var prof=isProf(), temPt=prof||meuAno==='4º ano'||meuAno==='5º ano';
+  var q=ST.busca||'', anoSel=ST.anoSel||meuAno||'Todos', disc=temPt?(ST.discSel||'Matemática'):'Matemática';
+  var words=norm(q).split(/\s+/).filter(Boolean), h='';
+  if(temPt) h+='<div class="chips" style="margin-top:8px" role="group" aria-label="Disciplina"><button class="chip'+(disc==='Matemática'?' on':'')+'" data-a="discSel" data-v="Matemática">Matemática</button><button class="chip'+(disc==='Português'?' on':'')+'" data-a="discSel" data-v="Português">Português</button></div>';
+  h+='<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por ano">'+(meuAno?[meuAno]:[]).concat(['Todos'],ANOS.filter(function(a){return a!==meuAno;})).map(function(a){return '<button class="chip'+(a===anoSel?' on':'')+'" data-a="anoSel" data-v="'+a+'">'+(a===meuAno?'⭐ Meu ano ('+a+')':a)+'</button>';}).join('')+'</div>';
+  if(disc==='Matemática'){
+    var L=TOPICS.slice().sort(function(x,y){ return (x.ano===meuAno?0:1)-(y.ano===meuAno?0:1); }).filter(function(t){ if(anoSel!=='Todos'&&t.ano!==anoSel) return false; var hay=norm(t.nome+' '+t.tags+' '+t.area+' '+t.ano); return words.every(function(w){return hay.indexOf(w)>=0;}); });
+    h+='<div class="search">'+ic('search','#55627F',20)+'<input id="busca" type="search" placeholder="Pesquisar assunto: frações, MMC, Pitágoras…" value="'+esc(q)+'" aria-label="Pesquisar assunto" autocomplete="off"></div><div id="lista">'+topicGrid(L,ST.prog,!prof)+'</div>';
+    page({title:prof?'Conteúdo':'Assuntos',sub:L.length+' assuntos de Matemática',nav:prof?'conteudo':'assuntos',body:(prof?'<a class="btn gold block" style="margin-bottom:12px" href="#/materiais">'+ic('file')+' Materiais em PDF</a>':'')+h});
+    var inp=document.getElementById('busca'); inp.addEventListener('input',function(){ ST.busca=inp.value; var pos=inp.selectionStart; vAssuntos(); var n=document.getElementById('busca'); n.focus(); try{n.setSelectionRange(pos,pos);}catch(e){} });
+  } else {
+    var P=PORTUGUES_TOPICS.filter(function(t){return (anoSel==='Todos'||t.ano===anoSel)&&words.every(function(w){return norm(t.nome).indexOf(w)>=0;});});
+    h+='<div class="search">'+ic('search','#55627F',20)+'<input id="busca" type="search" placeholder="Pesquisar assunto de Português…" value="'+esc(q)+'" aria-label="Pesquisar assunto" autocomplete="off"></div>';
+    h+='<p class="small muted">Catálogo de apoio para organizar PDFs. Português não gera listas, correção nem progresso.</p>';
+    h+='<div class="stack">'+P.map(function(t){return '<div class="item"><div class="grow"><span class="badge">4º ano</span><b style="display:block;margin-top:5px">'+esc(t.nome)+'</b></div>'+(prof?'<button class="btn sm gold" data-a="novoMat" data-disc="'+t.disciplina+'" data-ano="'+t.ano+'" data-assunto="'+esc(t.nome)+'">Enviar PDF</button>':'<button class="btn sm ghost" data-a="verPdfPt">Ver PDFs</button>')+'</div>';}).join('')+'</div>';
+    if(!P.length)h+='<p class="empty">Nenhum assunto encontrado para esse filtro.</p>';
+    page({title:prof?'Conteúdo':'Assuntos',sub:P.length+' assuntos de Português',nav:prof?'conteudo':'assuntos',body:(prof?'<a class="btn gold block" style="margin-bottom:12px" href="#/materiais">'+ic('file')+' Materiais em PDF</a>':'')+h});
+    var pin=document.getElementById('busca');pin.addEventListener('input',function(){ST.busca=pin.value;var pos=pin.selectionStart;vAssuntos();var n=document.getElementById('busca');n.focus();try{n.setSelectionRange(pos,pos);}catch(e){}});
+  }
 }
 A.anoSel=function(el){ ST.anoSel=el.dataset.v; vAssuntos(); };
+A.verPdfPt=function(){ ST.matdisc='Português'; ST.matf='todos'; ST.matano='Todos'; location.hash='#/materiais'; };
+A.discSel=function(el){ ST.discSel=el.dataset.v; ST.busca=''; ST.anoSel='Todos'; vAssuntos(); };
 
 async function vAssunto(id,tab){
   var t=TBY[id]; if(!t){ location.hash='#/assuntos'; return; }
@@ -474,10 +490,10 @@ async function vAlunos(){
   var h='<div class="grid"><button class="btn primary" data-a="novoAluno">+ Cadastrar aluno</button><a class="btn gold" href="#/financeiro">💰 Financeiro</a></div>'+(al.length?'<div class="stack" style="margin-top:12px">'+al.map(function(a){ var m=med[a.id]||[]; var v=m.length?Math.round(m.reduce(function(s,x){return s+x;},0)/m.length):0; return '<a class="item" style="text-decoration:none" href="#/aluno/'+a.id+'"><span class="avatar">'+esc(iniciais(a.nome))+'</span><div class="grow"><b>'+esc(a.nome)+'</b><span class="small muted">@'+esc(a.username)+' · '+esc(a.ano||'')+' · '+m.length+' assunto(s) · 🔥 '+streakInfo(at[a.id]||{},a.meta_xp||20).seq+'</span><div>'+vistoBadge(a)+'</div><div style="margin-top:6px">'+ruler(v)+'</div></div><b style="color:'+pctColor(v)+'">'+v+'%</b></a>'; }).join('')+'</div>':'<p class="empty">Nenhum aluno ainda. Cadastre o primeiro!</p>');
   page({title:'Alunos',sub:al.length+' cadastrados',nav:'alunos',body:h});
 }
-A.novoAluno=function(){ sheet('Cadastrar aluno','<form id="fa" data-form="aluno"><label for="an" style="margin-top:0">Nome completo</label><input id="an" name="n" required><label for="aa">Ano</label><select id="aa" name="a">'+ANOS.map(function(a){return '<option>'+a+'</option>';}).join('')+'</select><label for="au">Usuário (para o login)</label><input id="au" name="u" required autocapitalize="none" autocorrect="off" placeholder="ex.: mariaclara" pattern="[a-z0-9._\\-]{3,30}"><p class="small muted" style="margin:4px 0 0">Só letras minúsculas sem acento, números, ponto ou hífen.</p><label for="as">Senha inicial (mínimo 6)</label><input id="as" name="s" required minlength="6" value="'+Math.random().toString(36).slice(2,8)+'"><div id="amsg"></div></form>','<button class="btn primary block" form="fa">Cadastrar</button>');
+A.novoAluno=function(){ sheet('Cadastrar aluno','<form id="fa" data-form="aluno"><label for="an" style="margin-top:0">Nome completo</label><input id="an" name="n" required><label for="aa">Ano</label><select id="aa" name="a">'+ANOS.map(function(a){return '<option>'+a+'</option>';}).join('')+'</select><label for="au">Usuário (para o login)</label><input id="au" name="u" required autocapitalize="none" autocorrect="off" placeholder="ex.: mariaclara" pattern="[a-z0-9._\\-]{3,30}"><p class="small muted" style="margin:4px 0 0">Só letras minúsculas sem acento, números, ponto ou hífen.</p><label for="argn">Responsável (nome, opcional)</label><input id="argn" name="rn" placeholder="Ex.: Igor"><label for="arw">WhatsApp do responsável (opcional)</label><input id="arw" name="rw" inputmode="tel" placeholder="(81) 9 9999-9999"><label for="as">Senha inicial (mínimo 6)</label><input id="as" name="s" required minlength="6" value="'+Math.random().toString(36).slice(2,8)+'"><div id="amsg"></div></form>','<button class="btn primary block" form="fa">Cadastrar</button>');
   var n=document.getElementById('an'), u=document.getElementById('au'); n.addEventListener('input',function(){ if(!u.dataset.mexeu) u.value=norm(n.value).replace(/[^a-z\s]/g,'').trim().split(/\s+/).slice(0,2).join(''); }); u.addEventListener('input',function(){u.dataset.mexeu=1;}); };
 FORMS.aluno=async function(f){ var b=document.querySelector('[form="fa"]'); b.disabled=true; var m=document.getElementById('amsg');
-  try{ await server('alunos',{acao:'criar',nome:f.n.value.trim(),ano:f.a.value,usuario:f.u.value.trim().toLowerCase(),senha:f.s.value});
+  try{ await server('alunos',{acao:'criar',nome:f.n.value.trim(),ano:f.a.value,responsavel_nome:f.rn.value.trim()||null,responsavel_whatsapp:f.rw.value.trim()||null,usuario:f.u.value.trim().toLowerCase(),senha:f.s.value});
     var txt='Acesso à plataforma de matemática:\n'+location.origin+'\nUsuário: '+f.u.value.trim().toLowerCase()+'\nSenha: '+f.s.value;
     document.getElementById('sheetBody').innerHTML='<div class="okmsg">Aluno cadastrado!</div><p>Envie os dados de acesso para o aluno (ou responsável):</p><div class="studans">'+nl2br(txt)+'</div>';
     var ft=document.querySelector('#sheet footer'); ft.innerHTML='<div class="stack"><a class="btn wa block" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(txt)+'">'+ic('wa','#fff',20)+' Enviar pelo WhatsApp</a><button class="btn block" data-a="copiar" data-v="'+esc(txt)+'">Copiar</button></div>';
@@ -501,10 +517,11 @@ async function vAluno(id,tab){
   else if(tab==='notas'){ var nn=await DB.q('notes',{eq:{student_id:id},order:['created_at',false]}); x=nn.length?'<div class="stack">'+nn.map(noteItem).join('')+'</div>':'<p class="empty">Nenhuma anotação.</p>'; }
   else if(tab==='plano'){ x=await vPlano(id,true); }
   else if(tab==='listas'){ var ls=await DB.q('assignments',{eq:{student_id:id},order:['created_at',false]}); ls.forEach(function(l){l._aluno=a.nome;}); x='<a class="btn gold block" href="#/nova-lista/'+id+'">+ Mandar lista para '+esc(primeiroNome(a.nome))+'</a>'+(ls.length?'<div class="stack" style="margin-top:12px">'+ls.map(asgItem).join('')+'</div>':'<p class="empty">Nenhuma lista enviada.</p>'); }
-  else if(tab==='conta'){ x='<form class="card" data-form="resp" data-id="'+id+'" style="margin-bottom:12px"><label for="rw" style="margin-top:0">WhatsApp do responsável</label><input id="rw" name="w" inputmode="tel" placeholder="(81) 9 9999-9999" value="'+esc(a.responsavel_whatsapp||'')+'"><button class="btn primary block" style="margin-top:10px">Salvar</button></form><form class="card" data-form="senha" data-id="'+id+'"><label for="ns" style="margin-top:0">Nova senha para @'+esc(a.username)+'</label><input id="ns" name="s" minlength="6" required><button class="btn primary block" style="margin-top:10px">Trocar senha</button></form><button class="btn danger block" style="margin-top:16px" data-a="removerAluno" data-id="'+id+'">Remover aluno</button>'; }
+  else if(tab==='conta'){ x='<form class="card" data-form="perfilAluno" data-id="'+id+'" style="margin-bottom:12px"><label for="ay" style="margin-top:0">Ano escolar</label><select id="ay" name="ano">'+ANOS.map(function(y){return '<option'+(y===a.ano?' selected':'')+'>'+y+'</option>';}).join('')+'</select><label for="rn">Responsável (nome)</label><input id="rn" name="rn" value="'+esc(a.responsavel_nome||'')+'" placeholder="Ex.: Igor"><label for="rw">WhatsApp do responsável</label><input id="rw" name="rw" inputmode="tel" placeholder="(81) 9 9999-9999" value="'+esc(a.responsavel_whatsapp||'')+'"><button class="btn primary block" style="margin-top:10px">Salvar dados do aluno</button></form><form class="card" data-form="senha" data-id="'+id+'"><label for="ns" style="margin-top:0">Nova senha para @'+esc(a.username)+'</label><input id="ns" name="s" minlength="6" required><button class="btn primary block" style="margin-top:10px">Trocar senha</button></form><button class="btn danger block" style="margin-top:16px" data-a="removerAluno" data-id="'+id+'">Remover aluno</button>'; }
   b.innerHTML=x;
 }
 A.alTab=function(el){ ST.tab['al'+el.dataset.id]=el.dataset.v; vAluno(el.dataset.id,el.dataset.v); };
+FORMS.perfilAluno=async function(f){try{await server('alunos',{acao:'editar',id:f.dataset.id,ano:f.ano.value,responsavel_nome:f.rn.value.trim()||null,responsavel_whatsapp:f.rw.value.trim()||null});await getAlunos(true);toast('Dados do aluno atualizados');vAluno(f.dataset.id,'conta');}catch(e){toast(erroMsg(e));}};
 FORMS.senha=async function(f){ try{ await server('alunos',{acao:'senha',id:f.dataset.id,senha:f.s.value}); toast('Senha trocada'); f.reset(); }catch(e){ toast(erroMsg(e)); } };
 A.removerAluno=async function(el){ if(!confirmar('Remover este aluno e todos os dados dele? Isso não pode ser desfeito.')) return; try{ await server('alunos',{acao:'remover',id:el.dataset.id}); await getAlunos(true); toast('Aluno removido'); location.hash='#/alunos'; }catch(e){ toast(erroMsg(e)); } };
 
@@ -582,43 +599,56 @@ var MAT_MAX = 25*1024*1024;
 function fmtTam(b){ if(!b) return ''; return b<1024*1024? Math.max(1,Math.round(b/1024))+' KB' : (b/1048576).toFixed(1).replace('.',',')+' MB'; }
 function matItem(m){
   var t=m.topic_id&&TBY[m.topic_id]; var para=isProf()?(m.para?nomeAluno(m.para):'Todos os alunos'):'';
-  var info=[t?strip(t.nome):'Geral'].concat(para?[para]:[],m.tamanho?[fmtTam(m.tamanho)]:[],[fmtData(m.updated_at||m.created_at)]).map(esc).join(' · ');
+  var info=[m.disciplina||'Matemática',m.ano||'',m.assunto||(t?strip(t.nome):'Geral')].concat(para?[para]:[],m.tamanho?[fmtTam(m.tamanho)]:[],[fmtData(m.updated_at||m.created_at)]).filter(Boolean).map(esc).join(' · ');
   return '<div class="item"><span style="flex-shrink:0;color:var(--bad)">'+ic('file','currentColor',28)+'</span><div class="grow"><b>'+esc(m.titulo)+'</b>'+(m.descricao?'<span class="small" style="display:block">'+nl2br(m.descricao)+'</span>':'')+'<span class="small muted">'+info+'</span></div><div class="row" style="flex-shrink:0;gap:6px">'+(m.url?'<a class="btn sm primary" href="'+esc(m.url)+'" target="_blank" rel="noopener" data-mat="'+m.id+'" data-t="'+esc(m.titulo)+'">Abrir</a>':'<span class="small muted">indisponível</span>')+(isProf()?'<button class="btn sm ghost" data-a="editMat" data-id="'+m.id+'" aria-label="Editar material">Editar</button>':'')+'</div></div>';
 }
 async function vMateriais(){
   var prof=isProf(); loading('Materiais',prof?'conteudo':'assuntos'); if(prof) await getAlunos();
   var L=[], erro=''; try{ L=(await server('materiais',{acao:'listar'})).materiais||[]; }catch(e){ erro=erroMsg(e); }
   ST.mats={}; L.forEach(function(m){ ST.mats[m.id]=m; });
-  var f=ST.matf||'todos'; var usados={}; L.forEach(function(m){ usados[m.topic_id||'']=1; });
-  var V=L.filter(function(m){ return f==='todos' || (m.topic_id||'')===(f==='geral'?'':f); });
-  var h=(prof?'<button class="btn gold block" data-a="novoMat">'+ic('file')+' Enviar novo PDF</button><p class="small muted">Você escolhe o assunto e se o PDF é para todos ou para um aluno só. Dá para editar o título, trocar o arquivo ou apagar depois.</p>':'');
+  var f=ST.matf||'todos', disc=ST.matdisc||'todas', ano=ST.matano||'Todos', usados={}; L.forEach(function(m){usados[m.topic_id||'']=1;});
+  var V=L.filter(function(m){return (disc==='todas'||(m.disciplina||'Matemática')===disc)&&(ano==='Todos'||m.ano===ano)&&(f==='todos'||(m.topic_id||'')===(f==='geral'?'':f));});
+  var h=(prof?'<button class="btn gold block" data-a="novoMat">'+ic('file')+' Enviar novo PDF</button><p class="small muted">Escolha disciplina, ano, assunto e aluno destinatário. Português é material de apoio em PDF.</p>':'');
+  h+='<div class="chips" style="margin-top:10px"><button class="chip'+(disc==='todas'?' on':'')+'" data-a="matdisc" data-v="todas">Todas</button><button class="chip'+(disc==='Matemática'?' on':'')+'" data-a="matdisc" data-v="Matemática">Matemática</button><button class="chip'+(disc==='Português'?' on':'')+'" data-a="matdisc" data-v="Português">Português</button></div>';
+  h+='<div class="chips" style="margin-top:8px">'+['Todos'].concat(ANOS).map(function(y){return '<button class="chip'+(ano===y?' on':'')+'" data-a="matano" data-v="'+y+'">'+y+'</button>';}).join('')+'</div>';
   if(erro) h+='<div class="err">'+esc(erro)+'</div>';
-  if(Object.keys(usados).length>1) h+='<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por assunto"><button class="chip'+(f==='todos'?' on':'')+'" data-a="matf" data-v="todos">Todos</button>'+Object.keys(usados).map(function(k){ return '<button class="chip'+(f===(k||'geral')?' on':'')+'" data-a="matf" data-v="'+esc(k||'geral')+'">'+esc(k&&TBY[k]?strip(TBY[k].nome):'Geral')+'</button>'; }).join('')+'</div>';
+  if(Object.keys(usados).length>1) h+='<div class="chips" style="margin-top:10px" role="group" aria-label="Filtrar por assunto"><button class="chip'+(f==='todos'?' on':'')+'" data-a="matf" data-v="todos">Todos os assuntos</button>'+Object.keys(usados).map(function(k){return '<button class="chip'+(f===(k||'geral')?' on':'')+'" data-a="matf" data-v="'+esc(k||'geral')+'">'+esc(k&&TBY[k]?strip(TBY[k].nome):'Geral')+'</button>';}).join('')+'</div>';
   h+=V.length?'<div class="stack" style="margin-top:12px">'+V.map(matItem).join('')+'</div>':(erro?'':'<p class="empty">'+(prof?'Nenhum PDF enviado ainda.':'O professor ainda não mandou materiais.')+'</p>');
-  page({title:'Materiais',sub:L.length+' PDF(s)',back:true,nav:prof?'conteudo':'assuntos',body:h});
+  page({title:'Materiais',sub:V.length+' PDF(s)',back:true,nav:prof?'conteudo':'assuntos',body:h});
 }
 A.matf=function(el){ ST.matf=el.dataset.v; vMateriais(); };
+A.matdisc=function(el){ST.matdisc=el.dataset.v;ST.matf='todos';vMateriais();};
+A.matano=function(el){ST.matano=el.dataset.v;vMateriais();};
 async function matTopico(id){
   var L; try{ L=(await server('materiais',{acao:'listar',topic_id:id})).materiais||[]; }catch(e){ return; }
   L.forEach(function(m){ (ST.mats=ST.mats||{})[m.id]=m; });
   var box=document.getElementById('matTopico'); if(!box) return;
   if(L.length||isProf()) box.innerHTML='<h2>PDFs do professor</h2>'+(L.length?'<div class="stack">'+L.map(matItem).join('')+'</div>':'')+(isProf()?'<button class="btn ghost block" style="margin-top:8px" data-a="novoMat" data-t="'+esc(id)+'">+ Enviar PDF para este assunto</button>':'');
 }
-A.novoMat=async function(el){ await getAlunos(); matForm(null, el&&el.dataset&&el.dataset.t); };
+A.novoMat=async function(el){ await getAlunos(); matForm(null,el&&el.dataset&&el.dataset.t,el&&el.dataset&&el.dataset.disc,el&&el.dataset&&el.dataset.ano,el&&el.dataset&&el.dataset.assunto); };
 A.editMat=async function(el){ await getAlunos(); var m=(ST.mats||{})[el.dataset.id]; if(m) matForm(m); };
-function matForm(m,topico){
-  var novo=!m; m=m||{}; var tp=m.topic_id||topico||'';
+function matAssuntoOptions(disc,ano,selected){
+  if(disc==='Português') return '<option value="">Escolha o assunto</option>'+PORTUGUES_TOPICS.filter(function(x){return x.ano===ano;}).map(function(x){return '<option value="'+esc(x.nome)+'"'+(x.nome===selected?' selected':'')+'>'+esc(x.nome)+'</option>';}).join('');
+  var topics=TOPICS.filter(function(t){return ano==='Todos'||t.ano===ano;}); return '<option value="">Geral (sem assunto)</option>'+topics.map(function(t){return '<option value="'+t.id+'"'+(t.id===selected?' selected':'')+'>'+esc(strip(t.nome))+'</option>';}).join('');
+}
+function matForm(m,topico,discArg,anoArg,assuntoArg){
+  var novo=!m; m=m||{}; var disc=m.disciplina||discArg||'Matemática', tp=m.topic_id||topico||'';
+  var ano=m.ano||(disc==='Português'?'4º ano':(TBY[tp]&&TBY[tp].ano))||anoArg||(novo?'4º ano':'Todos');
+  var selected=disc==='Português'?(m.assunto||assuntoArg||''):tp;
   sheet(novo?'Enviar PDF':'Editar material','<form id="fmat" data-form="mat"'+(novo?'':' data-id="'+m.id+'"')+'>'+
     '<label for="mf" style="margin-top:0">'+(novo?'Arquivo PDF':'Trocar o PDF (opcional)')+'</label><input id="mf" name="f" type="file" accept="application/pdf,.pdf"'+(novo?' required':'')+' data-change="matArq">'+
     (novo?'':'<p class="small muted" style="margin:4px 0 0">Arquivo atual: '+esc(m.nome_arquivo||'PDF')+(m.tamanho?' · '+fmtTam(m.tamanho):'')+(m.url?' · <a href="'+esc(m.url)+'" target="_blank" rel="noopener">abrir</a>':'')+'</p>')+
+    '<label for="mdisc">Disciplina</label><select id="mdisc" name="disciplina" data-change="matDisc"><option'+(disc==='Matemática'?' selected':'')+'>Matemática</option><option'+(disc==='Português'?' selected':'')+'>Português</option></select>'+
+    '<label for="myear">Ano</label><select id="myear" name="ano" data-change="matAno">'+['Todos'].concat(ANOS).map(function(y){return '<option'+(y===ano?' selected':'')+'>'+y+'</option>';}).join('')+'</select>'+
+    '<label for="ma">Assunto</label><select id="ma" name="a">'+matAssuntoOptions(disc,ano,selected)+'</select>'+
     '<label for="mt">Título</label><input id="mt" name="t" required maxlength="120" value="'+esc(m.titulo||'')+'" placeholder="Ex.: Resumo de frações">'+
     '<label for="md">Descrição (opcional)</label><textarea id="md" name="d" maxlength="500" placeholder="Ex.: Leia antes da aula de quinta.">'+esc(m.descricao||'')+'</textarea>'+
-    '<label for="ma">Assunto</label><select id="ma" name="a"><option value="">Geral (sem assunto)</option>'+ANOS.map(function(an){ return '<optgroup label="'+an+'">'+TOPICS.filter(function(t){return t.ano===an;}).map(function(t){return '<option value="'+t.id+'"'+(t.id===tp?' selected':'')+'>'+esc(strip(t.nome))+'</option>';}).join('')+'</optgroup>'; }).join('')+'</select>'+
     '<label for="mp">Para quem</label><select id="mp" name="p"><option value="">Todos os alunos</option>'+(ALUNOS||[]).map(function(a){return '<option value="'+a.id+'"'+(a.id===m.para?' selected':'')+'>'+esc(a.nome)+'</option>';}).join('')+'</select>'+
-    '<label class="row" style="gap:8px;font-weight:600;margin-top:14px"><input type="checkbox" name="v"'+(novo?' checked':'')+' style="width:auto;min-height:0"> Avisar os alunos (sino 🔔 e notificação)</label>'+
-    '<div id="matMsg"></div></form>',
+    '<label class="row" style="gap:8px;font-weight:600;margin-top:14px"><input type="checkbox" name="v"'+(novo?' checked':'')+' style="width:auto;min-height:0"> Avisar os alunos (sino 🔔 e notificação)</label><div id="matMsg"></div></form>',
     '<button class="btn primary block" form="fmat" id="matBtn">'+(novo?'Enviar PDF':'Salvar alterações')+'</button>'+(novo?'':'<button class="btn danger block" style="margin-top:8px" data-a="delMat" data-id="'+m.id+'">Apagar material</button>'));
 }
+CHANGE.matDisc=function(sel){var d=sel.value,y=document.getElementById('myear'),a=document.getElementById('ma');if(d==='Português'&&y)y.value='4º ano';if(a)a.innerHTML=matAssuntoOptions(d,y?y.value:'4º ano','');};
+CHANGE.matAno=function(sel){var d=document.getElementById('mdisc'),a=document.getElementById('ma'),ano=sel.value;if(d&&d.value==='Português'&&ano!=='4º ano'){ano='4º ano';sel.value=ano;}if(a)a.innerHTML=matAssuntoOptions(d?d.value:'Matemática',ano,'');};
 CHANGE.matArq=function(inp){ var f=inp.files[0], t=document.getElementById('mt'), msg=document.getElementById('matMsg'); msg.innerHTML=''; if(!f) return;
   if(!/pdf$/i.test(f.type)&&!/\.pdf$/i.test(f.name)){ msg.innerHTML='<div class="err">Escolha um arquivo PDF.</div>'; inp.value=''; return; }
   if(f.size>MAT_MAX){ msg.innerHTML='<div class="err">Esse PDF tem '+fmtTam(f.size)+'. O limite é 25 MB; comprima e tente de novo.</div>'; inp.value=''; return; }
@@ -637,7 +667,7 @@ FORMS.mat=async function(f){ var b=document.getElementById('matBtn'), msg=docume
     if(file){ if(file.size>MAT_MAX) throw new Error('O limite é 25 MB.');
       var pr=await server('materiais',{acao:'preparar',tamanho:file.size}); b.textContent='Enviando… 0%';
       await subirArquivo(pr.uploadUrl,file,function(p){ b.textContent='Enviando… '+p+'%'; }); up=pr.path; b.textContent='Salvando…'; }
-    var body={acao:'salvar',titulo:f.t.value,descricao:f.d.value,topic_id:f.a.value||null,para:f.p.value||null,avisar:f.v.checked};
+    var disc=f.disciplina.value, ano=f.ano.value==='Todos'?'':f.ano.value, assunto=f.a.value||null; var body={acao:'salvar',titulo:f.t.value,descricao:f.d.value,disciplina:disc,ano:ano,assunto:disc==='Português'?assunto:(assunto&&TBY[assunto]?strip(TBY[assunto].nome):null),topic_id:disc==='Português'?null:assunto,para:f.p.value||null,avisar:f.v.checked};
     if(f.dataset.id) body.id=+f.dataset.id||f.dataset.id;
     if(up){ body.path=up; body.nome_arquivo=file.name; body.tamanho=file.size; }
     await server('materiais',body); closeSheet(); toast(f.dataset.id?'Material atualizado':'PDF enviado!'); render();
@@ -650,7 +680,7 @@ function mockMat(b){
   if(b.acao==='listar'){ var L=MEM.materiais.filter(function(m){ return (prof||!m.para||m.para===me.id) && (!b.topic_id||m.topic_id===b.topic_id); }).slice().reverse().map(function(m){ return Object.assign({},m,{url:MEM.blobs[m.path]||null}); }); return {materiais:b.limite?L.slice(0,b.limite):L}; }
   if(!prof) throw new Error('Só o professor pode fazer isso.');
   if(b.acao==='preparar'){ var p='m'+(++MEM.seq)+'.pdf'; return {path:p,uploadUrl:p}; }
-  if(b.acao==='salvar'){ var row={titulo:b.titulo,descricao:b.descricao||null,topic_id:b.topic_id,para:b.para,updated_at:new Date().toISOString()}; if(b.path){ row.path=b.path; row.nome_arquivo=b.nome_arquivo; row.tamanho=b.tamanho; }
+  if(b.acao==='salvar'){ var row={titulo:b.titulo,descricao:b.descricao||null,disciplina:b.disciplina||'Matemática',ano:b.ano||null,assunto:b.assunto||null,topic_id:b.topic_id||null,para:b.para||null,updated_at:new Date().toISOString()}; if(b.path){ row.path=b.path; row.nome_arquivo=b.nome_arquivo; row.tamanho=b.tamanho; }
     if(b.id){ var cur=MEM.materiais.filter(function(m){return m.id===b.id;})[0]; Object.assign(cur,row); return {ok:true,material:cur}; }
     var n=Object.assign({id:++MEM.seq,created_at:row.updated_at},row); MEM.materiais.push(n); return {ok:true,material:n}; }
   if(b.acao==='apagar'){ MEM.materiais=MEM.materiais.filter(function(m){return m.id!==b.id;}); return {ok:true}; }
@@ -705,7 +735,13 @@ var DIAS_C=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'], DIAS_L=['domingo','segu
 function brl(v){ return (+v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
 function durTxt(m){ m=+m||60; return m%60===0? (m/60)+'h' : (m>60? Math.floor(m/60)+'h'+String(m%60).padStart(2,'0') : m+' min'); }
 function dataLonga(iso){ var d=new Date(iso+'T12:00:00'); return DIAS_C[d.getDay()]+' '+fmtData(iso); }
-function valorAula(a,al){ if(a.valor!=null&&a.valor!=='') return +a.valor; return al&&al.valor_hora? Math.round(al.valor_hora*(+a.duracao_min||60)/60*100)/100 : 0; }
+function ehMensal(al){ return !!(al&&al.valor_mensal!=null&&al.valor_mensal!==''&&+al.valor_mensal>0); }
+function ehMens(a){ return a&&a.tipo==='mensalidade'; }
+// ciclos da mensalidade a partir do início (ex.: 30/11 → 30/11 a 29/12, 30/12 a 29/01…; no mês curto usa o último dia)
+function mesMais(iso,k){ var y=+iso.slice(0,4), m=+iso.slice(5,7)-1+k, dia=+iso.slice(8,10); y+=Math.floor(m/12); m=((m%12)+12)%12; var ult=new Date(y,m+1,0).getDate(); return y+'-'+String(m+1).padStart(2,'0')+'-'+String(Math.min(dia,ult)).padStart(2,'0'); }
+function ciclosMensais(al,ate){ var h=horarioDe(al), out=[]; if(!ehMensal(al)||!h.desde) return out; for(var k=0;k<240;k++){ var ini=mesMais(h.desde,k); if(ini>ate) break; var f=new Date(mesMais(h.desde,k+1)+'T12:00:00'); f.setDate(f.getDate()-1); out.push({data:ini,fim:isoDate(f),valor:+al.valor_mensal}); } return out; }
+function periodoTxt(ini,fim){ return ini.slice(8,10)+'/'+ini.slice(5,7)+' a '+fim.slice(8,10)+'/'+fim.slice(5,7); }
+function valorAula(a,al){ if(a.valor!=null&&a.valor!=='') return +a.valor; if(ehMens(a)) return 0; return al&&al.valor_hora? Math.round(al.valor_hora*(+a.duracao_min||60)/60*100)/100 : 0; }
 function horarioDe(al){ var h=al&&al.horario; if(typeof h==='string'){ try{ h=JSON.parse(h); }catch(e){ h=null; } } return h&&h.slots?h:{desde:null,slots:[]}; }
 // aulas do horário fixo entre duas datas (inclusive)
 function slotsEntre(al,de,ate){ var h=horarioDe(al), out=[]; if(!h.slots.length) return out; var d=new Date(de+'T12:00:00'), fim=new Date(ate+'T12:00:00'); if(h.desde){ var ds=new Date(h.desde+'T12:00:00'); if(ds>d) d=ds; }
@@ -716,18 +752,21 @@ function finResumo(al,aulas){
   var pagas=aulas.filter(function(a){return a.status==='paga';}).sort(function(a,b){return (b.pago_em||b.data)<(a.pago_em||a.data)?-1:1;});
   var tem={}; aulas.forEach(function(a){ tem[a.data+'|'+(a.hora||'')]=1; });
   var ini=new Date(hoje()); ini.setDate(ini.getDate()-28);
-  var confirmar=slotsEntre(al,isoDate(ini),hojeIso).filter(function(s){ return !tem[s.data+'|'+s.hora]; });
+  var mensal=ehMensal(al), temMens={}; aulas.forEach(function(a){ if(ehMens(a)) temMens[a.data]=1; });
+  var confirmar=mensal?[]:slotsEntre(al,isoDate(ini),hojeIso).filter(function(s){ return !tem[s.data+'|'+s.hora]; });
+  var mensais=ciclosMensais(al,hojeIso).filter(function(c){ return !temMens[c.data]; });
   var fim=new Date(hoje()); fim.setDate(fim.getDate()+7); var amanha=new Date(hoje()); amanha.setDate(amanha.getDate()+1);
   var prox=slotsEntre(al,isoDate(amanha),isoDate(fim)).filter(function(s){ return !tem[s.data+'|'+s.hora]; });
-  return { pend:pend, pagas:pagas, confirmar:confirmar, prox:prox,
+  return { pend:pend, pagas:pagas, confirmar:confirmar, prox:prox, mensal:mensal, mensais:mensais,
     totPend:pend.reduce(function(s,a){return s+valorAula(a,al);},0),
     recMes:pagas.filter(function(a){return String(a.pago_em||a.data).slice(0,7)===mes;}).reduce(function(s,a){return s+valorAula(a,al);},0),
-    totProx:prox.reduce(function(s,a){return s+valorAula(a,al);},0) };
+    totProx:mensal?0:prox.reduce(function(s,a){return s+valorAula(a,al);},0) };
 }
-function aulaLinha(a,al,acoes){ return '<div class="item">'+(acoes&&a.status==='pendente'?'<input type="checkbox" class="finsel" value="'+a.id+'" aria-label="Selecionar aula de '+esc(dataLonga(a.data))+'" style="width:22px;height:22px;min-height:0;margin-top:2px;flex-shrink:0">':'')+'<div class="grow"><b>'+esc(dataLonga(a.data))+(a.hora?' · '+esc(a.hora):'')+'</b><span class="small muted">'+durTxt(a.duracao_min)+(a.status==='paga'&&a.pago_em?' · pago em '+fmtData(a.pago_em):'')+(a.obs?' · '+esc(a.obs):'')+'</span></div><b style="white-space:nowrap">'+brl(valorAula(a,al))+'</b>'+(acoes?'<div class="row" style="gap:6px;flex-shrink:0">'+(a.status==='pendente'?'<button class="btn sm" style="background:var(--okbg);border-color:#B7DFC5;color:var(--ok)" data-a="finPagar" data-id="'+a.id+'">Pago</button>':'')+'<button class="btn sm ghost" data-a="finEditar" data-id="'+a.id+'" aria-label="Editar aula">✎</button></div>':'')+'</div>'; }
+function aulaLinha(a,al,acoes){ return '<div class="item">'+(acoes&&a.status==='pendente'?'<input type="checkbox" class="finsel" value="'+a.id+'" aria-label="Selecionar aula de '+esc(dataLonga(a.data))+'" style="width:22px;height:22px;min-height:0;margin-top:2px;flex-shrink:0">':'')+'<div class="grow"><b>'+(ehMens(a)?'Mensalidade':esc(dataLonga(a.data))+(a.hora?' · '+esc(a.hora):''))+'</b><span class="small muted">'+(ehMens(a)?'':durTxt(a.duracao_min))+(a.status==='paga'&&a.pago_em?(ehMens(a)?'':' · ')+'pago em '+fmtData(a.pago_em):'')+(a.obs?(ehMens(a)&&!(a.status==='paga'&&a.pago_em)?'':' · ')+esc(a.obs):'')+'</span></div><b style="white-space:nowrap">'+brl(valorAula(a,al))+'</b>'+(acoes?'<div class="row" style="gap:6px;flex-shrink:0">'+(a.status==='pendente'?'<button class="btn sm" style="background:var(--okbg);border-color:#B7DFC5;color:var(--ok)" data-a="finPagar" data-id="'+a.id+'">Pago</button>':'')+'<button class="btn sm ghost" data-a="finEditar" data-id="'+a.id+'" aria-label="Editar lançamento">✎</button></div>':'')+'</div>'; }
+function pendTxt(pend){ var m=pend.filter(ehMens).length, au=pend.length-m; return [m?m+' mensalidade(s)':'',au?au+' aula(s)':''].filter(Boolean).join(' + ')+' a pagar'; }
 function finCards(r,al){
-  var semValor=!al.valor_hora&&r.pend.some(function(a){return a.valor==null;});
-  return '<div class="stats"><div class="stat" style="border-color:'+(r.totPend?'#F2BDBD':'var(--line)')+';background:'+(r.totPend?'var(--badbg)':'#fff')+'"><b style="color:'+(r.totPend?'var(--bad)':'var(--ok)')+'">'+brl(r.totPend)+'</b><span>'+(r.pend.length?r.pend.length+' aula(s) a pagar':'nada pendente 🎉')+'</span></div><div class="stat"><b>'+brl(r.recMes)+'</b><span>pago neste mês</span></div></div>'+(semValor&&isProf()?'<div class="err" style="margin-top:10px">Defina o valor da hora em "Horário e valor" para calcular os totais.</div>':'');
+  var semValor=!al.valor_hora&&r.pend.some(function(a){return a.valor==null&&!ehMens(a);});
+  return '<div class="stats"><div class="stat" style="border-color:'+(r.totPend?'#F2BDBD':'var(--line)')+';background:'+(r.totPend?'var(--badbg)':'#fff')+'"><b style="color:'+(r.totPend?'var(--bad)':'var(--ok)')+'">'+brl(r.totPend)+'</b><span>'+(r.pend.length?pendTxt(r.pend):'nada pendente 🎉')+'</span></div>'+(ehMensal(al)?'<div class="stat"><b>'+brl(al.valor_mensal)+'</b><span>mensalidade fixa</span></div>':'')+'<div class="stat"><b>'+brl(r.recMes)+'</b><span>pago neste mês</span></div></div>'+(semValor&&isProf()?'<div class="err" style="margin-top:10px">Defina o valor da hora em "Horário e valor" para calcular os totais.</div>':'');
 }
 async function loadFin(al){ var aulas=await DB.q('aulas',{eq:{student_id:al.id},order:['data',false]}); ST.fin={al:al,aulas:aulas,by:{}}; aulas.forEach(function(a){ ST.fin.by[a.id]=a; }); return finResumo(al,aulas); }
 async function getPix(){ try{ var r=await DB.q('config',{eq:{chave:'pub_pix'}}); return r[0]?r[0].valor:''; }catch(e){ return ''; } }
@@ -737,27 +776,31 @@ async function finProfHTML(al){
   var r=await loadFin(al); var h=horarioDe(al);
   var x=finCards(r,al);
   x+='<div class="grid" style="margin-top:12px"><button class="btn gold" data-a="finAvulsa" data-id="'+al.id+'">+ Lançar aula</button><button class="btn ghost" data-a="finHorario" data-id="'+al.id+'">'+ic('cal')+' Horário e valor</button></div>';
-  x+='<p class="small muted" style="margin:8px 0 0">'+(h.slots.length?'Aulas fixas: '+h.slots.map(function(s){return DIAS_C[s.dia]+' '+s.hora+' ('+durTxt(s.dur)+')';}).join(', '):'Sem horário fixo cadastrado.')+(al.valor_hora?' · '+brl(al.valor_hora)+'/hora':'')+'</p>';
+  x+='<p class="small muted" style="margin:8px 0 0">'+(h.slots.length?'Aulas fixas: '+h.slots.map(function(s){return DIAS_C[s.dia]+' '+s.hora+' ('+durTxt(s.dur)+')';}).join(', '):'Sem horário fixo cadastrado.')+(al.valor_hora?' · '+brl(al.valor_hora)+'/hora':'')+(al.valor_mensal?' · Mensalidade fixa: '+brl(al.valor_mensal)+'/mês':'')+'</p>';
+  if(r.mensal) x+='<p class="small muted" style="margin:6px 0 0">Cobrança por mensalidade: as aulas fixas não geram cobrança por aula. Aulas extras você lança em "+ Lançar aula".</p>'+(horarioDe(al).desde?'':'<div class="err" style="margin-top:10px">Defina a data de início em "Horário e valor" para gerar as mensalidades.</div>');
+  if(r.mensais.length) x+='<h2>Mensalidades para lançar <span class="muted small">('+r.mensais.length+')</span></h2><p class="small muted" style="margin-top:-4px">Ao lançar, a mensalidade entra como pendente de pagamento.</p><div class="stack">'+r.mensais.slice().reverse().map(function(c){ return '<div class="item"><div class="grow"><b>Mensalidade · '+esc(periodoTxt(c.data,c.fim))+'</b><span class="small muted">'+brl(c.valor)+'</span></div><button class="btn sm primary" style="flex-shrink:0" data-a="finMens" data-d="'+c.data+'" data-f="'+c.fim+'" data-v="'+c.valor+'">Lançar cobrança</button></div>'; }).join('')+'</div>';
   if(r.confirmar.length) x+='<h2>Aulas da agenda para confirmar <span class="muted small">('+r.confirmar.length+')</span></h2><p class="small muted" style="margin-top:-4px">Confirme as aulas que você deu. Elas entram como pendentes de pagamento.</p><div class="stack">'+r.confirmar.slice().reverse().map(function(s){ return '<div class="item"><div class="grow"><b>'+esc(dataLonga(s.data))+' · '+esc(s.hora)+'</b><span class="small muted">'+durTxt(s.duracao_min)+' · '+brl(valorAula(s,al))+'</span></div><div class="row" style="gap:6px;flex-shrink:0"><button class="btn sm primary" data-a="finConfirma" data-id="'+al.id+'" data-d="'+s.data+'" data-h="'+esc(s.hora)+'" data-m="'+s.duracao_min+'">Dei a aula</button><button class="btn sm ghost" data-a="finFalta" data-id="'+al.id+'" data-d="'+s.data+'" data-h="'+esc(s.hora)+'" data-m="'+s.duracao_min+'">Não teve</button></div></div>'; }).join('')+'</div>';
   x+='<h2>Pagamentos pendentes <span class="muted small">('+r.pend.length+')</span></h2>';
   if(r.pend.length){ x+='<div class="stack">'+r.pend.map(function(a){return aulaLinha(a,al,true);}).join('')+'</div><div class="grid" style="margin-top:10px"><button class="btn primary" data-a="finPagarSel" data-id="'+al.id+'">✓ Marcar selecionadas como pagas</button><button class="btn wa" data-a="finCobrar" data-id="'+al.id+'">'+ic('wa','#fff',20)+' Cobrar os pais no WhatsApp</button></div><button class="btn gold block" style="margin-top:10px" data-a="finLembrar">'+ic('bell')+' Lembrar '+esc(primeiroNome(al.nome))+' no celular</button>'; }
-  else x+='<p class="muted">Nenhuma aula esperando pagamento.</p>';
-  if(r.prox.length) x+='<h2>Próximas aulas (7 dias)</h2><div class="card"><div class="small muted">'+r.prox.map(function(s){return esc(dataLonga(s.data))+' '+esc(s.hora);}).join(' · ')+'</div><b style="display:block;margin-top:6px">Previsto: '+brl(r.totProx)+'</b></div>';
+  else x+='<p class="muted">Nenhum pagamento pendente.</p>';
+  if(r.prox.length) x+='<h2>Próximas aulas (7 dias)</h2><div class="card"><div class="small muted">'+r.prox.map(function(s){return esc(dataLonga(s.data))+' '+esc(s.hora);}).join(' · ')+'</div>'+(r.mensal?'':'<b style="display:block;margin-top:6px">Previsto: '+brl(r.totProx)+'</b>')+'</div>';
   if(r.pagas.length) x+='<details style="margin-top:18px"><summary style="font-weight:800;cursor:pointer">Histórico de pagas ('+r.pagas.length+')</summary><div class="stack" style="margin-top:10px">'+r.pagas.slice(0,40).map(function(a){return aulaLinha(a,al,true);}).join('')+'</div></details>';
   return x;
 }
 function finRecarregar(){ var al=ST.fin&&ST.fin.al; if(!al) return render(); if(/#\/financeiro/.test(location.hash)) return render(); ST.tab['al'+al.id]='fin'; vAluno(al.id,'fin'); }
 async function finAluno(id){ await getAlunos(true); return (ALUNOS||[]).filter(function(a){return a.id===id;})[0]; }
 A.finConfirma=async function(el){ el.disabled=true; var al=ST.fin.al; try{ await DB.ins('aulas',{student_id:al.id,data:el.dataset.d,hora:el.dataset.h,duracao_min:+el.dataset.m,status:'pendente'}); toast('Aula lançada como pendente'); finRecarregar(); }catch(e){ toast(erroMsg(e)); el.disabled=false; } };
+A.finMens=async function(el){ el.disabled=true; var al=ST.fin.al; try{ await DB.ins('aulas',{student_id:al.id,tipo:'mensalidade',data:el.dataset.d,hora:null,duracao_min:0,valor:+el.dataset.v,status:'pendente',obs:periodoTxt(el.dataset.d,el.dataset.f)}); toast('Mensalidade lançada como pendente'); finRecarregar(); }catch(e){ toast(/tipo/.test(erroMsg(e))?'Rode sql/academy_v6_expansao.sql no Supabase antes de lançar mensalidades.':erroMsg(e)); el.disabled=false; } };
 A.finFalta=async function(el){ el.disabled=true; var al=ST.fin.al; try{ await DB.ins('aulas',{student_id:al.id,data:el.dataset.d,hora:el.dataset.h,duracao_min:+el.dataset.m,status:'cancelada',obs:'Não teve aula'}); toast('Marcado: não teve aula'); finRecarregar(); }catch(e){ toast(erroMsg(e)); el.disabled=false; } };
 async function finMarcarPagas(ids){ var al=ST.fin.al, agora=new Date().toISOString();
   for(var i=0;i<ids.length;i++){ var a=ST.fin.by[ids[i]]; await DB.upd('aulas',{id:a.id},{status:'paga',pago_em:agora,valor:valorAula(a,al)}); } }
 A.finPagar=async function(el){ el.disabled=true; try{ await finMarcarPagas([+el.dataset.id||el.dataset.id]); toast('Pagamento registrado'); finRecarregar(); }catch(e){ toast(erroMsg(e)); el.disabled=false; } };
 A.finPagarSel=async function(el){ var ids=[].map.call(document.querySelectorAll('.finsel:checked'),function(c){return +c.value||c.value;});
-  if(!ids.length){ if(!confirmar('Nenhuma aula selecionada. Marcar TODAS as pendentes como pagas?')) return; ids=ST.fin.aulas.filter(function(a){return a.status==='pendente';}).map(function(a){return a.id;}); }
-  el.disabled=true; try{ await finMarcarPagas(ids); toast(ids.length+' aula(s) marcada(s) como paga(s)'); finRecarregar(); }catch(e){ toast(erroMsg(e)); el.disabled=false; } };
+  if(!ids.length){ if(!confirmar('Nada selecionado. Marcar TODAS as pendências como pagas?')) return; ids=ST.fin.aulas.filter(function(a){return a.status==='pendente';}).map(function(a){return a.id;}); }
+  el.disabled=true; try{ await finMarcarPagas(ids); toast(ids.length+' pagamento(s) registrado(s)'); finRecarregar(); }catch(e){ toast(erroMsg(e)); el.disabled=false; } };
 A.finCobrar=async function(){ var al=ST.fin.al, r=finResumo(al,ST.fin.aulas), pix=await getPix();
-  var t='Olá! Aqui é o Prof. '+primeiroNome(ST.me.nome)+'. Segue o resumo das aulas de matemática de '+primeiroNome(al.nome)+' que ainda não foram pagas:\n\n'+r.pend.map(function(a){return '• '+dataLonga(a.data)+(a.hora?' às '+a.hora:'')+' ('+durTxt(a.duracao_min)+') — '+brl(valorAula(a,al));}).join('\n')+'\n\n*Total: '+brl(r.totPend)+'*'+(pix?'\n\nPIX: '+pix:'')+'\n\nObrigado!';
+  var resp=al.responsavel_nome?primeiroNome(al.responsavel_nome):'';
+  var t='Olá'+(resp?', '+resp:'')+'! Aqui é o Prof. '+primeiroNome(ST.me.nome)+'. Segue o resumo '+(r.pend.some(ehMens)?'dos pagamentos':'das aulas')+' de '+primeiroNome(al.nome)+' que ainda não foram pagos:\n\n'+r.pend.map(function(a){return '• '+(ehMens(a)?'Mensalidade'+(a.obs?' ('+a.obs+')':''):dataLonga(a.data)+(a.hora?' às '+a.hora:'')+' ('+durTxt(a.duracao_min)+')')+' — '+brl(valorAula(a,al));}).join('\n')+'\n\n*Total: '+brl(r.totPend)+'*'+(pix?'\n\nPIX: '+pix:'')+'\n\nObrigado!';
   var w=waNum(al.responsavel_whatsapp); window.open('https://wa.me/'+(w||'')+'?text='+encodeURIComponent(t),'_blank'); };
 function finForm(al,a){ var novo=!a; a=a||{data:isoDate(hoje()),hora:'18:00',duracao_min:60,status:'pendente'};
   sheet(novo?'Lançar aula':'Editar aula','<form id="ffa" data-form="finAula"'+(novo?'':' data-id="'+a.id+'"')+'><div class="grid"><div><label for="fd" style="margin-top:0">Data</label><input id="fd" name="d" type="date" required value="'+esc(a.data)+'"></div><div><label for="fh" style="margin-top:0">Hora</label><input id="fh" name="h" type="time" value="'+esc(a.hora||'')+'"></div></div>'+
@@ -773,19 +816,19 @@ FORMS.finAula=async function(f){ var al=ST.fin.al, id=f.dataset.id&&(+f.dataset.
   try{ if(id) await DB.upd('aulas',{id:id},row); else { row.student_id=al.id; await DB.ins('aulas',row); } closeSheet(); toast(id?'Aula atualizada':'Aula lançada'); finRecarregar(); }catch(e){ toast(erroMsg(e)); } };
 A.finApagar=async function(el){ if(!confirmar('Apagar este lançamento?')) return; try{ await DB.del('aulas',{id:+el.dataset.id||el.dataset.id}); closeSheet(); toast('Lançamento apagado'); finRecarregar(); }catch(e){ toast(erroMsg(e)); } };
 A.finHorario=function(){ var al=ST.fin.al, h=horarioDe(al), by={}; h.slots.forEach(function(s){ by[s.dia]=s; });
-  sheet('Horário e valor de '+esc(primeiroNome(al.nome)),'<form id="fho" data-form="finHorario"><label for="vh" style="margin-top:0">Valor da hora-aula (R$)</label><input id="vh" name="vh" type="number" min="0" step="0.01" inputmode="decimal" value="'+(al.valor_hora!=null?al.valor_hora:'')+'" placeholder="Ex.: 30">'+
+  sheet('Horário e valor de '+esc(primeiroNome(al.nome)),'<form id="fho" data-form="finHorario"><label for="vm" style="margin-top:0">Mensalidade fixa (R$) — opcional</label><input id="vm" name="vm" type="number" min="0" step="0.01" inputmode="decimal" value="'+(al.valor_mensal!=null?al.valor_mensal:'')+'" placeholder="Ex.: 400"><label for="vh" style="margin-top:0">Valor da hora-aula (R$) — opcional</label><input id="vh" name="vh" type="number" min="0" step="0.01" inputmode="decimal" value="'+(al.valor_hora!=null?al.valor_hora:'')+'" placeholder="Ex.: 30">'+
     '<label style="margin-top:16px">Dias de aula fixos</label><div class="stack">'+[1,2,3,4,5,6,0].map(function(d){ var s=by[d]; return '<div class="item" style="align-items:center;padding:8px 12px"><label class="row grow" style="gap:8px;margin:0;font-weight:700"><input type="checkbox" name="d'+d+'"'+(s?' checked':'')+' style="width:22px;height:22px;min-height:0"> '+DIAS_L[d]+'</label><input type="time" name="h'+d+'" value="'+esc(s?s.hora:'18:00')+'" aria-label="Hora de '+DIAS_L[d]+'" style="width:110px"><input type="number" name="m'+d+'" min="15" step="15" value="'+(s?s.dur:60)+'" aria-label="Duração em minutos de '+DIAS_L[d]+'" style="width:76px"><span class="small muted">min</span></div>'; }).join('')+'</div>'+
-    '<label for="hd">Contar aulas fixas a partir de</label><input id="hd" name="desde" type="date" value="'+esc(h.desde||isoDate(hoje()))+'"><p class="small muted">As aulas fixas a partir dessa data aparecem para você confirmar com um toque. Aulas fora do horário você lança em "+ Lançar aula".</p></form>',
+    '<label for="hd">Início das aulas fixas (e da mensalidade)</label><input id="hd" name="desde" type="date" value="'+esc(h.desde||isoDate(hoje()))+'"><p class="small muted">Com mensalidade, cada mês a partir dessa data aparece para você lançar a cobrança (ex.: início 30/11 → 30/11 a 29/12). Sem mensalidade, as aulas fixas a partir dessa data aparecem para você confirmar com um toque. Aulas fora do horário você lança em "+ Lançar aula".</p></form>',
     '<button class="btn primary block" form="fho">Salvar</button>'); };
 FORMS.finHorario=async function(f){ var al=ST.fin.al, slots=[]; [1,2,3,4,5,6,0].forEach(function(d){ if(f['d'+d].checked) slots.push({dia:d,hora:f['h'+d].value||'18:00',dur:+f['m'+d].value||60}); });
-  var patch={valor_hora:f.vh.value===''?null:+f.vh.value,horario:{desde:f.desde.value||isoDate(hoje()),slots:slots}};
+  var patch={valor_hora:f.vh.value===''?null:+f.vh.value,valor_mensal:f.vm.value===''?null:+f.vm.value,horario:{desde:f.desde.value||isoDate(hoje()),slots:slots}};
   try{ await DB.upd('profiles',{id:al.id},patch); Object.assign(al,patch); await getAlunos(true); closeSheet(); toast('Horário salvo'); finRecarregar(); }catch(e){ toast(erroMsg(e)); } };
 
-function finDiasTxt(pend){ var hj=isoDate(hoje()), ont=new Date(hoje()); ont.setDate(ont.getDate()-1); ont=isoDate(ont);
+function finDiasTxt(pend){ if(pend.some(ehMens)) return pend.length===1?'da mensalidade'+(pend[0].obs?' ('+pend[0].obs+')':''):'das '+pend.length+' cobranças em aberto'; var hj=isoDate(hoje()), ont=new Date(hoje()); ont.setDate(ont.getDate()-1); ont=isoDate(ont);
   if(pend.length>3) return 'das últimas '+pend.length+' aulas';
   var L=pend.map(function(a){ if(a.data===hj) return 'de hoje'; if(a.data===ont) return 'de ontem'; var d=new Date(a.data+'T12:00:00'); var dias=Math.round((hoje()-d)/86400000); var passada=dias>hoje().getDay(); return 'de '+DIAS_L[d.getDay()]+(d.getDay()>0&&d.getDay()<6?'-feira':'')+(passada&&dias<14?(d.getDay()===0||d.getDay()===6?' passado':' passada'):'')+(dias>=14?' ('+a.data.slice(8,10)+'/'+a.data.slice(5,7)+')':''); });
   return (L.length>1? 'das aulas '+L.slice(0,-1).join(', ')+' e '+L[L.length-1] : 'da aula '+L[0]); }
-A.finLembrar=function(){ var al=ST.fin.al, r=finResumo(al,ST.fin.aulas); if(!r.pend.length){ toast('Nenhuma aula pendente.'); return; }
+A.finLembrar=function(){ var al=ST.fin.al, r=finResumo(al,ST.fin.aulas); if(!r.pend.length){ toast('Nenhum pagamento pendente.'); return; }
   var txt='Oi, '+primeiroNome(al.nome)+'! 😊 Passando só pra lembrar do pagamento '+finDiasTxt(r.pend)+' ('+brl(r.totPend)+'). Quando puder, toque aqui para ver a chave PIX. Obrigado!';
   sheet('Lembrete para '+esc(primeiroNome(al.nome)),'<form id="flb" data-form="finLembrar"><label for="lt" style="margin-top:0">Título</label><input id="lt" name="t" maxlength="80" required value="Lembrete das aulas 💰"><label for="lx">Mensagem</label><textarea id="lx" name="x" maxlength="200" required rows="5">'+esc(txt.slice(0,200))+'</textarea><p class="small muted">Chega como notificação no celular do aluno (se ele ativou as notificações) e fica no sino 🔔 do app. Ao tocar, ele abre a tela de pagamentos com a chave PIX.</p></form>','<button class="btn primary block" form="flb">Enviar lembrete</button>'); };
 FORMS.finLembrar=async function(f){ var b=document.querySelector('[form="flb"]'); b.disabled=true; var al=ST.fin.al;
@@ -795,9 +838,9 @@ FORMS.finLembrar=async function(f){ var b=document.querySelector('[form="flb"]')
 // tela geral do professor
 async function vFinProf(){
   loading('Financeiro','alunos'); var al=await getAlunos(true); var todas=await DB.q('aulas',{order:['data',false]}); var pix=await getPix();
-  var tot=0, rec=0, conf=0, linhas=al.map(function(a){ var r=finResumo(a,todas.filter(function(x){return x.student_id===a.id;})); tot+=r.totPend; rec+=r.recMes; conf+=r.confirmar.length; return {a:a,r:r}; }).sort(function(x,y){return y.r.totPend-x.r.totPend;});
-  var h='<div class="stats"><div class="stat" style="background:'+(tot?'var(--badbg)':'#fff')+'"><b style="color:'+(tot?'var(--bad)':'var(--ok)')+'">'+brl(tot)+'</b><span>a receber</span></div><div class="stat"><b>'+brl(rec)+'</b><span>recebido neste mês</span></div></div>'+(conf?'<div class="card" style="margin-top:10px;border-color:var(--accent)"><b>'+conf+' aula(s) da agenda para confirmar</b><span class="small muted" style="display:block">Abra o aluno para marcar "Dei a aula".</span></div>':'');
-  h+='<h2>Por aluno</h2>'+(linhas.length?'<div class="stack">'+linhas.map(function(l){ return '<a class="item" style="text-decoration:none" href="#/aluno/'+l.a.id+'/fin"><span class="avatar">'+esc(iniciais(l.a.nome))+'</span><div class="grow"><b>'+esc(l.a.nome)+'</b><span class="small muted">'+(l.r.pend.length?l.r.pend.length+' aula(s) pendente(s)':'em dia')+(l.r.confirmar.length?' · '+l.r.confirmar.length+' para confirmar':'')+'</span></div><b style="color:'+(l.r.totPend?'var(--bad)':'var(--ok)')+';white-space:nowrap">'+brl(l.r.totPend)+'</b></a>'; }).join('')+'</div>':'<p class="empty">Nenhum aluno cadastrado.</p>');
+  var tot=0, rec=0, conf=0, mensal=al.reduce(function(v,a){return v+(+a.valor_mensal||0);},0), linhas=al.map(function(a){ var r=finResumo(a,todas.filter(function(x){return x.student_id===a.id;})); tot+=r.totPend; rec+=r.recMes; conf+=r.confirmar.length+r.mensais.length; return {a:a,r:r}; }).sort(function(x,y){return y.r.totPend-x.r.totPend;});
+  var h='<div class="stats"><div class="stat" style="background:'+(tot?'var(--badbg)':'#fff')+'"><b style="color:'+(tot?'var(--bad)':'var(--ok)')+'">'+brl(tot)+'</b><span>a receber</span></div><div class="stat"><b>'+brl(rec)+'</b><span>recebido neste mês</span></div><div class="stat"><b>'+brl(mensal)+'</b><span>mensalidades fixas / mês</span></div></div>'+(conf?'<div class="card" style="margin-top:10px;border-color:var(--accent)"><b>'+conf+' aula(s) ou mensalidade(s) para confirmar</b><span class="small muted" style="display:block">Abra o aluno para marcar "Dei a aula" ou "Lançar cobrança".</span></div>':'');
+  h+='<h2>Por aluno</h2>'+(linhas.length?'<div class="stack">'+linhas.map(function(l){ return '<a class="item" style="text-decoration:none" href="#/aluno/'+l.a.id+'/fin"><span class="avatar">'+esc(iniciais(l.a.nome))+'</span><div class="grow"><b>'+esc(l.a.nome)+'</b><span class="small muted">'+(l.r.pend.length?pendTxt(l.r.pend):'em dia')+(l.r.confirmar.length+l.r.mensais.length?' · '+(l.r.confirmar.length+l.r.mensais.length)+' para confirmar':'')+(l.a.valor_mensal?' · Mensalidade fixa '+brl(l.a.valor_mensal)+'/mês':'')+'</span></div><b style="color:'+(l.r.totPend?'var(--bad)':'var(--ok)')+';white-space:nowrap">'+brl(l.r.totPend)+'</b></a>'; }).join('')+'</div>':'<p class="empty">Nenhum aluno cadastrado.</p>');
   h+='<h2>Chave PIX</h2><form class="card" data-form="pix"><label for="px" style="margin-top:0">Aparece para os alunos na tela de pagamentos e na cobrança</label><input id="px" name="p" value="'+esc(pix)+'" placeholder="CPF, telefone, e-mail ou chave aleatória"><button class="btn primary block" style="margin-top:10px">Salvar chave PIX</button></form>';
   page({title:'Financeiro',sub:'aulas e pagamentos',back:true,nav:'alunos',body:h});
 }
