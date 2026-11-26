@@ -7,7 +7,8 @@ for(const t of ctx.TOPICS){ if(ids[t.id])console.log('DUP',t.id); ids[t.id]=1;
   if(L.length<20){console.log('SHORT',t.id,s,L.length);bad++;}
   for(const g of L){const txt=g.q+'|'+g.a+'|'+[].concat(g.s||'').join('|'); if(/NaN|undefined|Infinity|\[object|null/.test(txt)){console.log('BADTXT',t.id,txt.slice(0,300));bad++;break;}}
  }}
-console.log('topics',ctx.TOPICS.length,'bad',bad);\nif(bad) process.exitCode=1;
+console.log('topics',ctx.TOPICS.length,'bad',bad);
+if(bad) process.exitCode=1;
 // teoria e camada didática
 const ctx2=ctx; vm.runInContext('this.TEORIA=TEORIA;this.INTRO=INTRO;this.fx=fx;this.didatTeste=didatTeste;',ctx2);
 for(const t of ctx.TOPICS){ if(!ctx.TEORIA[t.id]&&!t.teoria)console.log('SEM TEORIA',t.id); if(!ctx.INTRO[t.id])console.log('SEM INTRO',t.id); const h=ctx.fx(ctx.TEORIA[t.id]||t.teoria||''); if(/\{[^}]*\/[^}]*\}/.test(h.replace(/<svg[\s\S]*?<\/svg>/g,'')))console.log('FX?',t.id); ctx.didatTeste(t); }
