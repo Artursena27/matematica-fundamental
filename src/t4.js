@@ -2,20 +2,20 @@
 function gen4(kind,r,i){
   var a,b,c,nm;
   if(kind==='num'){
-    a=r.i(1000,9999); b=r.i(1000,9999);
+    a=r.i(10000,99999); b=r.i(10000,99999);
     return mix(i,[
-      function(){var d=String(a)[r.i(0,3)];return {q:'No número '+n(a)+', qual é o valor do algarismo '+d+'? (Considere a posição em que ele aparece.)',a:n(+d*Math.pow(10,String(a).lastIndexOf(d)===0?3:String(a).length-1-String(a).indexOf(d))),s:'Cada algarismo vale conforme sua posição. Leia o número da esquerda para a direita: milhares, centenas, dezenas e unidades.'};},
+      function(){var str=String(a),pos=r.i(0,4),d=str[pos],v=+d*Math.pow(10,4-pos);return {q:'No número '+n(a)+', qual é o valor do algarismo '+d+' que está na posição '+(pos+1)+' da esquerda?',a:n(v),s:'Cada algarismo vale conforme sua posição: dezenas de milhar, milhares, centenas, dezenas e unidades. O '+d+' nessa posição vale '+n(v)+'.'};},
       function(){return {q:'Qual número vem imediatamente depois de '+n(a)+'?',a:n(a+1),s:'Para encontrar o sucessor, somamos 1: '+n(a)+' + 1 = '+n(a+1)+'.'};},
       function(){return {q:'Qual número vem imediatamente antes de '+n(a)+'?',a:n(a-1),s:'Para encontrar o antecessor, tiramos 1: '+n(a)+' − 1 = '+n(a-1)+'.'};},
       function(){return {q:'Qual é o maior número: '+n(a)+' ou '+n(b)+'?',a:n(Math.max(a,b)),s:'Compare primeiro a quantidade de algarismos. Se for igual, compare da esquerda para a direita.'};}
     ]);
   }
   if(kind==='decomp'){
-    a=r.i(1,9); b=r.i(0,9); c=r.i(0,9); var d=r.i(0,9), val=a*1000+b*100+c*10+d;
+    a=r.i(1,9); b=r.i(0,9); c=r.i(0,9); var d=r.i(0,9), e=r.i(0,9), val=a*10000+b*1000+c*100+d*10+e;
     return mix(i,[
-      function(){return {q:'Decomponha o número '+n(val)+' em milhares, centenas, dezenas e unidades.',a:a+'000 + '+b+'00 + '+c+'0 + '+d,s:'Separe cada algarismo pelo valor da casa: '+a+' milhares, '+b+' centenas, '+c+' dezenas e '+d+' unidades.'};},
-      function(){return {q:'Que número é formado por '+a+' milhares, '+b+' centenas, '+c+' dezenas e '+d+' unidades?',a:n(val),s:a+'000 + '+b+'00 + '+c+'0 + '+d+' = '+n(val)+'.'};},
-      function(){return {q:'No número '+n(val)+', quanto vale o algarismo '+a+'?',a:n(a*1000),s:'O '+a+' está na casa dos milhares: '+a+' × 1.000 = '+n(a*1000)+'.'};}
+      function(){return {q:'Decomponha o número '+n(val)+' em dezenas de milhar, milhares, centenas, dezenas e unidades.',a:a*10000+' + '+b*1000+' + '+c*100+' + '+d*10+' + '+e,s:'Separe cada algarismo pelo valor da casa: '+a+' dezenas de milhar, '+b+' milhares, '+c+' centenas, '+d+' dezenas e '+e+' unidades.'};},
+      function(){return {q:'Que número é formado por '+a+' dezenas de milhar, '+b+' milhares, '+c+' centenas, '+d+' dezenas e '+e+' unidades?',a:n(val),s:a*10000+' + '+b*1000+' + '+c*100+' + '+d*10+' + '+e+' = '+n(val)+'.'};},
+      function(){return {q:'No número '+n(val)+', quanto vale o algarismo '+a+'?',a:n(a*10000),s:'O '+a+' está na casa das dezenas de milhar: '+a+' × 10.000 = '+n(a*10000)+'.'};}
     ]);
   }
   if(kind==='add'){
@@ -96,7 +96,7 @@ function gen4(kind,r,i){
     return mix(i,[
       function(){return {q:'Em uma pesquisa, '+a+' crianças escolheram futebol e '+(a-b)+' escolheram vôlei. Qual opção foi mais escolhida?',a:'Futebol',s:a+' é maior que '+(a-b)+'. Portanto, futebol foi a opção mais escolhida.'};},
       function(){return {q:'Uma caixa tem '+a+' bolas: '+b+' azuis e as demais vermelhas. Qual cor é mais provável retirar?',a:(a-b>b?'Vermelha':a-b===b?'As duas têm a mesma chance':'Azul'),s:'Há '+b+' bolas azuis e '+(a-b)+' vermelhas. A cor com mais bolas tem maior chance.'};},
-      function(){return {q:'Se hoje há sol e não há nuvens, chover exatamente peixes amanhã é um evento…',a:'Impossível',s:'Um evento impossível é aquele que não pode acontecer.'};}
+      function(){return {q:'Se hoje há sol e não há nuvens, tirar o número 7 em um dado comum é um evento…',a:'Impossível',s:'Um evento impossível é aquele que não pode acontecer.'};}
     ]);
   }
   return {q:'Resolva a atividade.',a:'Vamos resolver juntos.',s:'Leia com atenção e procure as informações importantes.'};
