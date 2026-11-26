@@ -47,7 +47,10 @@ function gen4(kind,r,i){
     var den=r.p([2,3,4,5,10,100]);
     return mix(i,[
       function(){return {q:'Uma barra foi dividida em '+den+' partes iguais. Uma parte corresponde a qual fração?',a:'1/'+den,s:'O número de baixo mostra o total de partes iguais. Uma parte é 1/'+den+'.'};},
-      function(){return {q:'Qual é maior: 1/'+den+' ou 1/'+(den===2?3:2)+'?',a:(den===2?'1/2':'1/'+(den===2?3:2)),s:'Quando o numerador é 1, quanto maior o denominador, menor é cada pedaço.'};}
+      function(){return {q:'Qual é maior: 1/'+den+' ou 1/'+(den===2?3:2)+'?',a:'1/'+(den===2?2:2),s:'Quando o numerador é 1, quanto maior o denominador, menor é cada pedaço. Por isso 1/2 é maior.'};},
+      function(){return 'Uma folha foi cortada em '+den+' pedaços iguais. Qual fração representa um pedaço?'.replace('?', '?'),a:'1/'+den,s:'Um pedaço de um total de '+den+' partes iguais é 1/'+den+'.'};},
+      function(){return {q:'Complete: a fração que representa uma parte de '+den+' partes iguais é ___.',a:'1/'+den,s:'O numerador é 1 porque estamos escolhendo uma parte; o denominador é '+den+' porque existem '+den+' partes iguais.'};},
+      function(){return {q:'Uma fita foi separada em '+den+' partes iguais. Que fração representa uma dessas partes?',a:'1/'+den,s:'Uma parte de '+den+' partes iguais corresponde a 1/'+den+'.'};}
     ]);
   }
   if(kind==='money'){
@@ -66,15 +69,17 @@ function gen4(kind,r,i){
     ]);
   }
   if(kind==='geo'){
+    var formas=[['triângulo',3],['quadrado',4],['pentágono',5],['hexágono',6]], forma=r.p(formas);
+    var base=r.i(3,6), ctx=r.p(['uma janela','um livro','uma folha de papel','um azulejo']);
+    var paralela=r.p(['trilhos retos vistos de cima','linhas de um caderno','lados opostos de um retângulo']);
     return mix(i,[
-      function(){return {q:'Quantos lados tem um quadrado?',a:'4 lados',s:'O quadrado é uma figura plana com quatro lados iguais e quatro ângulos retos.'};},
-      function(){return {q:'Qual sólido geométrico tem duas bases iguais e paralelas?',a:'Prisma',s:'O prisma tem duas bases iguais e paralelas. As faces laterais ligam uma base à outra.'};},
-      function(){return {q:'Qual sólido tem uma base e faces laterais triangulares que se encontram em uma ponta?',a:'Pirâmide',s:'A pirâmide tem uma base e faces laterais triangulares que se encontram no vértice do topo.'};},
-      function(){return {q:'Como são chamadas duas retas que se cruzam formando um ângulo de 90°?',a:'Retas perpendiculares',s:'Retas perpendiculares se cruzam formando quatro ângulos retos de 90°.'};},
-      function(){return {q:'Um ângulo reto mede quantos graus?',a:'90°',s:'O cantinho de um livro ou de uma folha forma um ângulo reto de 90°.'};},
-      function(){return {q:'Um cubo tem quantas faces?',a:'6 faces',s:'O cubo tem 6 faces quadradas, 12 arestas e 8 vértices.'};},
-      function(){return {q:'Como chamamos duas retas que nunca se encontram e mantêm a mesma distância?',a:'Retas paralelas',s:'Retas paralelas seguem lado a lado e não se cruzam.'};},
-      function(){return {q:'Uma figura que pode ser dobrada ao meio e ter as duas metades iguais apresenta o quê?',a:'Simetria',s:'A linha da dobra é o eixo de simetria.'};}
+      function(){return {q:'Quantos lados tem um '+forma[0]+'?',a:forma[1]+' lados',s:'Conte os lados da figura: um '+forma[0]+' tem '+forma[1]+' lados.'};},
+      function(){return {q:'Um prisma com base de '+base+' lados tem quantas faces?',a:(base+2)+' faces',s:'Um prisma tem duas bases e uma face lateral para cada lado da base: '+base+' + 2 = '+(base+2)+' faces.'};},
+      function(){return {q:'O canto de '+ctx+' forma um ângulo de quantos graus?',a:'90°',s:'Esse canto é um ângulo reto. Todo ângulo reto mede 90°.'};},
+      function(){return {q:'Duas retas como '+paralela+' não se encontram. Como são chamadas?',a:'Retas paralelas',s:'Retas paralelas seguem lado a lado e não se cruzam.'};},
+      function(){var p=r.p(['duas ruas que se cruzam formando um canto reto','o encontro entre a parede e o chão','os lados vizinhos de um quadrado']);return {q:'A situação '+p+' representa retas de que tipo?',a:'Retas perpendiculares',s:'Elas se encontram formando um ângulo reto de 90°.'};},
+      function(){var obj=r.p(['borboleta','coração desenhado','folha com duas metades iguais']);return {q:'Quando dobramos uma figura como uma '+obj+' e as duas metades combinam, ela apresenta qual característica?',a:'Simetria',s:'A dobra indica o eixo de simetria: as duas metades se correspondem.'};},
+      function(){return {q:'Qual sólido tem uma base e faces laterais triangulares que se encontram em uma ponta?',a:'Pirâmide',s:'A pirâmide tem uma base e faces triangulares que se encontram no vértice do topo.'};}
     ]);
   }
   if(kind==='measure'){
