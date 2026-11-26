@@ -68,6 +68,9 @@ function gen4(kind,r,i){
   if(kind==='geo'){
     return mix(i,[
       function(){return {q:'Quantos lados tem um quadrado?',a:'4 lados',s:'O quadrado é uma figura plana com quatro lados iguais e quatro ângulos retos.'};},
+      function(){return {q:'Qual sólido geométrico tem duas bases iguais e paralelas?',a:'Prisma',s:'O prisma tem duas bases iguais e paralelas. As faces laterais ligam uma base à outra.'};},
+      function(){return {q:'Qual sólido tem uma base e faces laterais triangulares que se encontram em uma ponta?',a:'Pirâmide',s:'A pirâmide tem uma base e faces laterais triangulares que se encontram no vértice do topo.'};},
+      function(){return {q:'Como são chamadas duas retas que se cruzam formando um ângulo de 90°?',a:'Retas perpendiculares',s:'Retas perpendiculares se cruzam formando quatro ângulos retos de 90°.'};},
       function(){return {q:'Um ângulo reto mede quantos graus?',a:'90°',s:'O cantinho de um livro ou de uma folha forma um ângulo reto de 90°.'};},
       function(){return {q:'Um cubo tem quantas faces?',a:'6 faces',s:'O cubo tem 6 faces quadradas, 12 arestas e 8 vértices.'};},
       function(){return {q:'Como chamamos duas retas que nunca se encontram e mantêm a mesma distância?',a:'Retas paralelas',s:'Retas paralelas seguem lado a lado e não se cruzam.'};},
