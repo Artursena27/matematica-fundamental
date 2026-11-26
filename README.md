@@ -5,7 +5,10 @@ Plataforma de apoio às aulas de Matemática Academy, com painel do professor e 
 - `index.html` é o site pronto (gerado).
 - `src/` tem o conteúdo: `t1.js`/`t1b.js` (números), `t2.js` (álgebra), `t3.js` (geometria, medidas, estatística) e `t4.js` (Matemática do 4º ano, com a teoria em `teoria6.js`).
 - Para regerar depois de editar: `node build.js`
-- Para conferir os geradores de questões: `node test.js`
+- Para conferir os geradores de questões e os jogos: `node test.js`
+
+## Jogos do 4º ano
+Cada assunto do 4º ano (12 de Matemática e 6 de Português) tem 2 joguinhos interativos em `src/jogos.js` (montar números com blocos, foguete das contas, repartir docinhos, pizzaria de frações, mercadinho, relógio de ponteiros, montar frases, ligar sinônimos…), com mascote, estrelas e confete. Em Matemática, os acertos contam no progresso do assunto; em Português dão só XP. As partidas aparecem na aba Atividade do aluno. Português tem página própria por assunto (Jogar · Aprender · PDFs).
 
 ## Materiais em PDF
 O professor envia, edita (disciplina, ano, assunto, título, descrição e destinatário), troca o arquivo e apaga PDFs em **Painel → Materiais (PDF)**. Materiais antigos permanecem classificados como Matemática. Português funciona como catálogo de assuntos e apoio em PDF, sem progresso ou listas. Os alunos veem os materiais no Início, na tela **Materiais** e dentro de cada assunto.
