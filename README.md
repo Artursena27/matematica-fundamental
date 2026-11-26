@@ -12,7 +12,7 @@ Cada assunto do 4º ano (12 de Matemática e 6 de Português) tem 2 joguinhos in
 
 ## Materiais em PDF
 O professor envia, edita (disciplina, ano, assunto, título, descrição e destinatário), troca o arquivo e apaga PDFs em **Painel → Materiais (PDF)**. Materiais antigos permanecem classificados como Matemática. Português funciona como catálogo de assuntos e apoio em PDF, sem progresso ou listas. Os alunos veem os materiais no Início, na tela **Materiais** e dentro de cada assunto.
-- A tabela e o bucket são criados por `sql/academy_v3_materiais.sql`. Para a expansão de anos, disciplinas, responsável e mensalidade fixa, rode `sql/academy_v6_expansao.sql` no SQL Editor do Supabase (e depois `sql/academy_v6b_theo.sql`, com os dados do Theo).
+- A tabela e o bucket são criados por `sql/academy_v3_materiais.sql`. Para a expansão de anos, disciplinas, responsável e mensalidade fixa, rode `sql/academy_v6_expansao.sql` no SQL Editor do Supabase (e depois `sql/academy_v6b_everton.sql`, com os dados do Everton).
 - Os arquivos vão direto do navegador para o Storage (até 25 MB) e os alunos abrem por links temporários gerados em `api/materiais.js`.
 
 ## Financeiro

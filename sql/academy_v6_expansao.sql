@@ -1,6 +1,6 @@
 -- v6: expansão para 4º/5º ano, disciplinas nos materiais, dados do responsável e mensalidade fixa.
 -- Só ADICIONA colunas/constraints. Nenhum aluno, lista, progresso ou pagamento existente é apagado ou alterado.
--- Os dados do Theo ficam em sql/academy_v6b_theo.sql (rodar depois deste).
+-- Os dados do Everton ficam em sql/academy_v6b_everton.sql (rodar depois deste).
 
 -- Anos: profiles.ano é texto livre, sem CHECK nem ENUM, então 4º e 5º ano já são aceitos pelo banco.
 -- A validação da lista de anos fica em api/alunos.js.
