@@ -15,11 +15,11 @@ module.exports = async (req, res) => {
     if (ja.ok && ja.data.length) return json(res, 400, { erro: 'Esse usuário já existe.' });
     const u = await adminAuth('users', 'POST', { email: usuario + '@' + ALUNO_DOMINIO, password: senha, email_confirm: true, user_metadata: { nome } });
     if (!u.ok) return json(res, 400, { erro: 'Não consegui criar o acesso: ' + ((u.data && (u.data.msg || u.data.message)) || u.status) });
-    const p = await rest('profiles', { method: 'POST', body: { id: u.data.id, role: 'aluno', nome, username: usuario, ano } });
+    const p = await rest('profiles', { method: 'POST', body: { id: u.data.id, role: 'aluno', nome, username: usuario, ano, responsavel_nome: String(b.responsavel_nome || '').trim() || null, responsavel_whatsapp: String(b.responsavel_whatsapp || '').trim() || null } });
     if (!p.ok) { await adminAuth('users/' + u.data.id, 'DELETE'); return json(res, 500, { erro: 'Falha ao salvar o perfil.', detalhe: p.data }); }
     return json(res, 200, { ok: true, aluno: p.data[0] });
   }
-  if (b.acao === 'senha') {
+  if (b.acao === 'editar') {\n    if ((await getRole(b.id)) !== 'aluno') return json(res, 400, { erro: 'Aluno não encontrado.' });\n    const patch = {};\n    if (['4º ano','5º ano','6º ano','7º ano','8º ano','9º ano'].includes(String(b.ano || ''))) patch.ano = String(b.ano);\n    if (Object.prototype.hasOwnProperty.call(b, 'responsavel_nome')) patch.responsavel_nome = String(b.responsavel_nome || '').trim() || null;\n    if (Object.prototype.hasOwnProperty.call(b, 'responsavel_whatsapp')) patch.responsavel_whatsapp = String(b.responsavel_whatsapp || '').trim() || null;\n    const p = await rest('profiles?id=eq.' + encodeURIComponent(b.id), { method: 'PATCH', body: patch });\n    return p.ok ? json(res, 200, { ok: true, aluno: p.data[0] }) : json(res, 400, { erro: 'Não consegui atualizar o aluno.', detalhe: p.data });\n  }\n  if (b.acao === 'senha') {
     if (String(b.senha || '').length < 6) return json(res, 400, { erro: 'A senha precisa ter pelo menos 6 caracteres.' });
     if ((await getRole(b.id)) !== 'aluno') return json(res, 400, { erro: 'Aluno não encontrado.' });
     const u = await adminAuth('users/' + encodeURIComponent(b.id), 'PUT', { password: String(b.senha) });
