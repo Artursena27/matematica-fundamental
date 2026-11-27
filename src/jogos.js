@@ -472,3 +472,22 @@ async function vPt(id,tab){ var t=ptTopico(id); if(!t){ location.hash='#/assunto
     tb.innerHTML=(L.length?'<div class="stack">'+L.map(matItem).join('')+'</div>':'<p class="empty">'+(prof?'Nenhum PDF neste assunto ainda.':'O professor ainda não mandou PDFs deste assunto.')+'</p>')+(prof?'<button class="btn gold block" style="margin-top:10px" data-a="novoMat" data-disc="Português" data-ano="'+t.ano+'" data-assunto="'+esc(t.nome)+'">+ Enviar PDF para este assunto</button>':''); }
 }
 A.ptTab=function(el){ ST.tab[el.dataset.id]=el.dataset.v; vPt(el.dataset.id,el.dataset.v); window.scrollTo(0,0); };
+
+/* ================= NIVELAMENTO DE PORTUGUÊS (4º ano) =================
+   2 perguntas por assunto, cada uma olhando uma habilidade diferente. Resultado por assunto:
+   sabe (2/2), parcial (1/2) ou reforçar (0/2). Não entra no progresso. */
+function genOrdemEsc(r,k){ var f=PT_ORDENAR[r.i(0,PT_ORDENAR.length-1)], w=f.replace(/\.$/,'').split(' '), errs=[];
+  for(var t=0;t<12&&errs.length<3;t++){ var s=r.sh(w).join(' ')+'.'; if(s!==f&&errs.indexOf(s)<0) errs.push(s); }
+  return mkEsc(r,{perg:'Qual frase está na <b>ordem certa</b>? 🧩',certa:f,erradas:errs,exp:['A frase começa com letra maiúscula, tem sentido e termina com ponto.','Certo: '+f]}); }
+var PT_DIAG=[['pt4-1',genLeitor,0,'achar a informação no texto'],['pt4-1',genDetetive,1,'deduzir pelas pistas do texto'],['pt4-2',genGenero,0,'reconhecer o tipo de texto'],['pt4-2',genPista,1,'saber as características do texto'],
+  ['pt4-3',genMesmoContrario,0,'sinônimos'],['pt4-3',genMesmoContrario,1,'antônimos'],['pt4-4',genQualClasse,0,'substantivo, adjetivo e verbo'],['pt4-4',genQualClasse,1,'substantivo, adjetivo e verbo'],
+  ['pt4-5',genPonto,0,'ponto final, interrogação e exclamação'],['pt4-5',genVirgula,1,'vírgula'],['pt4-6',genCompletar,0,'completar frases com sentido'],['pt4-6',genOrdemEsc,1,'organizar as palavras na frase']];
+function ptDiagQs(seed){ var vistos={};
+  return PT_DIAG.map(function(d,i){ var t=ptTopico(d[0]), ro, tent=0;
+    do{ ro=d[1](R(seed*131+i*7919+tent*17),d[2]); tent++; }while(vistos[stripTxt(ro.perg+ro.visual)]&&tent<8); vistos[stripTxt(ro.perg+ro.visual)]=1;
+    return {key:d[0]+'#'+i,disc:'Português',hab:d[3],t:{id:d[0],nome:t?t.nome:d[0],ano:'4º ano'},g:{q:ro.perg,a:ro.certaTxt,visual:ro.visual},opts:ro.opts}; }); }
+function ptDiagResumo(qs,res){ var por={}, ac=0, tot=0;
+  qs.forEach(function(q){ if(q.disc!=='Português') return; tot++; var ok=!!res[q.key]; if(ok) ac++; var p=por[q.t.id]=por[q.t.id]||{c:0,n:0,falhou:[]}; p.n++; if(ok) p.c++; else p.falhou.push(q.hab); });
+  var topicos={}, falhas={}; Object.keys(por).forEach(function(id){ var p=por[id]; topicos[id]=p.c===p.n?'sabe':p.c?'parcial':'reforcar'; if(p.falhou.length) falhas[id]=p.falhou; });
+  return {nota:tot?Math.round(ac/tot*100):0,acertos:ac,total:tot,topicos:topicos,falhas:falhas}; }
+var PT_NIVEL={sabe:['⭐','já sabe','ok'],parcial:['🌤️','mais ou menos','gray'],reforcar:['🌱','vamos reforçar','bad']};
